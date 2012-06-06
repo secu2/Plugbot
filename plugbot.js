@@ -23,7 +23,7 @@ function displayGUI() {
 		if ($("#plugbot-gui").length) 
 			$("#plugbot-gui").remove();
 		$("#meta-frame").after('<div id="plugbot-gui"></div>');
-		$("#plugbot-gui").css("width", "348px").css("height", "48px").css("background-color", "#0A0A0A").css("opacity", "0.9100000262260437").css("border-top", "1px dotted #292929").css("-webkit-border-radius", "0 0 8px 8px").css("-moz-border-radius", "0 0 8px 8px").css("left", "349.5px").css("position", "absolute").css("top", "281px").css("z-index", "100");
+		$("#plugbot-gui").css("width", "348px").css("height", "48px").css("background-color", "#0A0A0A").css("opacity", "0.9100000262260437").css("border-top", "1px dotted #292929").css("-webkit-border-radius", "0 0 8px 8px").css("-moz-border-radius", "0 0 8px 8px").css("position", "absolute").css("top", "281px").css("left", "360px").css("z-index", "100");
 		
 		$("#plugbot-gui").prepend('<br /><span id="autowoot-btn">AUTOWOOT</span>');
 		$("#plugbot-gui").append('<span id="automeh-btn">AUTOMEH</span>');
