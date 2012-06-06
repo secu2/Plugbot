@@ -1,5 +1,5 @@
 /*
- * Author: Conner Davis (Logic®)
+ * Author: Conner Davis (LogicÂ®)
  * Purpose: Bookmarklet entry point
  */
 
@@ -22,10 +22,10 @@ function displayGUI() {
 	$(document).ready(function() {
 		if ($("#plugbot-gui").length) 
 			$("#plugbot-gui").remove();
-		$("#playback").css("z-index", "999");
+		$("#playback").css("z-index", "49");
 		$("#playback-container").after('<div id="plugbot-gui"></div>');
 		
-		$("#plugbot-gui").css("width", "348px").css("height", "48px").css("background-color", "#0A0A0A").css("opacity", "0.9100000262260437").css("border-top", "1px dotted #292929").css("-webkit-border-radius", "0 0 8px 8px").css("-moz-border-radius", "0 0 8px 8px").css("margin", "0 auto").css("z-index", "1000");
+		$("#plugbot-gui").css("width", "348px").css("height", "48px").css("background-color", "#0A0A0A").css("opacity", "0.9100000262260437").css("border-top", "1px dotted #292929").css("-webkit-border-radius", "0 0 8px 8px").css("-moz-border-radius", "0 0 8px 8px").css("margin", "0 auto").css("z-index", "50");
 		
 		$("#plugbot-gui").prepend('<br /><span id="autowoot-btn">AUTOWOOT</span>');
 		$("#plugbot-gui").append('<span id="automeh-btn">AUTOMEH</span>');
