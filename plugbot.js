@@ -35,6 +35,7 @@ function displayGUI() {
 			$("#autoqueue-btn").css("color", "#ED1C24");
 		$("#plugbot-gui span:first-child").css("margin-left", "0px !important");
 		
+		$("#automeh-btn").css("color", "#ED1C24");
 	});
 	$("#autowoot-btn").on('click', function() {
 		autowoot = !autowoot;
@@ -54,6 +55,9 @@ function displayGUI() {
 			$(this).css("color", "#3FFF00");
 			document.getElementById('button-dj-waitlist-join').click();
 		}
+	});
+	$("#automeh-btn").on('click', function() {
+		alert("You actually fucking thought I'd add this? The Game.");
 	});
 }
 
