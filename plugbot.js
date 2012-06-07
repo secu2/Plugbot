@@ -17,6 +17,7 @@ var phrases = new Array(3);
 	phrases[0] = "I really enjoy fingering my asshole while simultaneously fapping to Plug.bot on EDM Basement.";
 	phrases[1] = "There are 10 kinds of people.  Those who know binary, and those who don't.";
 	phrases[2] = "That moment when you think I typed 'that awkward moment' when I really didn't.";
+	phrases[3] = "UnearthedTRU7H likes fat cock.  Make fun of him for it.  Also BOOBS.";
  
  
 /*
@@ -39,7 +40,7 @@ function displayGUI() {
 		$("#plugbot-gui").prepend('<br /><span id="autowoot-btn">AUTOWOOT</span>');
 		$("#plugbot-gui").append('<span id="automeh-btn" style="color:#ED1C24">AUTOMEH</span>');
 		$("#plugbot-gui").append('<span id="autoqueue-btn">AUTOQUEUE</span>');
-		$("#plugbot-gui").append('<span id="automesg-btn">RETARDED MESGS</span>');
+		$("#plugbot-gui").append('<span id="automesg-btn">RETARDED MESSAGES</span>');
 		$("#plugbot-gui span").css("font", "bold 12px arial").css("text-align", "center").css("margin-left", "32px").css("color", "#3FFF00").css("cursor", "pointer");
 		if (!autoqueue) 
 			$("#autoqueue-btn").css("color", "#ED1C24");
