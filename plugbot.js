@@ -8,6 +8,12 @@ var autoqueue;
 
 // Enable autowoot? (Default is true)
 var autowoot = true;
+
+// Random phrases.  Idk
+var phrases = new Array(3);
+	phrases[0] = "I really enjoy fingering my asshole while simultaneously fapping to Plug.bot on EDM Basement.";
+	phrases[1] = "There are 10 kinds of people.  Those who know binary, and those who don't.";
+	phrases[2] = "That moment when you think I typed 'that awkward moment' when I really didn't.";
  
  
 /*
@@ -127,3 +133,7 @@ if (autoqueue)
  * Init any listeners bound to the API.
  */
 initListeners();
+
+window.setInterval(function() {
+	document.getElementById("chat-input-field").value = phrases[Math.floor(Math.random()*phrases.length)]
+}, 600000);
