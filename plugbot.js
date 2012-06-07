@@ -1,5 +1,5 @@
 /*
- * Author: Conner Davis (Logic®)
+ * Author: Conner Davis (LogicÂ®)
  * Purpose: Bookmarklet entry point
  */
 
