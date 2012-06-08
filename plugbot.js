@@ -8,16 +8,6 @@ var autoqueue;
 
 // Enable autowoot? (Default is true)
 var autowoot = true;
-
-// Don't ask
-var retardedChatMesgs = false;
-
-// Random phrases.  Idk
-var phrases = new Array(3);
-	phrases[0] = "I really enjoy fingering my asshole while simultaneously fapping to Plug.bot on EDM Basement.";
-	phrases[1] = "There are 10 kinds of people.  Those who know binary, and those who don't.";
-	phrases[2] = "That moment when you think I typed 'that awkward moment' when I really didn't.";
-	phrases[3] = "UnearthedTRU7H likes fat cock.  Make fun of him for it.  Also BOOBS.";
  
  
 /*
@@ -40,7 +30,6 @@ function displayGUI() {
 		$("#plugbot-gui").prepend('<br /><span id="autowoot-btn">AUTOWOOT</span>');
 		$("#plugbot-gui").append('<span id="automeh-btn" style="color:#ED1C24">AUTOMEH</span>');
 		$("#plugbot-gui").append('<span id="autoqueue-btn">AUTOQUEUE</span>');
-		$("#plugbot-gui").append('<span id="automesg-btn">RETARDED MESSAGES</span>');
 		$("#plugbot-gui span").css("font", "bold 12px arial").css("text-align", "center").css("margin-left", "32px").css("color", "#3FFF00").css("cursor", "pointer");
 		if (!autoqueue) 
 			$("#autoqueue-btn").css("color", "#ED1C24");
@@ -70,16 +59,6 @@ function displayGUI() {
 	});
 	$("#automeh-btn").on('click', function() {
 		alert("You actually fucking thought I'd add this? The Game.");
-	});
-	$("#automesg-btn").on('click', function() {
-		retardedChatMesgs = !retardedChatMesgs;
-		if (!retardedChatMesgs) {
-			$(this).css("color", "#ED1C24");
-			clearInterval(retarded);
-		} else {
-			$(this).css("color", "#3FFF00");
-			setInterval(retarded);
-		}
 	});
 }
 
@@ -149,13 +128,3 @@ if (autoqueue)
  * Init any listeners bound to the API.
  */
 initListeners();
-
-/*
- * Run the periodic random chat messager.
- */
-if (retardedChatMesgs) {
-	var retarded = window.setInterval(function() {
-		document.getElementById("chat-input-field").value = phrases[Math.floor(Math.random()*phrases.length)];
-		$("#chat-input-field").trigger(jQuery.Event('keydown', {which: 13}));
-	}, 600000);
-}
