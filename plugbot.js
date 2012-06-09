@@ -38,6 +38,7 @@ function displayGUI() {
 		
 		$("#automeh-btn").css("color", "#ED1C24");
 		$("#automesg-btn").css("color", "#ED1C24");
+		$("#idlechat-btn").css("color", "#ED1C24");
 	});
 	$("#autowoot-btn").on('click', function() {
 		autowoot = !autowoot;
