@@ -30,6 +30,7 @@ function displayGUI() {
 		$("#plugbot-gui").prepend('<br /><span id="autowoot-btn">AUTOWOOT</span>');
 		$("#plugbot-gui").append('<span id="automeh-btn" style="color:#ED1C24">AUTOMEH</span>');
 		$("#plugbot-gui").append('<span id="autoqueue-btn">AUTOQUEUE</span>');
+		$("#plugbot-gui").append('<span id="idlechat-btn">IDLE MESSAGES</span>');
 		$("#plugbot-gui span").css("font", "bold 12px arial").css("text-align", "center").css("margin-left", "32px").css("color", "#3FFF00").css("cursor", "pointer");
 		if (!autoqueue) 
 			$("#autoqueue-btn").css("color", "#ED1C24");
@@ -59,6 +60,9 @@ function displayGUI() {
 	});
 	$("#automeh-btn").on('click', function() {
 		alert("You actually fucking thought I'd add this? The Game.");
+	});
+	$("#idlechat-btn").on('click', function() {
+		alert("Feature coming soon when Steven adds to the API, as requested, tomorrow.");
 	});
 }
 
