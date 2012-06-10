@@ -8,12 +8,20 @@ var autoqueue;
 
 // Enable autowoot? (Default is true)
 var autowoot = true;
+
+// Enable automatic idle chat messages?
+var idleMessages = false;
+
+// Random messages to display
+var messages = new Array();
+	messages[0] = "I am using Plug.bot by Logic®.  Check it out at http://bit.ly/Kbi18U";
+	messages[1] = "NoizeRebel is currently in the lead for most points in EDM Basement, at over 26k!";
+	messages[2] = "EDM Basement is often recognised as the most popular room on Plug.dj!"
+	messages[3] = "The rules of EDM Basement are important.  Read them!!";
  
  
 /*
- * Since we're cool, we use a jQuery rollout for our GUI.
- * Also, because I was running out of space by using it in 
- * the audience container.
+ * Since we're cool, we use jQuery for the UI.
  */
 function displayGUI() {
 	/* 
@@ -63,7 +71,16 @@ function displayGUI() {
 		alert("You actually fucking thought I'd add this? The Game.");
 	});
 	$("#idlechat-btn").on('click', function() {
-		alert("Feature coming soon when Steven adds to the API, as requested, tomorrow.");
+		idleMessages = !idleMessages;
+		if (!idleMessages) {
+			$(this).css("color", "#ED1C24");
+			API.sendChat("I just disabled automatic idle messages on Plug.bot!  :(");
+			window.clearInterval(idleMessagesInterval);
+		} else {
+			$(this).css("color", "#3FFF00");
+			API.sendChat("I just enabled automatic idle messages on Plug.bot!  I'm awesome!");
+			window.setInterval(idleMessagesInterval);
+		}
 	});
 }
 
@@ -133,3 +150,13 @@ if (autoqueue)
  * Init any listeners bound to the API.
  */
 initListeners();
+
+/*
+ * Start the idle chat messaging loop.
+ */
+var idleMessagesInterval = window.setInterval(function() {
+	API.sendChat(messages[Math.floor(Math.random()*messages.length)]);
+}, 3600000 /* 1 hour */);
+
+if (!idleMessages)
+	window.clearInterval(idleMessagesInterval);
