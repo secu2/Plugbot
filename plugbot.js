@@ -12,6 +12,10 @@ var autowoot = true;
 // Enable automatic idle chat messages?
 var idleMessages = false;
 
+// The last time they sent a chat message.  Makes it so users can't continuosly disable/enable
+// the idle chat messages option and spam the room chat.
+var lastChatDuration = 0;
+
 // Random messages to display
 var messages = new Array();
 	messages[0] = "I am using Plug.bot by Logic®.  Check it out at http://bit.ly/Kbi18U";
@@ -74,11 +78,17 @@ function displayGUI() {
 		idleMessages = !idleMessages;
 		if (!idleMessages) {
 			$(this).css("color", "#ED1C24");
-			API.sendChat("I just disabled automatic idle messages on Plug.bot!  :(");
+			if (lastChatDuration >= 60000) {
+				API.sendChat("I just disabled automatic idle messages on Plug.bot!  :(");
+				lastChatDuration = 0;
+			}
 			window.clearInterval(idleMessagesInterval);
 		} else {
 			$(this).css("color", "#3FFF00");
-			API.sendChat("I just enabled automatic idle messages on Plug.bot!  I'm awesome!");
+			if (lastChatDuration >= 60000) {
+				API.sendChat("I just enabled automatic idle messages on Plug.bot!  I'm awesome!");
+				lastChatDuration = 0;
+			}
 			window.setInterval(idleMessagesInterval);
 		}
 	});
@@ -155,8 +165,15 @@ initListeners();
  * Start the idle chat messaging loop.
  */
 var idleMessagesInterval = window.setInterval(function() {
-	API.sendChat(messages[Math.floor(Math.random()*messages.length)]);
+	API.sendChat(messages[Math.floor(Math.random() * messages.length)]);
 }, 3600000 /* 1 hour */);
 
 if (!idleMessages)
 	window.clearInterval(idleMessagesInterval);
+	
+/*
+ * Start the last-message-sent loop updater.
+ */
+window.setInterval(function() {
+	lastChatDuration += 1000;
+}, 1000);
