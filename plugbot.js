@@ -4,25 +4,18 @@
  */
 
 // Enable autoqueue?
-var autoqueue;
+var autoqueue = true;
 
 // Enable autowoot? (Default is true)
 var autowoot = true;
 
-// Enable automatic idle chat messages?
-var idleMessages = false;
+// Enable the woot/meh ratio sidebar?
+var enableSidebar = false;
 
 // The last time they sent a chat message.  Makes it so users can't continuosly disable/enable
 // the idle chat messages option and spam the room chat.
 var lastChatDuration = 0;
 
-// Random messages to display
-var messages = new Array();
-	messages[0] = "I am using Plug.bot by Logic®.  Check it out at http://bit.ly/Kbi18U";
-	messages[1] = "NoizeRebel is currently in the lead for most points in EDM Basement, at over 26k!";
-	messages[2] = "EDM Basement is often recognised as the most popular room on Plug.dj!"
-	messages[3] = "The rules of EDM Basement are important.  Read them!!";
- 
  
 /*
  * Since we're cool, we use jQuery for the UI.
@@ -42,18 +35,14 @@ function displayGUI() {
 		$("#plugbot-gui").prepend('<br /><span id="autowoot-btn">AUTOWOOT</span>');
 		$("#plugbot-gui").append('<span id="automeh-btn" style="color:#ED1C24">AUTOMEH</span>');
 		$("#plugbot-gui").append('<span id="autoqueue-btn">AUTOQUEUE</span>');
-		$("#plugbot-gui").append('<span id="idlechat-btn">IDLE MESSAGES</span>');
 		$("#plugbot-gui span").css("font", "bold 12px arial").css("text-align", "center").css("margin-left", "32px").css("color", "#3FFF00").css("cursor", "pointer");
-		if (!autoqueue) 
-			$("#autoqueue-btn").css("color", "#ED1C24");
-		$("#autowoot-btn").css("margin-left", "0px");
 		
+		$("#autowoot-btn").css("margin-left", "0px");
 		$("#automeh-btn").css("color", "#ED1C24");
-		$("#automesg-btn").css("color", "#ED1C24");
-		$("#idlechat-btn").css("color", "#ED1C24");
 	});
 	$("#autowoot-btn").on('click', function() {
 		autowoot = !autowoot;
+		console.log('Autowoot state changed: ' + autowoot);
 		if (!autowoot) {
 			$(this).css("color", "#ED1C24");
 		} else {
@@ -74,42 +63,6 @@ function displayGUI() {
 	$("#automeh-btn").on('click', function() {
 		alert("You actually fucking thought I'd add this? The Game.");
 	});
-	$("#idlechat-btn").on('click', function() {
-		idleMessages = !idleMessages;
-		if (!idleMessages) {
-			$(this).css("color", "#ED1C24");
-			if (lastChatDuration >= 60000) {
-				API.sendChat("I just disabled automatic idle messages on Plug.bot!  :(");
-				lastChatDuration = 0;
-			}
-			window.clearInterval(idleMessagesInterval);
-		} else {
-			$(this).css("color", "#3FFF00");
-			if (lastChatDuration >= 60000) {
-				API.sendChat("I just enabled automatic idle messages on Plug.bot!  I'm awesome!");
-				lastChatDuration = 0;
-			}
-			window.setInterval(idleMessagesInterval);
-		}
-	});
-}
-
-
-/*
- * Enable or disable auto-queueing.  
- *
- * Auto-queueing is the process where whenever the user
- * has finished playing a song and are removed from the
- * DJ queue, they are immediately re-added.
- */
-function determineAutoqueue() {
-	var input = prompt("Would you like to enable auto-queueing?", "Yes/No  (not case sensitive)").toLowerCase();
-	if (input == "yes") 	
-		autoqueue = true;
-	else if (input == "no")
-		autoqueue = false;
-	else 					
-		alert("You didn't validly tell me whether you want to enable auto-queueing or not... please run the script again..");
 }
 
 
@@ -130,16 +83,42 @@ function initListeners() {
 		if (autowoot)
 			document.getElementById('button-vote-positive').click();
 	});
+	
+	/*
+	 * Listen for when someone Woots/Mehs so we can add them to the
+	 * optional sidebar.
+	 */
+	/*if (enableSidebar) {
+		$(document).ready(function() {
+			if ($("#plugbot-sidebar").length)
+				$("#plugbot-sidebar").remove();
+			$("body").prepend('<div id="plugbot-sidebar"></div>');
+			$("#plugbot-sidebar").css("width", "349px").css("height", "768px").css("position", "absolute").css("opacity", "0.9100000262260437").css("background-color", "#0A0A0A");
+			
+			$("#plugbot-sidebar").prepend("<h1 style=\"text-align:center;font-family:'arial';\">Meh/Woot List</h3>");
+			$("#plugbot-sidebar").append('<hr style="border-bottom:1px dotted #fff;width:75%" /><br />');
+			
+			$("#plugbot-sidebar").append('<div id="woots"><h2 style="color:#3FFF00;text-align:center">WOOTS</h3><br /><br /></div>');
+			$("#woots").css("float", "left").css("width", "140px").css("margin-left", "16px").css("color", "#3FFF00");
+			$("#plugbot-sidebar").append('<div id="mehs"><h2 style="color:#ED1C24;text-align:center">MEHS</h2><br />');
+			$("#mehs").css("color", "#ED1C24").css("margin-left", "160px").css("text-align", "center");
+			
+			$("#woots, #mehs").css("font-family", "'arial'").css("font-size", "12px");
+		});
+		API.addEventListener(API.VOTE_UPDATE, function(obj) {
+			if (obj.vote == 1) {
+				if (("#woots").not(":contains('" + obj.user.username + "')"))
+					$("#woots").append(obj.user.username + "<br />");
+			} else {
+				if (("#mehs").not(":contains('" + obj.user.username + "')"))
+					$("#mehs").append(obj.user.username + "<br />");
+			}
+		});
+	}*/
 }
 
 
 // Call init functions
-
-/*
- * Determine if they want to enable auto-queue or not. 
- * This may or may not be removed eventually.
- */
-determineAutoqueue();
 
 /*
  * Display the UI that allows users to edit settings.
@@ -148,32 +127,18 @@ determineAutoqueue();
 displayGUI();
 
 /*
- * Click the Autowoot button as a start, if they want it.
- * Same with the Wait List Join button.
- */
-if (autowoot)
-	document.getElementById('button-vote-positive').click();
-if (autoqueue)
-	document.getElementById('button-dj-waitlist-join').click();
-	
-/*
  * Init any listeners bound to the API.
  */
 initListeners();
 
 /*
- * Start the idle chat messaging loop.
+ * Click the Autowoot button as a start.
+ * Same with the Wait List Join button.
  */
-var idleMessagesInterval = window.setInterval(function() {
-	API.sendChat(messages[Math.floor(Math.random() * messages.length)]);
-}, 3600000 /* 1 hour */);
-
-if (!idleMessages)
-	window.clearInterval(idleMessagesInterval);
+document.getElementById('button-vote-positive').click();
+document.getElementById('button-dj-waitlist-join').click();
 	
 /*
- * Start the last-message-sent loop updater.
+ * Because reasons
  */
-window.setInterval(function() {
-	lastChatDuration += 1000;
-}, 1000);
+//API.sendChat("I just started using Plug.bot!");
