@@ -42,7 +42,6 @@ function displayGUI() {
 	});
 	$("#autowoot-btn").on('click', function() {
 		autowoot = !autowoot;
-		console.log('Autowoot state changed: ' + autowoot);
 		if (!autowoot) {
 			$(this).css("color", "#ED1C24");
 		} else {
@@ -78,6 +77,8 @@ function initListeners() {
 	 * Also, if auto-queue is enabled, then click the Join button.
 	 */
 	API.addEventListener(API.DJ_ADVANCE, function( obj ) {
+		if (obj.media.title.indexOf("Skrillex") != -1 || obj.media.title.indexOf("skrillex") != -1)
+			API.sendChat("[Plug.bot] God damnit, why are you playing skrylleks?");
 		if (autoqueue)
 			document.getElementById('button-dj-waitlist-join').click();
 		if (autowoot)
