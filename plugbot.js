@@ -76,8 +76,8 @@ function initListeners() {
 	 * 
 	 * Also, if auto-queue is enabled, then click the Join button.
 	 */
-	API.addEventListener(API.DJ_ADVANCE, function( obj ) {
-		if (obj.media.title.indexOf("Skrillex") != -1 || obj.media.title.indexOf("skrillex") != -1)
+	API.addEventListener(API.DJ_ADVANCE, function(obj) {
+		if (obj.media.title.indexOf("Skrillex") != -1 || obj.media.author.indexOf("Skrillex") != -1)
 			API.sendChat("[Plug.bot] God damnit, why are you playing skrylleks?");
 		if (autoqueue)
 			document.getElementById('button-dj-waitlist-join').click();
