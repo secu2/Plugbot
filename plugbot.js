@@ -12,10 +12,6 @@ var autowoot = true;
 // Enable the woot/meh ratio sidebar?
 var enableSidebar = false;
 
-// The last time they sent a chat message.  Makes it so users can't continuosly disable/enable
-// the idle chat messages option and spam the room chat.
-var lastChatDuration = 0;
-
  
 /*
  * Since we're cool, we use jQuery for the UI.
@@ -77,12 +73,14 @@ function initListeners() {
 	 * Also, if auto-queue is enabled, then click the Join button.
 	 */
 	API.addEventListener(API.DJ_ADVANCE, function(obj) {
-		if (obj.media.title.indexOf("Skrillex") != -1 || obj.media.author.indexOf("Skrillex") != -1)
-			API.sendChat("[Plug.bot] God damnit, why are you playing skrylleks?");
 		if (autoqueue)
 			document.getElementById('button-dj-waitlist-join').click();
 		if (autowoot)
 			document.getElementById('button-vote-positive').click();
+		if (obj.media.title.indexOf("Avicii") != -1 && obj.media.author.indexOf("Levels") != -1) {
+			API.sendChat("[Plug.bot] Levels?  Really?  FUCK THAT SHIT");
+			document.getElementById('button-vote-negative').click();
+		}
 	});
 	
 	/*
