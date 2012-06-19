@@ -136,13 +136,7 @@ function initListeners() {
 
 // Call init functions
 
-if ($('#current-room-value:contains("Dubstep Den")').length > 0) {
-	document.getElementById('button-vote-negative').click();
-	API.sendChat("#BasementTakeOver");
-	alert("Oh, what's that?  You like Dubstep Den? #EDMBasementTakeOver");
-} else {
-	displayGUI();
-	initListeners();
-	document.getElementById('button-vote-positive').click();
-	document.getElementById('button-dj-waitlist-join').click();
-}
+displayGUI();
+initListeners();
+document.getElementById('button-vote-positive').click();
+document.getElementById('button-dj-waitlist-join').click();
