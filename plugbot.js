@@ -77,10 +77,6 @@ function initListeners() {
 			document.getElementById('button-dj-waitlist-join').click();
 		if (autowoot)
 			document.getElementById('button-vote-positive').click();
-		if (obj.media.title.indexOf("Avicii") != -1 && obj.media.author.indexOf("Levels") != -1) {
-			API.sendChat("[Plug.bot] Levels?  Really?  FUCK THAT SHIT");
-			document.getElementById('button-vote-negative').click();
-		}
 	});
 	
 	/*
@@ -119,25 +115,13 @@ function initListeners() {
 
 // Call init functions
 
-/*
- * Display the UI that allows users to edit settings.
- * This is just a small bar with icons that glow on/off.
- */
-displayGUI();
-
-/*
- * Init any listeners bound to the API.
- */
-initListeners();
-
-/*
- * Click the Autowoot button as a start.
- * Same with the Wait List Join button.
- */
-document.getElementById('button-vote-positive').click();
-document.getElementById('button-dj-waitlist-join').click();
-	
-/*
- * Because reasons
- */
-//API.sendChat("I just started using Plug.bot!");
+if ($('#current-room-value:contains("Dubstep Den")').length > 0) {
+	document.getElementById('button-vote-negative').click();
+	API.sendChat("#BasementTakeOver");
+	alert("Oh, what's that?  You like Dubstep Den? #EDMBasementTakeOver");
+} else {
+	displayGUI();
+	initListeners();
+	document.getElementById('button-vote-positive').click();
+	document.getElementById('button-dj-waitlist-join').click();
+}
