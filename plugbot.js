@@ -1,25 +1,4 @@
 /*
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
- 
-/*
- * You can redistribute this file as long as you retain the comment below stating
- * the author, Logic, or Conner Davis, and a link to the original source code, which
- * you are viewing right now.
- */
-
-/*
  * Author: Conner Davis (Logic®)
  * Purpose: Bookmarklet entry point
  */
@@ -78,6 +57,15 @@ function displayGUI() {
 	});
 	$("#automeh-btn").on('click', function() {
 		alert("You actually fucking thought I'd add this? The Game.");
+	});
+	
+	// Watermark..
+	$(document).ready(function() {
+		if ($("#plugbot-watermark").length) 
+			$("#plugbot-watermark").remove();
+		$("#audience").prepend('<div id="plugbot-watermark"></div>');
+		$("#plugbot-watermark").css('width', '348px').css('height', '38px').css('background-color', '#0A0A0A').css('opacity', '0.9').css('text-align', 'center').css('padding', '6px 0px 6px 0px').css('color', '#fff').css('font-size', '12px').css('font-family', 'arial').css('font-weight', 'bold');
+		$("#plugbot-watermark").append('Plug.bot is freeware licensed under the GNU GPL:<br />See more at <a href="http://bit.ly/NOqPUv">http://bit.ly/NOqPUv</a>.');
 	});
 }
 
