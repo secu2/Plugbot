@@ -25,6 +25,11 @@ javascript: (function () {<br />var jsCode = document.createElement('script'); <
 4.  Save and run the bookmark while you have your Plug.dj tab open.  If it was successful, the GUI will slide down from the top and you'll be able to set it all up.
 
 
+### Copyright Notice ###
+
+Plug.bot is licensed under the GNU General Public License, or GPL.  Essentially, all I require of you if you want to redistribute Plug.bot's source code, is that you retain the three first comments in the files composing Plug.bot:  firstly, the GNU GPL statement.  Secondly, the statement I make myself about usage.  And thirdly, the author and purposes comment that show who originally made the content -- me.  So long as you abide by that rule and provide a link back to this repository, you are free to redistribute it as you want!  Thanks for playing fair ^.^
+
+
 ### Problems? Bugs? Questions? ###
 
 connergdavis@gmail.com
