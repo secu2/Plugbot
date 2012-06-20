@@ -247,7 +247,7 @@ if ($('#current-room-value:contains("Dubstep Den")').length) {
  * Load the Plug.bot essential stylesheet that handles all elements of
  * the Plug.bot UI.
  */
-$("head").append('<link rel="stylesheet" type="text/css" href="http://localhost/plugbot/plugbot.css" />');
+$("head").append('<link rel="stylesheet" type="text/css" href="https://raw.github.com/connergdavis/Plugbot/master/plugbot.css" />');
 
 /*
  * 'Render' the UI by generating all the HTML structure for the UI.
