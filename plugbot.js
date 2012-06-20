@@ -94,8 +94,8 @@ function displayGUI() {
 		if ($("#plugbot-watermark").length) 
 			$("#plugbot-watermark").remove();
 		$("body").prepend('<div id="plugbot-watermark"></div>');
-		$("#plugbot-watermark").css('width', '348px').css('height', '48px').css('left', '360px').css('top', '281px').css('position', 'absolute').css('background-color', '#0A0A0A').css('opacity', '0.9').css('text-align', 'center').css('padding', '6px 0px 6px 0px').css('color', '#fff').css('font-size', '12px').css('font-family', 'arial').css('font-weight', 'bold').css('z-index', '100');
-		$("#plugbot-watermark").append('Plug.bot is freeware licensed under the<br /> GNU GPL by 251Studios:<br />See more at <a href="http://bit.ly/NOqPUv" target="_new">http://bit.ly/NOqPUv</a>.');
+		$("#plugbot-watermark").css('width', '348px').css('height', '36px').css('left', '360px').css('top', '281px').css('position', 'absolute').css('background-color', '#0A0A0A').css('opacity', '0.9').css('text-align', 'center').css('padding', '9px 0px 6px 0px').css('color', '#fff').css('font-size', '12px').css('font-family', 'arial').css('font-weight', 'bold').css('z-index', '100');
+		$("#plugbot-watermark").append('<a href="http://bit.ly/NOqPUv" target="_new" style="text-transform:uppercase">Plug.bot is freeware licensed under the<br /> GNU GPL by 251Studios</a>');
 	});
 }
 
@@ -128,12 +128,15 @@ function initListeners() {
 			if ($("#plugbot-sidebar").length)
 				$("#plugbot-sidebar").remove();
 			$("body").prepend('<div id="plugbot-sidebar"></div>');
-			$("#plugbot-sidebar").css("width", "360px").css("height", "768px").css("position", "absolute").css("opacity", "0.9100000262260437").css("background-color", "#0A0A0A");
+			$("#plugbot-sidebar").css("width", "360px").css("height", "768px").css("position", "absolute").css('background', 'transparent');
 			
 			$("#plugbot-sidebar").prepend('<div id="plugbot-woots"></div>').append('<div id="plugbot-mehs"></div>');
 			
 			$("#plugbot-woots").css('height', '70%').css('width', '100%').css('color', '#3FFF00').css('font-size', '12px').css('text-align', 'center').css('font-weight', 'bold').css('padding-top', '16px');
 			$("#plugbot-mehs").css('height', '30%').css('width', '100%').css('color', '#ED1C24').css('font-size', '12px').css('text-align', 'center').css('font-weight', 'bold');
+			
+			$("#plugbot-woots").append("<span id='plugbot-woot-percentage' style='font-size:32px'></span><br /><br />");
+			$("#plugbot-mehs").append("<span id='plugbot-meh-percentage' style='font-size:32px'></span><br /><br />");
 		});
 		API.addEventListener(API.VOTE_UPDATE, function(obj) {
 			if (obj.vote == 1) { // Woot
@@ -146,6 +149,11 @@ function initListeners() {
 				} else {
 					$("#plugbot-woots").append("<span id='" + obj.user.username + "'>" + obj.user.username + "</span>").append('<br />');
 				}
+				
+				$("#plugbot-woot-percentage").empty();
+				var woots = $("#room-score-positive-value").text();
+				var solve = ((100 / API.getUsers().length) * woots) + "";
+				$("#plugbot-woot-percentage").append(solve.substring(0, 2) + "<span id='font-weight:bold'>%</span>");
 			} else { // Meh
 				if ($("#plugbot-woots:contains('" + obj.user.username + "')").length) {
 					$("#" + obj.user.username).remove();
@@ -156,6 +164,11 @@ function initListeners() {
 				} else {
 					$("#plugbot-mehs").append("<span id='" + obj.user.username + "'>"+obj.user.username+"</span>").append('<br />');
 				}
+				
+				$("#plugbot-meh-percentage").empty();
+				var mehs = $("#room-score-negative-value").text();
+				var solve = ((100 / API.getUsers().length) * woots) + "";
+				$("#plugbot-meh-percentage").append(solve.substring(0, 2) + "<span id='font-weight:bold'>%</span>");
 			}
 		});
 	}
