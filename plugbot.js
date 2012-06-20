@@ -1,4 +1,32 @@
 /*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * TERMS OF REPRODUCTION USE
+ *
+ * 1. Provide a link back to the original repository (this repository), as
+ * 		in, https://github.com/ConnerGDavis/Plugbot, that is well-visible
+ * 		wherever the source is being reproduced.  For example, should you 
+ * 		display it on a website, you should provide a link above/below that
+ *		which the users use, titled something such as "ORIGINAL AUTHOR".  
+ *
+ * 2. Retain these three comments:  the GNU GPL license statement, this comment,
+ * 		and that below it, that details the author and purpose.
+ */
+ 
+/*
  * Author: Conner Davis (Logic®)
  * Purpose: Bookmarklet entry point
  */
@@ -10,11 +38,13 @@ var autoqueue = true;
 var autowoot = true;
 
 // Enable the woot/meh ratio sidebar?
-var enableSidebar = false;
+var enableSidebar = true;
 
  
 /*
- * Since we're cool, we use jQuery for the UI.
+ * Display the "GUI", or "Graphical User Interface",
+ * that end-users will use in order to access the functionality
+ * of Plug.bot.
  */
 function displayGUI() {
 	/* 
@@ -63,9 +93,9 @@ function displayGUI() {
 	$(document).ready(function() {
 		if ($("#plugbot-watermark").length) 
 			$("#plugbot-watermark").remove();
-		$("#audience").prepend('<div id="plugbot-watermark"></div>');
-		$("#plugbot-watermark").css('width', '348px').css('height', '38px').css('background-color', '#0A0A0A').css('opacity', '0.9').css('text-align', 'center').css('padding', '6px 0px 6px 0px').css('color', '#fff').css('font-size', '12px').css('font-family', 'arial').css('font-weight', 'bold');
-		$("#plugbot-watermark").append('Plug.bot is freeware licensed under the GNU GPL:<br />See more at <a href="http://bit.ly/NOqPUv">http://bit.ly/NOqPUv</a>.');
+		$("body").prepend('<div id="plugbot-watermark"></div>');
+		$("#plugbot-watermark").css('width', '348px').css('height', '48px').css('left', '360px').css('top', '281px').css('position', 'absolute').css('background-color', '#0A0A0A').css('opacity', '0.9').css('text-align', 'center').css('padding', '6px 0px 6px 0px').css('color', '#fff').css('font-size', '12px').css('font-family', 'arial').css('font-weight', 'bold').css('z-index', '100');
+		$("#plugbot-watermark").append('Plug.bot is freeware licensed under the<br /> GNU GPL by 251Studios:<br />See more at <a href="http://bit.ly/NOqPUv" target="_new">http://bit.ly/NOqPUv</a>.');
 	});
 }
 
@@ -86,39 +116,49 @@ function initListeners() {
 			document.getElementById('button-dj-waitlist-join').click();
 		if (autowoot)
 			document.getElementById('button-vote-positive').click();
+		$("#plugbot-woots, #plugbot-mehs").empty();
 	});
 	
 	/*
 	 * Listen for when someone Woots/Mehs so we can add them to the
 	 * optional sidebar.
 	 */
-	/*if (enableSidebar) {
+	if (enableSidebar) {
 		$(document).ready(function() {
 			if ($("#plugbot-sidebar").length)
 				$("#plugbot-sidebar").remove();
 			$("body").prepend('<div id="plugbot-sidebar"></div>');
-			$("#plugbot-sidebar").css("width", "349px").css("height", "768px").css("position", "absolute").css("opacity", "0.9100000262260437").css("background-color", "#0A0A0A");
+			$("#plugbot-sidebar").css("width", "360px").css("height", "768px").css("position", "absolute").css("opacity", "0.9100000262260437").css("background-color", "#0A0A0A");
 			
-			$("#plugbot-sidebar").prepend("<h1 style=\"text-align:center;font-family:'arial';\">Meh/Woot List</h3>");
-			$("#plugbot-sidebar").append('<hr style="border-bottom:1px dotted #fff;width:75%" /><br />');
+			$("#plugbot-sidebar").prepend('<div id="plugbot-woots"></div>').append('<div id="plugbot-mehs"></div>');
 			
-			$("#plugbot-sidebar").append('<div id="woots"><h2 style="color:#3FFF00;text-align:center">WOOTS</h3><br /><br /></div>');
-			$("#woots").css("float", "left").css("width", "140px").css("margin-left", "16px").css("color", "#3FFF00");
-			$("#plugbot-sidebar").append('<div id="mehs"><h2 style="color:#ED1C24;text-align:center">MEHS</h2><br />');
-			$("#mehs").css("color", "#ED1C24").css("margin-left", "160px").css("text-align", "center");
-			
-			$("#woots, #mehs").css("font-family", "'arial'").css("font-size", "12px");
+			$("#plugbot-woots").css('height', '70%').css('width', '100%').css('color', '#3FFF00').css('font-size', '12px').css('text-align', 'center').css('font-weight', 'bold').css('padding-top', '16px');
+			$("#plugbot-mehs").css('height', '30%').css('width', '100%').css('color', '#ED1C24').css('font-size', '12px').css('text-align', 'center').css('font-weight', 'bold');
 		});
 		API.addEventListener(API.VOTE_UPDATE, function(obj) {
-			if (obj.vote == 1) {
-				if (("#woots").not(":contains('" + obj.user.username + "')"))
-					$("#woots").append(obj.user.username + "<br />");
-			} else {
-				if (("#mehs").not(":contains('" + obj.user.username + "')"))
-					$("#mehs").append(obj.user.username + "<br />");
+			if (obj.vote == 1) { // Woot
+				if ($("#plugbot-mehs:contains('" + obj.user.username + "')").length) {
+					$("#" + obj.user.username).remove();
+				}
+			
+				if ($("#plugbot-woots:contains('" + obj.user.username + "')").length) {
+					// Do nothing
+				} else {
+					$("#plugbot-woots").append("<span id='" + obj.user.username + "'>" + obj.user.username + "</span>").append('<br />');
+				}
+			} else { // Meh
+				if ($("#plugbot-woots:contains('" + obj.user.username + "')").length) {
+					$("#" + obj.user.username).remove();
+				}
+			
+				if ($("#plugbot-mehs:contains('" + obj.user.username + "')").length) {
+					// Do nothing
+				} else {
+					$("#plugbot-mehs").append("<span id='" + obj.user.username + "'>"+obj.user.username+"</span>").append('<br />');
+				}
 			}
 		});
-	}*/
+	}
 }
 
 
