@@ -24,70 +24,84 @@
  *
  * 2. Retain these three comments:  the GNU GPL license statement, this comment,
  * 		and that below it, that details the author and purpose.
+ *
+ * Thanks for playing fair!  You'll fare better than WOLVES, that's for sure.
  */
  
 /*
- * Author: Conner Davis (Logic®)
- * Purpose: Bookmarklet entry point
+ * Author: Conner Davis (♫Łŏġïç®)
  */
 
-// Enable autoqueue?
-var autoqueue = true;
-
-// Enable autowoot? (Default is true)
-var autowoot = true;
-
-// Enable the woot/meh ratio sidebar?
+// Core features: enable them? true = yes
+var enableAutoqueue = true;
+var enableAutowoot = true;
 var enableSidebar = true;
+
+
+// When acted on with invertButton(), we need to know the type of button we're dealing with, this defines them
+var ButtonType = {
+	'Autowoot' : 0,
+	'Autoqueue' : 1
+};
 
  
 /*
  * Display the "GUI", or "Graphical User Interface",
- * that end-users will use in order to access the functionality
- * of Plug.bot.
+ * that end-users will use in order to access the 
+ * functionality of Plug.bot.
  */
-function displayGUI() {
+function renderUI() {
 	/* 
 	 * Generate the Plug.bot settings GUI.
 	 */
 	$(document).ready(function() {
-		if ($("#plugbot-gui").length) 
+		if ($("#plugbot-gui").length) {
+			/*
+			 * If the UI was already there, we need to remove the previous
+			 * version so the user can have a fresh, new version loaded.
+			 * 
+			 * They tend to stack if you don't do this.  Just ask UnearthedTRU7H!
+			 */
 			$("#plugbot-gui").remove();
+		}
+			
+		/*
+		 * We need to add a custom rule here to the normal Plug.dj UI
+		 * because if we don't, then our buttons aren't clickable.  It's due
+		 * to x-indexing being popular on Plug.dj's UI, and we have to make them
+		 * all just right.
+		 */
 		$("#playback").css("z-index", "49");
+		
+		/*
+		 * Now, create the Plug.bot UI div container and add all the buttons to it.
+		 */
 		$("#playback-container").after('<div id="plugbot-gui"></div>');
-		
-		$("#plugbot-gui").css("width", "494px").css("height", "48px").css("background-color", "#0A0A0A").css("opacity", "0.9100000262260437").css("border-top", "1px dotted #292929").css("-webkit-border-radius", "0 0 8px 8px").css("-moz-border-radius", "0 0 8px 8px").css("margin", "0 auto").css("z-index", "50").css("text-align", "center");
-		
 		$("#plugbot-gui").prepend('<br /><span id="autowoot-btn">AUTOWOOT</span>');
-		$("#plugbot-gui").append('<span id="automeh-btn" style="color:#ED1C24">AUTOMEH</span>');
 		$("#plugbot-gui").append('<span id="autoqueue-btn">AUTOQUEUE</span>');
-		$("#plugbot-gui span").css("font", "bold 12px arial").css("text-align", "center").css("margin-left", "32px").css("color", "#3FFF00").css("cursor", "pointer");
 		
-		$("#autowoot-btn").css("margin-left", "0px");
-		$("#automeh-btn").css("color", "#ED1C24");
-	});
-	$("#autowoot-btn").on('click', function() {
-		autowoot = !autowoot;
-		if (!autowoot) {
-			$(this).css("color", "#ED1C24");
-		} else {
-			$(this).css("color", "#3FFF00");
-			document.getElementById('button-vote-positive').click();
+		if (enableSidebar) {
+			/*
+			 * Since the sidebar is enabled, we also need to render that
+			 * portion of the UI as well.
+			 */
+			if ($("#plugbot-sidebar").length) {
+				/*
+				 * Again, make sure that it hasn't already been render, and if it 
+				 * has, then we need to remove the old version so it can be fresh.
+				 */
+				$("#plugbot-sidebar").remove();
+			}
+				
+			/*
+			 * Add this portion of the UI to the body tag, since we're positioning
+			 * it absolutely and nesting it anywhere else is illogical.
+			 */
+			$("body").prepend('<div id="plugbot-sidebar"></div>');
+			$("#plugbot-sidebar").prepend('<div id="plugbot-woots"></div>').append('<div id="plugbot-mehs"></div>');
 		}
 	});
-	$("#autoqueue-btn").on('click', function() {
-		autoqueue = !autoqueue;
-		if (!autoqueue) {
-			$(this).css("color", "#ED1C24");
-			document.getElementById('button-dj-waitlist-leave').click();
-		} else {
-			$(this).css("color", "#3FFF00");
-			document.getElementById('button-dj-waitlist-join').click();
-		}
-	});
-	$("#automeh-btn").on('click', function() {
-		alert("You actually fucking thought I'd add this? The Game.");
-	});
+	
 }
 
 
@@ -97,79 +111,159 @@ function displayGUI() {
  * us to execute code when a certain event occurs.
  */
 function initListeners() {
-	/*
-	 * Listen for when a new DJ starts playing, then Woot.
-	 * 
-	 * Also, if auto-queue is enabled, then click the Join button.
+	/**
+	 * Listen for whenever the user clicks the auto-woot
+	 * button of the UI. 
 	 */
-	API.addEventListener(API.DJ_ADVANCE, function(obj) {
-		if (autoqueue)
-			document.getElementById('button-dj-waitlist-join').click();
-		if (autowoot)
-			document.getElementById('button-vote-positive').click();
-		$("#plugbot-woots, #plugbot-mehs").empty();
+	$("#autowoot-btn").on("click", function() {
+		invertButton(ButtonType.Autowoot);
+	});
+	
+	/**
+	 * Listen for whenever the user clicks the auto-queue
+	 * button of the UI. 
+	 */
+	$("#autoqueue-btn").on("click", function() {
+		invertButton(ButtonType.Autoqueue);
 	});
 	
 	/*
-	 * Listen for when someone Woots/Mehs so we can add them to the
-	 * optional sidebar.
+	 * This listener provides us the ability to state a custom
+	 * callback whenever a DJ advances.
 	 */
+	API.addEventListener(API.DJ_ADVANCE, function(obj) {
+		/*
+		 * If auto-queueing is enabled, click the DJ waitlist
+		 * join button.
+		 */
+		if (enableAutoqueue) {
+			document.getElementById('button-dj-waitlist-join').click();
+		}
+			
+		/*
+		 * If auto-woot is enabled, click the vote-woot button.
+		 */
+		if (enableAutowoot) {
+			document.getElementById('button-vote-positive').click();
+		}
+			
+		/*
+		 * If the sidebar is enabled, empty the woot and meh sidebar
+		 * count.
+		 */
+		if (enableSidebar) {
+			$("#plugbot-woots, #plugbot-mehs").empty();
+		}
+	});
+	
 	if (enableSidebar) {
-		$(document).ready(function() {
-			if ($("#plugbot-sidebar").length)
-				$("#plugbot-sidebar").remove();
-			$("body").prepend('<div id="plugbot-sidebar"></div>');
-			$("#plugbot-sidebar").css("width", "360px").css("height", "768px").css("position", "absolute").css('background', 'transparent');
-			
-			$("#plugbot-sidebar").prepend('<div id="plugbot-woots"></div>').append('<div id="plugbot-mehs"></div>');
-			
-			$("#plugbot-woots").css('height', '70%').css('width', '100%').css('color', '#3FFF00').css('font-size', '12px').css('text-align', 'center').css('font-weight', 'bold').css('padding-top', '16px');
-			$("#plugbot-mehs").css('height', '30%').css('width', '100%').css('color', '#ED1C24').css('font-size', '12px').css('text-align', 'center').css('font-weight', 'bold');
-			
-			$("#plugbot-woots").append("<span id='plugbot-woot-percentage' style='font-size:32px'></span><br /><br />");
-			$("#plugbot-mehs").append("<span id='plugbot-meh-percentage' style='font-size:32px'></span><br /><br />");
-		});
+		/*
+	 	 * If the user wants the woot/meh count on the sidebar, 
+	 	 * then we need to initialise the VOTE_UPDATE listener so 
+	 	 * whenever someone in the room WOOT!s or MEHs a track,
+	 	 * we can add their name to the list of WOOT!s or MEHs, 
+	 	 * respectively.
+	 	 */
 		API.addEventListener(API.VOTE_UPDATE, function(obj) {
-			if (obj.vote == 1) { // Woot
-				if ($("#plugbot-mehs:contains('" + obj.user.username + "')").length) {
-					$("#" + obj.user.username).remove();
-				}
-			
-				if ($("#plugbot-woots:contains('" + obj.user.username + "')").length) {
-					// Do nothing
-				} else {
-					$("#plugbot-woots").append("<span id='" + obj.user.username + "'>" + obj.user.username + "</span>").append('<br />');
-				}
-				
-				$("#plugbot-woot-percentage").empty();
-				var woots = $("#room-score-positive-value").text();
-				var solve = ((100 / API.getUsers().length) * woots) + "";
-				$("#plugbot-woot-percentage").append(solve.substring(0, 2) + "<span id='font-weight:bold'>%</span>");
-			} else { // Meh
-				if ($("#plugbot-woots:contains('" + obj.user.username + "')").length) {
-					$("#" + obj.user.username).remove();
-				}
-			
-				if ($("#plugbot-mehs:contains('" + obj.user.username + "')").length) {
-					// Do nothing
-				} else {
-					$("#plugbot-mehs").append("<span id='" + obj.user.username + "'>"+obj.user.username+"</span>").append('<br />');
-				}
-				
-				$("#plugbot-meh-percentage").empty();
-				var mehs = $("#room-score-negative-value").text();
-				var solve = ((100 / API.getUsers().length) * woots) + "";
-				$("#plugbot-meh-percentage").append(solve.substring(0, 2) + "<span id='font-weight:bold'>%</span>");
-			}
+			sidebarCallback(obj.vote);
 		});
 	}
 }
 
 
-// Call init functions
+/*
+ * Callback method that handles a VOTE_UPDATE listener
+ * telling us a user just voted Woot or Meh, so in the
+ * case that the user has the sidebar enabled, we need
+ * to update it.
+ * 
+ * @param vote
+ * 				The status code of the vote, 1 = Woot, -1 = Meh
+ */
+function sidebarCallback(vote) {
+	switch (vote) 
+	{
+		case 1: // WOOT!
+			// TODO Handle WOOT
+			break;
+		case -1: // Meh
+			// TODO Handle Meh
+			break;
+	}
+}
 
 
-displayGUI();
+/*
+ * By 'inverting', we switch the colour of the text
+ * to its opposite (green = active, red = inactive)
+ * and invert the variable's value to whatever it wasn't.
+ */
+function invertButton(t) {
+	switch (t) 
+	{
+		case ButtonType.Autowoot: // WOOT!
+			enableAutowoot = !enableAutowoot;
+			console.log("Enable autowoot? " + enableAutowoot);
+			
+			$("#autowoot-btn").css("color", "#" + (enableAutowoot ? "3FFF00" : "ED1C24"));
+			/*
+			 * If they are enabling auto-woot, hit the woot button for them.
+			 */
+			if (enableAutowoot) {
+				$("#button-vote-positive").click();
+			}
+			break;
+		case ButtonType.Autoqueue: // Meh
+			enableAutoqueue = !enableAutoqueue;
+			console.log("Enable autoqueue? " + enableAutoqueue);
+			
+			$("#autoqueue-btn").css("color", "#" + (enableAutoqueue ? "3FFF00" : "ED1C24"));
+			if (enableAutoqueue) {
+				/*
+			 	 * If they are enabling auto-queue, join the waitlist for them.
+			 	 */
+				$("#button-dj-waitlist-join").click();
+			} else {
+				/*
+				 * If not, hit the leave button.
+				 */
+				$("#button-dj-waitlist-leave").click();
+			}
+			break;
+	}
+}
+
+
+// INITIALISATION
+
+/*
+ * Thank our honest users from Dubstep Den.
+ */
+if ($('#current-room-value:contains("Dubstep Den")').length) {
+	alert("Thank you for using Plug.bot and not WOLVES' stolen code of mine.  If you see Xhila autowoot anywhere, tell those using it to use this instead -- this is the better version, not the one I wrote a month ago that he stole!");
+}
+
+/*
+ * Load the Plug.bot essential stylesheet that handles all elements of
+ * the Plug.bot UI.
+ */
+$("head").append('<link rel="stylesheet" type="text/css" href="http://localhost/plugbot/plugbot.css" />');
+
+/*
+ * 'Render' the UI by generating all the HTML structure for the UI.
+ * This is where our CSS stylesheet comes in handy.
+ */
+renderUI();
+
+/*
+ * Initialise all the Plug.dj API listener functions that give us
+ * the ability to intercept an event and provide a callback function
+ * to handle it.
+ */
 initListeners();
+
+/*
+ * Click each of the woot and waitlist buttons.
+ */
 document.getElementById('button-vote-positive').click();
 document.getElementById('button-dj-waitlist-join').click();

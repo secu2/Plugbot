@@ -1,1 +1,54 @@
 @charset "utf-8";
+
+#plugbot-gui {
+	width: 494px;
+	height: 48px;
+	background-color: #0A0A0A;
+	opacity: 0.9100000262260437;
+	border-top: 1px dotted #292929;
+	margin: 0 auto;
+	z-index: 50;
+	text-align: center
+}
+
+#plugbot-gui span {
+	font-size: 12px;
+	font-weight: bold;
+	font-family: 'arial', helvetica, sans-serif;
+	text-align: center;
+	margin-left: 32px;
+	cursor: pointer
+}
+
+#autowoot-btn, #autoqueue-btn {
+	color: #3FFF00
+}
+
+#plugbot-gui span:first-child {
+	margin-left: 0
+}
+
+#plugbot-sidebar {
+	width: 360px;
+	height: 768px;
+	position: absolute;
+	background: transparent
+}
+
+#plugbot-woots, #plugbot-mehs {
+	width: 100%;
+	font-size: 12px;
+	text-align: center;
+	font-weight: bold
+}
+
+#plugbot-woots {
+	padding-top: 16px;
+	height: 70%;
+	color: #3FFF00
+}
+
+#plugbot-mehs {
+	color: #ED1C24;
+	height: 30%
+}
