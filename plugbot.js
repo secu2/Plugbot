@@ -88,15 +88,6 @@ function displayGUI() {
 	$("#automeh-btn").on('click', function() {
 		alert("You actually fucking thought I'd add this? The Game.");
 	});
-	
-	// Watermark..
-	$(document).ready(function() {
-		if ($("#plugbot-watermark").length) 
-			$("#plugbot-watermark").remove();
-		$("body").prepend('<div id="plugbot-watermark"></div>');
-		$("#plugbot-watermark").css('width', '348px').css('height', '36px').css('left', '360px').css('top', '281px').css('position', 'absolute').css('background-color', '#0A0A0A').css('opacity', '0.9').css('text-align', 'center').css('padding', '9px 0px 6px 0px').css('color', '#fff').css('font-size', '12px').css('font-family', 'arial').css('font-weight', 'bold').css('z-index', '100');
-		$("#plugbot-watermark").append('<a href="http://bit.ly/NOqPUv" target="_new" style="text-transform:uppercase">Plug.bot is freeware licensed under the<br /> GNU GPL by 251Studios</a>');
-	});
 }
 
 
@@ -176,6 +167,7 @@ function initListeners() {
 
 
 // Call init functions
+
 
 displayGUI();
 initListeners();
