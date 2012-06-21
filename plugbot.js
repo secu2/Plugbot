@@ -38,10 +38,36 @@ var enableAutowoot = true;
 var enableSidebar = true;
 
 
+/*
+ * Since the Google App Engine sucks, the Plug API encounters duplicate calls
+ * when dealing with most listeners.  Because of this, Plug.bot would normally
+ * print out each person's username twice, instead of once, in the sidebar.  
+ * To deal with this, we save an object to memory that keeps the value of the
+ * previous username, to compare against the next usernames coming, so that
+ * if the duplicate call is detected, we can avoid it.
+ */
+var lastWoot;
+var lastMeh;
+
+/*
+ * Since Sebastian tells us what song was recently played, we have to save it
+ * in memory until the next update so we can print it out when the song is
+ * completed.
+ */
+var lastPlayed;
+
+/*
+ * Single Google App Engine is shit, we have to register the last user to
+ * join, too.
+ */
+var lastUserJoin;
+
+
 // When acted on with invertButton(), we need to know the type of button we're dealing with, this defines them
 var ButtonType = {
 	'Autowoot' : 0,
-	'Autoqueue' : 1
+	'Autoqueue' : 1,
+	'Sidebar' : 2
 };
 
  
@@ -77,8 +103,10 @@ function renderUI() {
 		 * Now, create the Plug.bot UI div container and add all the buttons to it.
 		 */
 		$("#playback-container").after('<div id="plugbot-gui"></div>');
-		$("#plugbot-gui").prepend('<br /><span id="autowoot-btn">AUTOWOOT</span>');
-		$("#plugbot-gui").append('<span id="autoqueue-btn">AUTOQUEUE</span>');
+		$("#plugbot-gui").
+			prepend('<br /><span id="autowoot-btn">AUTOWOOT</span>').
+			append('<span id="autoqueue-btn">AUTOQUEUE</span>').
+			append('<span id="sidebar-btn">SIDEBAR</span>');
 		
 		if (enableSidebar) {
 			/*
@@ -111,7 +139,7 @@ function renderUI() {
  * us to execute code when a certain event occurs.
  */
 function initListeners() {
-	/**
+	/*
 	 * Listen for whenever the user clicks the auto-woot
 	 * button of the UI. 
 	 */
@@ -119,13 +147,21 @@ function initListeners() {
 		invertButton(ButtonType.Autowoot);
 	});
 	
-	/**
+	/*
 	 * Listen for whenever the user clicks the auto-queue
 	 * button of the UI. 
 	 */
 	$("#autoqueue-btn").on("click", function() {
 		invertButton(ButtonType.Autoqueue);
 	});
+	
+	/*
+	 * Listen for when the user clicks the sidebar 
+	 * button of the UI.
+	 */
+	$("#sidebar-btn").on("click", function() {
+		invertButton(ButtonType.Sidebar);
+	})
 	
 	/*
 	 * This listener provides us the ability to state a custom
@@ -164,8 +200,31 @@ function initListeners() {
 	 	 * we can add their name to the list of WOOT!s or MEHs, 
 	 	 * respectively.
 	 	 */
-		API.addEventListener(API.VOTE_UPDATE, function(obj) {
-			sidebarCallback(obj.vote);
+		API.addEventListener(API.VOTE_UPDATE, sidebarCallback);
+	}
+	
+	if (API.getSelf().username == "Sebastian[BOT]") {
+		/*
+	 	 * Sebastian bot needs to know when users join so we can
+	 	 * greet them to the room.
+	 	 */
+	 	API.addEventListener(API.USER_JOIN, function(user) {
+	 		if (user.username != lastUserJoin) {
+				API.sendChat("Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
+				lastUserJoin = user.username;
+			}
+		});
+		
+		/*
+		 * Sebastian tells us how many woots, mehs, curates there
+		 * were for the most recent song, who played it, and what it
+		 * was called.
+		 */
+		API.addEventListener(API.DJ_ADVANCE, function(obj) {
+			API.sendChat("//me " + lastPlayed.dj.username + " just played " + lastPlayed.media.title + " by " +
+				lastPlayed.media.author + ", and it received " + (lastPlayed.dj.djPoints + lastPlayed.dj.listenerPoints) + 
+				" woots and " + lastPlayed.dj.curatorPoints + " curates.");
+			lastPlayed = obj;
 		});
 	}
 }
@@ -177,17 +236,30 @@ function initListeners() {
  * case that the user has the sidebar enabled, we need
  * to update it.
  * 
- * @param vote
- * 				The status code of the vote, 1 = Woot, -1 = Meh
+ * @param obj
+ * 				The status code of the vote
  */
-function sidebarCallback(vote) {
-	switch (vote) 
+function sidebarCallback(obj) {
+	switch (obj.vote) 
 	{
 		case 1: // WOOT!
-			// TODO Handle WOOT
+			if (lastWoot != obj.user.username) {
+				/*
+				 * Avoid the duplicate call.
+				 */
+				$("#plugbot-woots").append("<span>" + obj.user.username + "</span><br />");
+				
+				/*
+				 * Set their username as the most recent woot.
+				 */
+				lastWoot = obj.user.username;
+			}
 			break;
 		case -1: // Meh
-			// TODO Handle Meh
+			if (lastMeh != obj.user.username) {
+				$("#plugbot-mehs").append("<span>" + obj.user.username + "</span><br />");
+				lastMeh = obj.user.username;
+			}
 			break;
 	}
 }
@@ -203,7 +275,6 @@ function invertButton(t) {
 	{
 		case ButtonType.Autowoot: // WOOT!
 			enableAutowoot = !enableAutowoot;
-			console.log("Enable autowoot? " + enableAutowoot);
 			
 			$("#autowoot-btn").css("color", "#" + (enableAutowoot ? "3FFF00" : "ED1C24"));
 			/*
@@ -215,7 +286,6 @@ function invertButton(t) {
 			break;
 		case ButtonType.Autoqueue: // Meh
 			enableAutoqueue = !enableAutoqueue;
-			console.log("Enable autoqueue? " + enableAutoqueue);
 			
 			$("#autoqueue-btn").css("color", "#" + (enableAutoqueue ? "3FFF00" : "ED1C24"));
 			if (enableAutoqueue) {
@@ -230,6 +300,22 @@ function invertButton(t) {
 				$("#button-dj-waitlist-leave").click();
 			}
 			break;
+		case ButtonType.Sidebar:
+			enableSidebar = !enableSidebar;
+			
+			$("#sidebar-btn").css("color", "#" + (enableSidebar ? "3FFF00" : "ED1C24"));
+			if (enableSidebar) {
+				/*
+				 * They enabled the sidebar, so make it visible again.
+				 */
+				$("#plugbot-sidebar").css("opacity", "0.9100000262260437");
+			} else {
+				/*
+				 * They disabled the sidebar, so make it invisible.
+				 */
+				$("#plugbot-sidebar").css("opacity", "0.0");
+			}
+			break;
 	}
 }
 
@@ -242,12 +328,6 @@ function invertButton(t) {
 if ($('#current-room-value:contains("Dubstep Den")').length) {
 	alert("Thank you for using Plug.bot and not WOLVES' stolen code of mine.  If you see Xhila autowoot anywhere, tell those using it to use this instead -- this is the better version, not the one I wrote a month ago that he stole!");
 }
-
-/*
- * Load the Plug.bot essential stylesheet that handles all elements of
- * the Plug.bot UI.
- */
-$("head").append('<link rel="stylesheet" type="text/css" href="https://raw.github.com/connergdavis/Plugbot/master/plugbot.css" />');
 
 /*
  * 'Render' the UI by generating all the HTML structure for the UI.

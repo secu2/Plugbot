@@ -32,13 +32,13 @@
 	width: 360px;
 	height: 768px;
 	position: absolute;
-	background: transparent
+	background: transparent;
+	padding-left: 8px
 }
 
 #plugbot-woots, #plugbot-mehs {
 	width: 100%;
 	font-size: 12px;
-	text-align: center;
 	font-weight: bold
 }
 
