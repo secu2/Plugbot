@@ -365,10 +365,10 @@ document.getElementById('button-dj-waitlist-join').click();
  * Make Sebastian periodically remind everyone.
  */
 if (isSebastian()) {
-	setTimeout(function() {
+	setInterval(function() {
 		API.sendChat("@Boris[BOT] Hey sexy ;)");
 	}, (1000 * 60 * 10));
-	setTimeout(function() {
+	setInterval(function() {
 		API.sendChat("Here's another round of unfiltered Hwheat beer to you all!  On the house, couresty of Sebastian!");
 	}, (1000 * 60 * 2));
 } 
