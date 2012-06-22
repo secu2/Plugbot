@@ -201,6 +201,14 @@ function initListeners() {
 		if (isBoris()) {
 			API.sendChat("@Sebastian[BOT] Hey babe ;)");
 		}
+		
+		/*
+		 * Let's make Sebastian remind us of the 
+		 * presense of the hwheat.
+		 */
+		if (isSebastian()) {
+			API.sendChat("MAY THE HWHEAT BE WITH YOU ALL!");
+		}
 	});
 	
 	if (enableSidebar) {
@@ -360,15 +368,3 @@ initListeners();
  */
 document.getElementById('button-vote-positive').click();
 document.getElementById('button-dj-waitlist-join').click();
-
-/*
- * Make Sebastian periodically remind everyone.
- */
-if (isSebastian()) {
-	setInterval(function() {
-		API.sendChat("@Boris[BOT] Hey sexy ;)");
-	}, (1000 * 60 * 10));
-	setInterval(function() {
-		API.sendChat("Here's another round of unfiltered Hwheat beer to you all!  On the house, couresty of Sebastian!");
-	}, (1000 * 60 * 2));
-} 
