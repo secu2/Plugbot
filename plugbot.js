@@ -70,6 +70,10 @@ var ButtonType = {
 	'Sidebar' : 2
 };
 
+
+// All of the bots, superusers, and myself, that have special permissions (extra stuff, or testing)
+var bots = new Array("[VIP] ♫Łŏġïç® [Moot/Weh]", "Sebastian[BOT]", "Boris[BOT]");
+
  
 /*
  * Display the "GUI", or "Graphical User Interface",
@@ -104,7 +108,7 @@ function renderUI() {
 		 */
 		$("#playback-container").after('<div id="plugbot-gui"></div>');
 		$("#plugbot-gui").
-			prepend('<br /><span id="autowoot-btn">AUTOWOOT</span>').
+			prepend('<br /><span id="autowoot-btn" style="margin-left:0">AUTOWOOT</span>').
 			append('<span id="autoqueue-btn">AUTOQUEUE</span>').
 			append('<span id="sidebar-btn">SIDEBAR</span>');
 		
@@ -190,6 +194,13 @@ function initListeners() {
 		if (enableSidebar) {
 			$("#plugbot-woots, #plugbot-mehs").empty();
 		}
+		
+		if (isBot()) {
+			API.sendChat(lastPlayed.dj.username + " just played " + lastPlayed.media.title + " by " +
+				lastPlayed.media.author + ", and it received " + (lastPlayed.dj.djPoints + lastPlayed.dj.listenerPoints) + 
+				" woots and " + lastPlayed.dj.curatorPoints + " curates.");
+			lastPlayed = obj;
+		}
 	});
 	
 	if (enableSidebar) {
@@ -203,28 +214,16 @@ function initListeners() {
 		API.addEventListener(API.VOTE_UPDATE, sidebarCallback);
 	}
 	
-	if (API.getSelf().username == "Sebastian[BOT]" || API.getSelf().username == "[VIP] ♫Łŏġïç® [Moot/Weh]") {
+	if (isBot()) {
 		/*
 	 	 * Sebastian bot needs to know when users join so we can
 	 	 * greet them to the room.
 	 	 */
 	 	API.addEventListener(API.USER_JOIN, function(user) {
 	 		if (user.username != lastUserJoin) {
-				API.sendChat("//me Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
+				API.sendChat("Welcome back to " + $("#current-room-value").text() + ", " + user.username + "!");
 				lastUserJoin = user.username;
 			}
-		});
-		
-		/*
-		 * Sebastian tells us how many woots, mehs, curates there
-		 * were for the most recent song, who played it, and what it
-		 * was called.
-		 */
-		API.addEventListener(API.DJ_ADVANCE, function(obj) {
-			API.sendChat("//me " + lastPlayed.dj.username + " just played " + lastPlayed.media.title + " by " +
-				lastPlayed.media.author + ", and it received " + (lastPlayed.dj.djPoints + lastPlayed.dj.listenerPoints) + 
-				" woots and " + lastPlayed.dj.curatorPoints + " curates.");
-			lastPlayed = obj;
 		});
 	}
 }
@@ -319,6 +318,20 @@ function invertButton(t) {
 	}
 }
 
+
+/*
+ * Determine if the current user is a bot/SU or not, so we can
+ * enable special permissions for them.
+ * 
+ * @param username
+ * 				The username we'll compare to.
+ */
+function isBot(username) {
+	for (var b in bots) 
+		if (b == username) 
+			return true;
+	return false;
+}
 
 // INITIALISATION
 

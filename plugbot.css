@@ -24,10 +24,6 @@
 	color: #3FFF00
 }
 
-#plugbot-gui span:first-child {
-	margin-left: 0
-}
-
 #plugbot-sidebar {
 	width: 360px;
 	height: 768px;
