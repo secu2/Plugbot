@@ -72,7 +72,6 @@ var ButtonType = {
 
 
 // All of the bots, superusers, and myself, that have special permissions (extra stuff, or testing)
-var bots = [ "Sebastian[BOT]", "Boris[BOT]" ];
 
  
 /*
@@ -110,7 +109,8 @@ function renderUI() {
 		$("#plugbot-gui").
 			prepend('<br /><span id="autowoot-btn" style="margin-left:0">AUTOWOOT</span>').
 			append('<span id="autoqueue-btn">AUTOQUEUE</span>').
-			append('<span id="sidebar-btn">SIDEBAR</span>');
+			append('<span id="sidebar-btn">SIDEBAR</span>').
+			append('<br /><br /><span id="plugbot-waitlist-counter">Waitlist: </span>');
 		
 		if (enableSidebar) {
 			/*
@@ -195,11 +195,11 @@ function initListeners() {
 			$("#plugbot-woots, #plugbot-mehs").empty();
 		}
 		
-		if (isBot()) {
-			API.sendChat(lastPlayed.dj.username + " just played " + lastPlayed.media.title + " by " +
-				lastPlayed.media.author + ", and it received " + (lastPlayed.dj.djPoints + lastPlayed.dj.listenerPoints) + 
-				" woots and " + lastPlayed.dj.curatorPoints + " curates.");
-			lastPlayed = obj;
+		/*
+		 * Let's make Boris hit on Sebastian
+		 */
+		if (isBoris()) {
+			API.sendChat("@Sebastian[BOT] Hey babe ;)");
 		}
 	});
 	
@@ -214,7 +214,7 @@ function initListeners() {
 		API.addEventListener(API.VOTE_UPDATE, sidebarCallback);
 	}
 	
-	if (isBot()) {
+	if (isSebastian()) {
 		/*
 	 	 * Sebastian bot needs to know when users join so we can
 	 	 * greet them to the room.
@@ -320,16 +320,17 @@ function invertButton(t) {
 
 
 /*
- * Determine if the current user is a bot/SU or not, so we can
- * enable special permissions for them.
+ * Determine if the current user is Sebastian!
  */
-function isBot() {
-	for (var i = 0; i < bots.length; i++) {
-		if (bots[i] == API.getSelf().username) 
-			return true;
-		continue;
-	}
-	return false;
+function isSebastian() {
+	return API.getSelf().username == "Sebastian[BOT]";
+}
+
+/*
+ * Determine if the current user is Boris!
+ */
+function isBoris() {
+	return API.getSelf().username == "Boris[BOT]";
 }
 
 // INITIALISATION
@@ -359,3 +360,15 @@ initListeners();
  */
 document.getElementById('button-vote-positive').click();
 document.getElementById('button-dj-waitlist-join').click();
+
+/*
+ * Make Sebastian periodically remind everyone.
+ */
+if (isSebastian()) {
+	setTimeout(function() {
+		API.sendChat("@Boris[BOT] Hey sexy ;)");
+	}, (1000 * 60 * 10));
+	setTimeout(function() {
+		API.sendChat("Here's another round of unfiltered Hwheat beer to you all!  On the house, couresty of Sebastian!");
+	}, (1000 * 60 * 2));
+} 

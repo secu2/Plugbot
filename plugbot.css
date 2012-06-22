@@ -2,7 +2,7 @@
 
 #plugbot-gui {
 	width: 494px;
-	height: 48px;
+	height: 72px;
 	background-color: #0A0A0A;
 	opacity: 0.9100000262260437;
 	border-top: 1px dotted #292929;
@@ -18,6 +18,12 @@
 	text-align: center;
 	margin-left: 32px;
 	cursor: pointer
+}
+
+#plugbot-waitlist-counter {
+	color: #3FFF00;
+	font-size: 20px;
+	cursor: default;
 }
 
 #autowoot-btn, #autoqueue-btn, #sidebar-btn {
