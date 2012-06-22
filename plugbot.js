@@ -72,7 +72,7 @@ var ButtonType = {
 
 
 // All of the bots, superusers, and myself, that have special permissions (extra stuff, or testing)
-var bots = new Array("[VIP] ♫Łŏġïç® [Moot/Weh]", "Sebastian[BOT]", "Boris[BOT]");
+var bots = [ "Sebastian[BOT]", "Boris[BOT]" ];
 
  
 /*
@@ -322,14 +322,13 @@ function invertButton(t) {
 /*
  * Determine if the current user is a bot/SU or not, so we can
  * enable special permissions for them.
- * 
- * @param username
- * 				The username we'll compare to.
  */
-function isBot(username) {
-	for (var b in bots) 
-		if (b == username) 
+function isBot() {
+	for (var i = 0; i < bots.length; i++) {
+		if (bots[i] == API.getSelf().username) 
 			return true;
+		continue;
+	}
 	return false;
 }
 
