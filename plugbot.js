@@ -203,14 +203,14 @@ function initListeners() {
 		API.addEventListener(API.VOTE_UPDATE, sidebarCallback);
 	}
 	
-	if (API.getSelf().username == "Sebastian[BOT]") {
+	if (API.getSelf().username == "Sebastian[BOT]" || API.getSelf().username == "[VIP] ♫Łŏġïç® [Moot/Weh]") {
 		/*
 	 	 * Sebastian bot needs to know when users join so we can
 	 	 * greet them to the room.
 	 	 */
 	 	API.addEventListener(API.USER_JOIN, function(user) {
 	 		if (user.username != lastUserJoin) {
-				API.sendChat("Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
+				API.sendChat("//me Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
 				lastUserJoin = user.username;
 			}
 		});

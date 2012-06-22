@@ -20,7 +20,7 @@
 	cursor: pointer
 }
 
-#autowoot-btn, #autoqueue-btn {
+#autowoot-btn, #autoqueue-btn, #sidebar-btn {
 	color: #3FFF00
 }
 
@@ -39,7 +39,8 @@
 #plugbot-woots, #plugbot-mehs {
 	width: 100%;
 	font-size: 12px;
-	font-weight: bold
+	font-weight: bold;
+	text-align: left
 }
 
 #plugbot-woots {
