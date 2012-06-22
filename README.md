@@ -18,19 +18,7 @@ Literally so easy.
 
 1.  Create a new bookmark in your web browser.  In Firefox and Chrome, just click the star icon in the top right.  If you really need help with this, Google is your friend.  Or Yahoo.  Or Bing (god forbid.)
 2.  Title the bookmark whatever you desire;  this is irrelevent to Plug.bot.  I named it Plugbot.
-3.  In the field titled, "Location" "URL" "Website" "Link" "Place" or WHATEVER it may be, add the following:
-<code>
-javascript: (function () { 
-var cssRules = document.createElement('link');
-cssRules.setAttribute('rel', 'stylesheet');
-cssRules.setAttribute('type', 'text/css'); 
-cssRules.setAttribute('href', 'http://localhost/plugbot/plugbot.css'); 
-document.getElementsByTagName("head")[0].appendChild(cssRules); 
-var jsCode = document.createElement('script'); 
-jsCode.setAttribute('src', 'http://localhost/plugbot/plugbot.js'); 
-document.body.appendChild(jsCode); 
-}());
-</code>
+3.  In the field titled, "Location" "URL" "Website" "Link" "Place" or WHATEVER it may be, add the following: <a href="http://privatepaste.com/bc6a391b26">http://privatepaste.com/bc6a391b26</a>
 4.  Save and run the bookmark while you have your Plug.dj tab open.  If it was successful, the GUI will slide down from the top and you'll be able to set it all up.
 
 
