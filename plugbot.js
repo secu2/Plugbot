@@ -29,7 +29,7 @@
  */
  
 /*
- * Author: Conner Davis (♫Łŏġïç®)
+ * Author: Conner Davis ([VIP] ♫Łŏġïç®)
  */
 
 // Core features: enable them? true = yes
@@ -65,8 +65,8 @@ var lastUserJoin;
 /*
  * Count of woots/mehs so we can print that as well as the percentage.
  */
-var wootCount = 0;
-var mehCount = 0;
+var woots = new Array();
+var mehs  = new Array();
 
 
 // When acted on with invertButton(), we need to know the type of button we're dealing with, this defines them
@@ -203,8 +203,8 @@ function initListeners() {
 			/*
 			 * Reset the woot and meh counters.
 			 */
-			wootCount = 0;
-			mehCount = 0;
+			woots.length = 0;
+			mehs.length = 0;
 			
 			/*
 			 * Now, re-append the woot/meh counters and percentages.
@@ -364,10 +364,9 @@ function invertButton(t) {
  * Update the sidebar counters (#/total).
  */
 function updateCounters() {
-	$('#plugbot-mehs-count').html(mehCount + '/' + API.getUsers().length + '&nbsp;&nbsp;' +
-					calcPercentage("meh"));
-	$('#plugbot-woots-count').html(wootCount + '/' + API.getUsers().length + '&nbsp;&nbsp;' +
-					calcPercentage("woot"));
+	var innerfix = '/' + API.getUsers().length + '&nbsp;&nbsp;';
+	$('#plugbot-mehs-count').html(mehCount + innerfix + calcPercentage("meh"));
+	$('#plugbot-woots-count').html(wootCount + innerfix + calcPercentage("woot"));
 }
 
 
@@ -434,3 +433,13 @@ initListeners();
  */
 document.getElementById('button-vote-positive').click();
 document.getElementById('button-dj-waitlist-join').click();
+
+/*
+ * If we're Sebastian, we will randomly send a message to the
+ * room and remind them to view the rules.
+ */
+if (isSebastian()) {
+	setTimeout(function() {
+		API.sendChat("Please remember to view the EDM Basement rules! http://bit.ly/O3ENRa");
+	}, (1000 * 60 * 30));
+}
