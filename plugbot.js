@@ -252,7 +252,11 @@ function initListeners() {
 		});
 	}
 	
-	
+	if (isSebastian()) {
+		API.addEventListener(API.USER_LEAVE, function(user) {
+			API.sendChat("We'll see you later, " + user.username + "! :(");
+		});
+	}
 }
 
 
@@ -266,14 +270,13 @@ function initListeners() {
  * 				The status code of the vote
  */
 function sidebarCallback(obj) {
-	switch (obj.vote) 
-	{
+	switch (obj.vote) {
 		case 1: // WOOT!
 			if (lastWoot != obj.user.username) {
 				/*
 				 * Avoid the duplicate call.
 				 */
-				$("#plugbot-woots").append("<span>" + obj.user.username + "</span><br />");
+				$("#plugbot-woots").append('<span>' + obj.user.username + '</span><br />');
 				
 				/*
 				 * Set their username as the most recent woot.
@@ -290,8 +293,8 @@ function sidebarCallback(obj) {
 			break;
 		case -1: // Meh
 			if (lastMeh != obj.user.username) {
-				$("#plugbot-mehs").append("<span>" + obj.user.username + "</span><br />");
-				
+				$("#plugbot-mehs").append('<span>' + obj.user.username + '</span><br />');
+			
 				lastMeh = obj.user.username;
 				
 				mehCount++;
