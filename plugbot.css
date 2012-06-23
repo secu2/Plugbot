@@ -20,14 +20,18 @@
 	cursor: pointer
 }
 
-#plugbot-waitlist-counter {
-	color: #3FFF00;
-	font-size: 20px;
-	cursor: default;
-}
-
 #autowoot-btn, #autoqueue-btn, #sidebar-btn {
 	color: #3FFF00
+}
+
+#plugbot-woots-count, #plugbot-mehs-count {
+	font-size: 21px;
+}
+
+#plugbot-learnmore {
+	color: #3FFF00;
+	font-size: 14px;
+	font-variant: small-caps
 }
 
 #plugbot-sidebar {

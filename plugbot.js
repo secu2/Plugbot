@@ -62,6 +62,12 @@ var lastPlayed;
  */
 var lastUserJoin;
 
+/*
+ * Count of woots/mehs so we can print that as well as the percentage.
+ */
+var wootCount = 0;
+var mehCount = 0;
+
 
 // When acted on with invertButton(), we need to know the type of button we're dealing with, this defines them
 var ButtonType = {
@@ -110,7 +116,7 @@ function renderUI() {
 			prepend('<br /><span id="autowoot-btn" style="margin-left:0">AUTOWOOT</span>').
 			append('<span id="autoqueue-btn">AUTOQUEUE</span>').
 			append('<span id="sidebar-btn">SIDEBAR</span>').
-			append('<br /><br /><span id="plugbot-waitlist-counter">Waitlist: </span>');
+			append('<br /><br /><a id="plugbot-learnmore" href="https://github.com/ConnerGDavis/Plugbot" target="_blank">learn more about plug.bot</a>');
 		
 		if (enableSidebar) {
 			/*
@@ -130,7 +136,7 @@ function renderUI() {
 			 * it absolutely and nesting it anywhere else is illogical.
 			 */
 			$("body").prepend('<div id="plugbot-sidebar"></div>');
-			$("#plugbot-sidebar").prepend('<div id="plugbot-woots"></div>').append('<div id="plugbot-mehs"></div>');
+			$("#plugbot-sidebar").prepend('<div id="plugbot-woots"><h3 id="plugbot-woots-count"></h3></div>').append('<div id="plugbot-mehs"><h3 id="plugbot-mehs-count"></h3></div>');
 		}
 	});
 	
@@ -193,6 +199,18 @@ function initListeners() {
 		 */
 		if (enableSidebar) {
 			$("#plugbot-woots, #plugbot-mehs").empty();
+			
+			/*
+			 * Reset the woot and meh counters.
+			 */
+			wootCount = 0;
+			mehCount = 0;
+			
+			/*
+			 * Now, re-append the woot/meh counters and percentages.
+			 */
+			$('#plugbot-woots').append('<h3 id="plugbot-woots-count"></h3>');
+			$('#plugbot-mehs').append('<h3 id="plugbot-mehs-count"></h3>');
 		}
 		
 		/*
@@ -200,14 +218,6 @@ function initListeners() {
 		 */
 		if (isBoris()) {
 			API.sendChat("@Sebastian[BOT] Hey babe ;)");
-		}
-		
-		/*
-		 * Let's make Sebastian remind us of the 
-		 * presense of the hwheat.
-		 */
-		if (isSebastian()) {
-			API.sendChat("MAY THE HWHEAT BE WITH YOU ALL!");
 		}
 	});
 	
@@ -220,20 +230,29 @@ function initListeners() {
 	 	 * respectively.
 	 	 */
 		API.addEventListener(API.VOTE_UPDATE, sidebarCallback);
-	}
-	
-	if (isSebastian()) {
-		/*
-	 	 * Sebastian bot needs to know when users join so we can
-	 	 * greet them to the room.
-	 	 */
-	 	API.addEventListener(API.USER_JOIN, function(user) {
-	 		if (user.username != lastUserJoin) {
-				API.sendChat("Welcome back to " + $("#current-room-value").text() + ", " + user.username + "!");
-				lastUserJoin = user.username;
+		
+		API.addEventListener(API.USER_JOIN, function(user) {
+			if (isSebastian()) {
+				/*
+	 	 		 * Sebastian bot needs to know when users join so we can
+	 	 		 * greet them to the room.
+	 	 		 */
+	 			if (user.username != lastUserJoin) {
+					API.sendChat("Welcome back to " + $("#current-room-value").text() + ", " + user.username + "!");
+					lastUserJoin = user.username;
+				}
 			}
+	 		
+	 		/*
+	 		 * Otherwise, they still need to be aware of when
+	 		 * someone joins, so we can update the sidebar
+	 		 * counters.
+	 		 */
+	 		updateCounters();
 		});
 	}
+	
+	
 }
 
 
@@ -260,12 +279,23 @@ function sidebarCallback(obj) {
 				 * Set their username as the most recent woot.
 				 */
 				lastWoot = obj.user.username;
+				
+				/*
+				 * Increase the number of woots, then update the
+				 * percentage and count out of total users for woots.
+				 */
+				wootCount++;
+				updateCounters();
 			}
 			break;
 		case -1: // Meh
 			if (lastMeh != obj.user.username) {
 				$("#plugbot-mehs").append("<span>" + obj.user.username + "</span><br />");
+				
 				lastMeh = obj.user.username;
+				
+				mehCount++;
+				updateCounters();
 			}
 			break;
 	}
@@ -323,6 +353,39 @@ function invertButton(t) {
 				$("#plugbot-sidebar").css("opacity", "0.0");
 			}
 			break;
+	}
+}
+
+
+/*
+ * Update the sidebar counters (#/total).
+ */
+function updateCounters() {
+	$('#plugbot-mehs-count').html(mehCount + '/' + API.getUsers().length + '&nbsp;&nbsp;' +
+					calcPercentage("meh"));
+	$('#plugbot-woots-count').html(wootCount + '/' + API.getUsers().length + '&nbsp;&nbsp;' +
+					calcPercentage("woot"));
+}
+
+
+/*
+ * Calculate the percentage (100 / total users * woot/meh count)
+ * of people who are wooting or mehing.
+ * 
+ * @param type
+ * 				May be woot or meh.  String type. 
+ */ 
+function calcPercentage(type) {
+	try {
+		if (type == "woot") 
+			return (((100 / API.getUsers().length) * wootCount) + "").substring(0, 4) + "%";
+		else if (type == "meh") 
+			return (((100 / API.getUsers().length) * mehCount) + "").substring(0, 4) + "%";
+		else
+			throw "InvalidType";
+	} catch (ex) {
+		if (ex == "InvalidType") 
+			alert("Could not calculate woot or meh percentage; the type passed to calcPercentage() was invalid!");
 	}
 }
 
