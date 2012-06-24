@@ -37,18 +37,6 @@ var enableAutoqueue = true;
 var enableAutowoot = true;
 var enableSidebar = true;
 
-
-/*
- * Since the Google App Engine sucks, the Plug API encounters duplicate calls
- * when dealing with most listeners.  Because of this, Plug.bot would normally
- * print out each person's username twice, instead of once, in the sidebar.  
- * To deal with this, we save an object to memory that keeps the value of the
- * previous username, to compare against the next usernames coming, so that
- * if the duplicate call is detected, we can avoid it.
- */
-var lastWoot;
-var lastMeh;
-
 /*
  * Since Sebastian tells us what song was recently played, we have to save it
  * in memory until the next update so we can print it out when the song is
@@ -113,7 +101,7 @@ function renderUI() {
 		 */
 		$("#playback-container").after('<div id="plugbot-gui"></div>');
 		$("#plugbot-gui").
-			prepend('<br /><span id="autowoot-btn" style="margin-left:0">AUTOWOOT</span>').
+			prepend('<br /><span id="autowoot-btn" style="margin-left:0">AUTOHWHEAT</span>').
 			append('<span id="autoqueue-btn">AUTOQUEUE</span>').
 			append('<span id="sidebar-btn">SIDEBAR</span>').
 			append('<br /><br /><a id="plugbot-learnmore" href="https://github.com/ConnerGDavis/Plugbot" target="_blank">learn more about plug.bot</a>');
@@ -251,12 +239,6 @@ function initListeners() {
 	 		updateCounters();
 		});
 	}
-	
-	if (isSebastian()) {
-		API.addEventListener(API.USER_LEAVE, function(user) {
-			API.sendChat("We'll see you later, " + user.username + "! :(");
-		});
-	}
 }
 
 
@@ -272,7 +254,7 @@ function initListeners() {
 function sidebarCallback(obj) {
 	switch (obj.vote) {
 		case 1: // WOOT!
-			if (lastWoot != obj.user.username) {
+			if (woots[woots.length - 1] != obj.user.username) {
 				/*
 				 * Avoid the duplicate call.
 				 */
@@ -281,23 +263,20 @@ function sidebarCallback(obj) {
 				/*
 				 * Set their username as the most recent woot.
 				 */
-				lastWoot = obj.user.username;
-				
-				/*
-				 * Increase the number of woots, then update the
-				 * percentage and count out of total users for woots.
-				 */
-				wootCount++;
+				woots.push(obj.user.username);
+
+                /*
+                 * Update the percentage counters.
+                 */
 				updateCounters();
 			}
 			break;
 		case -1: // Meh
-			if (lastMeh != obj.user.username) {
+			if (mehs[mehs.length - 1] != obj.user.username) {
 				$("#plugbot-mehs").append('<span>' + obj.user.username + '</span><br />');
-			
-				lastMeh = obj.user.username;
-				
-				mehCount++;
+
+                mehs.push(obj.user.username);
+
 				updateCounters();
 			}
 			break;
@@ -365,8 +344,8 @@ function invertButton(t) {
  */
 function updateCounters() {
 	var innerfix = '/' + API.getUsers().length + '&nbsp;&nbsp;';
-	$('#plugbot-mehs-count').html(mehCount + innerfix + calcPercentage("meh"));
-	$('#plugbot-woots-count').html(wootCount + innerfix + calcPercentage("woot"));
+	$('#plugbot-mehs-count').html(mehs.length + innerfix + calcPercentage(mehs.length));
+	$('#plugbot-woots-count').html(woots.length + innerfix + calcPercentage(woots.length));
 }
 
 
@@ -374,21 +353,12 @@ function updateCounters() {
  * Calculate the percentage (100 / total users * woot/meh count)
  * of people who are wooting or mehing.
  * 
- * @param type
- * 				May be woot or meh.  String type. 
+ * @param length
+ * 				The length of the array we're counting.
  */ 
-function calcPercentage(type) {
-	try {
-		if (type == "woot") 
-			return (((100 / API.getUsers().length) * wootCount) + "").substring(0, 4) + "%";
-		else if (type == "meh") 
-			return (((100 / API.getUsers().length) * mehCount) + "").substring(0, 4) + "%";
-		else
-			throw "InvalidType";
-	} catch (ex) {
-		if (ex == "InvalidType") 
-			alert("Could not calculate woot or meh percentage; the type passed to calcPercentage() was invalid!");
-	}
+function calcPercentage(len) {
+    console.log(len);
+    return (((100 / API.getUsers().length) * len) + "").substring(0, 4) + "%";
 }
 
 
