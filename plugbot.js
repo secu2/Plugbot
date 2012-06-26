@@ -28,388 +28,174 @@
  * Thanks for playing fair!  You'll fare better than WOLVES, that's for sure.
  */
  
-/*
- * Author: Conner Davis ([VIP] ♫Łŏġïç®)
- */
-
-// Core features: enable them? true = yes
-var enableAutoqueue = true;
-var enableAutowoot = true;
-var enableSidebar = true;
-
-/*
- * Since Sebastian tells us what song was recently played, we have to save it
- * in memory until the next update so we can print it out when the song is
- * completed.
- */
-var lastPlayed;
-
-/*
- * Single Google App Engine is shit, we have to register the last user to
- * join, too.
- */
-var lastUserJoin;
-
-/*
- * Count of woots/mehs so we can print that as well as the percentage.
- */
-var woots = new Array();
-var mehs  = new Array();
-
-
-// When acted on with invertButton(), we need to know the type of button we're dealing with, this defines them
-var ButtonType = {
-	'Autowoot' : 0,
-	'Autoqueue' : 1,
-	'Sidebar' : 2
-};
-
-
-// All of the bots, superusers, and myself, that have special permissions (extra stuff, or testing)
-
- 
-/*
- * Display the "GUI", or "Graphical User Interface",
- * that end-users will use in order to access the 
- * functionality of Plug.bot.
- */
-function renderUI() {
-	/* 
-	 * Generate the Plug.bot settings GUI.
-	 */
-	$(document).ready(function() {
-		if ($("#plugbot-gui").length) {
-			/*
-			 * If the UI was already there, we need to remove the previous
-			 * version so the user can have a fresh, new version loaded.
-			 * 
-			 * They tend to stack if you don't do this.  Just ask UnearthedTRU7H!
-			 */
-			$("#plugbot-gui").remove();
-		}
-			
-		/*
-		 * We need to add a custom rule here to the normal Plug.dj UI
-		 * because if we don't, then our buttons aren't clickable.  It's due
-		 * to x-indexing being popular on Plug.dj's UI, and we have to make them
-		 * all just right.
-		 */
-		$("#playback").css("z-index", "49");
-		
-		/*
-		 * Now, create the Plug.bot UI div container and add all the buttons to it.
-		 */
-		$("#playback-container").after('<div id="plugbot-gui"></div>');
-		$("#plugbot-gui").
-			prepend('<br /><span id="autowoot-btn" style="margin-left:0">AUTOHWHEAT</span>').
-			append('<span id="autoqueue-btn">AUTOQUEUE</span>').
-			append('<span id="sidebar-btn">SIDEBAR</span>').
-			append('<br /><br /><a id="plugbot-learnmore" href="https://github.com/ConnerGDavis/Plugbot" target="_blank">learn more about plug.bot</a>');
-		
-		if (enableSidebar) {
-			/*
-			 * Since the sidebar is enabled, we also need to render that
-			 * portion of the UI as well.
-			 */
-			if ($("#plugbot-sidebar").length) {
-				/*
-				 * Again, make sure that it hasn't already been render, and if it 
-				 * has, then we need to remove the old version so it can be fresh.
-				 */
-				$("#plugbot-sidebar").remove();
-			}
-				
-			/*
-			 * Add this portion of the UI to the body tag, since we're positioning
-			 * it absolutely and nesting it anywhere else is illogical.
-			 */
-			$("body").prepend('<div id="plugbot-sidebar"></div>');
-			$("#plugbot-sidebar").prepend('<div id="plugbot-woots"><h3 id="plugbot-woots-count"></h3></div>').append('<div id="plugbot-mehs"><h3 id="plugbot-mehs-count"></h3></div>');
-		}
-	});
-	
-}
-
-
-/*
- * Initialise the core listeners.  These listeners
- * are the key functionality of Plug.bot, and allow 
- * us to execute code when a certain event occurs.
- */
-function initListeners() {
-	/*
-	 * Listen for whenever the user clicks the auto-woot
-	 * button of the UI. 
-	 */
-	$("#autowoot-btn").on("click", function() {
-		invertButton(ButtonType.Autowoot);
-	});
-	
-	/*
-	 * Listen for whenever the user clicks the auto-queue
-	 * button of the UI. 
-	 */
-	$("#autoqueue-btn").on("click", function() {
-		invertButton(ButtonType.Autoqueue);
-	});
-	
-	/*
-	 * Listen for when the user clicks the sidebar 
-	 * button of the UI.
-	 */
-	$("#sidebar-btn").on("click", function() {
-		invertButton(ButtonType.Sidebar);
-	})
-	
-	/*
-	 * This listener provides us the ability to state a custom
-	 * callback whenever a DJ advances.
-	 */
-	API.addEventListener(API.DJ_ADVANCE, function(obj) {
-		/*
-		 * If auto-queueing is enabled, click the DJ waitlist
-		 * join button.
-		 */
-		if (enableAutoqueue) {
-			document.getElementById('button-dj-waitlist-join').click();
-		}
-			
-		/*
-		 * If auto-woot is enabled, click the vote-woot button.
-		 */
-		if (enableAutowoot) {
-			document.getElementById('button-vote-positive').click();
-		}
-			
-		/*
-		 * If the sidebar is enabled, empty the woot and meh sidebar
-		 * count.
-		 */
-		if (enableSidebar) {
-			$("#plugbot-woots, #plugbot-mehs").empty();
-			
-			/*
-			 * Reset the woot and meh counters.
-			 */
-			woots.length = 0;
-			mehs.length = 0;
-			
-			/*
-			 * Now, re-append the woot/meh counters and percentages.
-			 */
-			$('#plugbot-woots').append('<h3 id="plugbot-woots-count"></h3>');
-			$('#plugbot-mehs').append('<h3 id="plugbot-mehs-count"></h3>');
-		}
-		
-		/*
-		 * Let's make Boris hit on Sebastian
-		 */
-		if (isBoris()) {
-			API.sendChat("@Sebastian[BOT] Hey babe ;)");
-		}
-	});
-	
-	if (enableSidebar) {
-		/*
-	 	 * If the user wants the woot/meh count on the sidebar, 
-	 	 * then we need to initialise the VOTE_UPDATE listener so 
-	 	 * whenever someone in the room WOOT!s or MEHs a track,
-	 	 * we can add their name to the list of WOOT!s or MEHs, 
-	 	 * respectively.
-	 	 */
-		API.addEventListener(API.VOTE_UPDATE, sidebarCallback);
-		
-		API.addEventListener(API.USER_JOIN, function(user) {
-			if (isSebastian()) {
-				/*
-	 	 		 * Sebastian bot needs to know when users join so we can
-	 	 		 * greet them to the room.
-	 	 		 */
-	 			if (user.username != lastUserJoin) {
-					API.sendChat("Welcome back to " + $("#current-room-value").text() + ", " + user.username + "!");
-					lastUserJoin = user.username;
-				}
-			}
-	 		
-	 		/*
-	 		 * Otherwise, they still need to be aware of when
-	 		 * someone joins, so we can update the sidebar
-	 		 * counters.
-	 		 */
-	 		updateCounters();
-		});
-	}
-}
-
-
-/*
- * Callback method that handles a VOTE_UPDATE listener
- * telling us a user just voted Woot or Meh, so in the
- * case that the user has the sidebar enabled, we need
- * to update it.
+/**
+ * NOTE:  I use a Java-esque style of comments.  I don't use any docs.  
+ * I just do it because it makes it easier for me to read.
  * 
- * @param obj
- * 				The status code of the vote
+ * @author Conner Davis ([VIP] ♫Łŏġïç®)
+ * @version 0.2.0a
  */
-function sidebarCallback(obj) {
-	switch (obj.vote) {
-		case 1: // WOOT!
-			if (woots[woots.length - 1] != obj.user.username) {
-				/*
-				 * Avoid the duplicate call.
-				 */
-				$("#plugbot-woots").append('<span>' + obj.user.username + '</span><br />');
-				
-				/*
-				 * Set their username as the most recent woot.
-				 */
-				woots.push(obj.user.username);
 
-                /*
-                 * Update the percentage counters.
-                 */
-				updateCounters();
-			}
-			break;
-		case -1: // Meh
-			if (mehs[mehs.length - 1] != obj.user.username) {
-				$("#plugbot-mehs").append('<span>' + obj.user.username + '</span><br />');
 
-                mehs.push(obj.user.username);
-
-				updateCounters();
-			}
-			break;
-	}
+/**
+ * The core is an unintuitive representation of all the "core" features of
+ * plug.bot: those that make plug.bot work.  It also includes the primary 
+ * entry point which then calls all of the core functionality.
+ */
+function Core()
+{
+	
+	/**
+	 * Whether or not the Auto-WOOT! functionality is
+	 * enabled.
+	 */
+	this.autowootEnabled = true;
+	/**
+	 * Whether or not to enable the auto-queueing functionality.
+	 */
+	this.autoqueueEnabled = true;
+	
 }
 
+Core.prototype.IsAutowootEnabled = function() { return this.autowootEnabled; }
+Core.prototype.IsAutoqueueEnabled = function() { return this.autoqueueEnabled; }
+Core.prototype.SetAutowootEnabled = function() { this.autowootEnabled = !this.autowootEnabled; }
+Core.prototype.SetAutoqueueEnabled = function() { this.autoqueueEnabled = !this.autoqueueEnabled; }
 
-/*
- * By 'inverting', we switch the colour of the text
- * to its opposite (green = active, red = inactive)
- * and invert the variable's value to whatever it wasn't.
+/**
+ * Bind relevant plug.dj API listeners.
  */
-function invertButton(t) {
-	switch (t) 
+Core.prototype.BindListeners = function()
+{
+	/*
+	 * Listen for whenever the DJ is changed (the last DJ's song ended)
+	 * so we can cycle.
+	 */
+	API.addEventListener(API.DJ_ADVANCE, NewDjCallback);
+}
+
+/**
+ * Hit the auto-queue and auto-woot buttons upon startup.
+ */
+Core.prototype.PushInitButtons = function()
+{
+	$("#button-vote-positive").click();
+	$("#button-dj-waitlist-join").click();
+}
+
+/**
+ * Respond to the API's DJ_ADVANCE listener call by 
+ * doing anything that should be done whenever there's
+ * a new DJ playing.
+ */
+function NewDjCallback() 
+{
+	if (c.IsAutowootEnabled()) 
 	{
-		case ButtonType.Autowoot: // WOOT!
-			enableAutowoot = !enableAutowoot;
-			
-			$("#autowoot-btn").css("color", "#" + (enableAutowoot ? "3FFF00" : "ED1C24"));
-			/*
-			 * If they are enabling auto-woot, hit the woot button for them.
-			 */
-			if (enableAutowoot) {
-				$("#button-vote-positive").click();
-			}
-			break;
-		case ButtonType.Autoqueue: // Meh
-			enableAutoqueue = !enableAutoqueue;
-			
-			$("#autoqueue-btn").css("color", "#" + (enableAutoqueue ? "3FFF00" : "ED1C24"));
-			if (enableAutoqueue) {
-				/*
-			 	 * If they are enabling auto-queue, join the waitlist for them.
-			 	 */
-				$("#button-dj-waitlist-join").click();
-			} else {
-				/*
-				 * If not, hit the leave button.
-				 */
-				$("#button-dj-waitlist-leave").click();
-			}
-			break;
-		case ButtonType.Sidebar:
-			enableSidebar = !enableSidebar;
-			
-			$("#sidebar-btn").css("color", "#" + (enableSidebar ? "3FFF00" : "ED1C24"));
-			if (enableSidebar) {
-				/*
-				 * They enabled the sidebar, so make it visible again.
-				 */
-				$("#plugbot-sidebar").css("opacity", "0.9100000262260437");
-			} else {
-				/*
-				 * They disabled the sidebar, so make it invisible.
-				 */
-				$("#plugbot-sidebar").css("opacity", "0.0");
-			}
-			break;
+		$("#button-vote-positive").click();
+		
+		console.log("NEW DJ CALLBACK: Autowoot -- COMPLETED");
+	}
+	
+	if (c.IsAutoqueueEnabled() && ($("#button-dj-waitlist-join").css("display") === "block")) 
+	{
+		$("#button-dj-waitlist-join").click();
+		
+		console.log("NEW DJ CALLBACK: Autoqueue -- COMPLETED");
 	}
 }
 
 
-/*
- * Update the sidebar counters (#/total).
+/**
+ * Boris Yeltsin is the famous EDM Basement bot created by
+ * UnearthedTRU7H that is provided some extra functionality
+ * by Plug.bot.
  */
-function updateCounters() {
-	var innerfix = '/' + API.getUsers().length + '&nbsp;&nbsp;';
-	$('#plugbot-mehs-count').html(mehs.length + innerfix + calcPercentage(mehs.length));
-	$('#plugbot-woots-count').html(woots.length + innerfix + calcPercentage(woots.length));
+function Boris()
+{
+
+	/**
+	 * As Boris welcomes new users, we stash them into an
+	 * array for all users we already know were here before.
+	 * We do this so we can say "Welcome back" versus "Welcome"
+	 * to those users.
+	 */	
+	var knownUsers = new Array();
+	
+	/**
+	 * Various random messages that Boris can send to Sebastian.
+	 */
+	var randomMessages = new Array(
+		"How are you doing today, Sebastian?",
+		"I am good as well.  Logic is sexy."
+	);
+	
 }
 
+Boris.prototype.GetKnownUsers = function() { return this.knownUsers; }
 
-/*
- * Calculate the percentage (100 / total users * woot/meh count)
- * of people who are wooting or mehing.
+/**
+ * Initialise all of Sebastian's functionality.
+ */
+Boris.prototype.Init = function()
+{
+	/*
+	 * Welcome all new users to the room.
+	 */
+	API.addEventListener(API.USER_JOIN, BorisWelcomeCallback);
+	
+	/*
+	 * Start the random message timer.  Since Boris is the one
+	 * that initiates all the conversations between himself and
+	 * Sebastian, he has to start it.
+	 */
+	window.setInterval(function() {
+		API.sendChat("@Sebastian " + (this.randomMessages[Math.floor(Math.random() * randomMessages.length)]));
+	}, (1000 * 60 * 60) * (Math.floor(Math.random() * 24)));
+}
+
+/**
+ * We'll call this method whenever a user joins, so Boris
+ * can welcome them!
  * 
- * @param length
- * 				The length of the array we're counting.
- */ 
-function calcPercentage(len) {
-    console.log(len);
-    return (((100 / API.getUsers().length) * len) + "").substring(0, 4) + "%";
+ * @param user
+ * 				The user that just joined.
+ */
+function BorisWelcomeCallback(user)
+{
+	console.log('Boris should welcome ' + user.username);
+	
+	API.sendChat("Welcome " + ($.inArray(user, b.GetKnownUsers()) ? "back" : "") + 
+		" to " + $("#current-room-value").text() + ", " + user.username + "!");
 }
 
+///////////////////////////////////////////////////////////////////////////////
 
 /*
- * Determine if the current user is Sebastian!
+ * Let's add the CSS stylesheet so that's over with.
  */
-function isSebastian() {
-	return API.getSelf().username == "Sebastian[BOT]";
-}
+var css = document.createElement("link");
+	css.setAttribute('rel', 'stylesheet');
+	css.setAttribute('type', 'text/css');
+	css.setAttribute('id', 'plugbot-css');
+	css.setAttribute('href', (API.getSelf().username == "[VIP][PLUG.BOT] Łŏģıč®") ? 'http://localhost/plugbot/plugbot.css' : 'null');
+document.body.appendChild(css);
 
 /*
- * Determine if the current user is Boris!
+ * Init the core.
  */
-function isBoris() {
-	return API.getSelf().username == "Boris[BOT]";
-}
-
-// INITIALISATION
-
+var c = new Core;
+	c.BindListeners();
+	c.PushInitButtons();
+	
+	
 /*
- * Thank our honest users from Dubstep Den.
+ * Init Boris's functionality if we're Boris.
  */
-if ($('#current-room-value:contains("Dubstep Den")').length) {
-	alert("Thank you for using Plug.bot and not WOLVES' stolen code of mine.  If you see Xhila autowoot anywhere, tell those using it to use this instead -- this is the better version, not the one I wrote a month ago that he stole!");
-}
-
-/*
- * 'Render' the UI by generating all the HTML structure for the UI.
- * This is where our CSS stylesheet comes in handy.
- */
-renderUI();
-
-/*
- * Initialise all the Plug.dj API listener functions that give us
- * the ability to intercept an event and provide a callback function
- * to handle it.
- */
-initListeners();
-
-/*
- * Click each of the woot and waitlist buttons.
- */
-document.getElementById('button-vote-positive').click();
-document.getElementById('button-dj-waitlist-join').click();
-
-/*
- * If we're Sebastian, we will randomly send a message to the
- * room and remind them to view the rules.
- */
-if (isSebastian()) {
-	setTimeout(function() {
-		API.sendChat("Please remember to view the EDM Basement rules! http://bit.ly/O3ENRa");
-	}, (1000 * 60 * 30));
+if (API.getSelf().username == "BorisYeltsin[BOT]")
+{
+	var b = new Boris;
+		b.Init();
+	
+	console.log('Boris Yeltsin bot functionality initialised.');
 }
