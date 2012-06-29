@@ -244,8 +244,6 @@ function isBoris() { return API.getSelf().username == "BorisYeltsin[BOT]"; }
 
 // On init
 
-alert("PLUG.BOT HAS UPDATED!  Please visit https://github.com/ConnerGDavis/Plugbot to change your bookmark!  Last change, I promise!!");
-
 $('head').prepend('<link href="' + ROOT_DIR + 'plugbot.css" rel="stylesheet" type="text/css" />');
 
 $("#button-vote-positive").click();
