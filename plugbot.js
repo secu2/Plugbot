@@ -29,173 +29,229 @@
  */
  
 /**
- * NOTE:  I use a Java-esque style of comments.  I don't use any docs.  
- * I just do it because it makes it easier for me to read.
+ * NOTE:  This is all procedural as hell because prototypes and any 
+ * 			OOP techniques in Javascript are stupid and confusing.
  * 
  * @author Conner Davis ([VIP] ♫Łŏġïç®)
  * @version 0.2.0a
  */
 
+// Triggers
+var autowoot = true;
+var autoqueue = true;
+var counters = true;
+var hideVideo = false;
 
-/**
- * The core is an unintuitive representation of all the "core" features of
- * plug.bot: those that make plug.bot work.  It also includes the primary 
- * entry point which then calls all of the core functionality.
- */
-function Core()
+var showingWoots = true;
+var showingMehs = true;
+var showingUndecided = true;
+
+var woots = new Array();
+var mehs = new Array();
+
+var ROOT_DIR = "http://wlsandd.net78.net/plugbot/";
+
+// Last played info
+var lastPlayed = null;
+
+// API listeners
+function initAPIListeners() 
 {
+	API.addEventListener(API.DJ_ADVANCE, djAdvanced);
+	if (isBoris())
+	{
+		console.log('Activated Boris');
+		
+		API.addEventListener(API.USER_JOIN, function(user) {
+			API.sendChat("Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
+		});
+	}
 	
-	/**
-	 * Whether or not the Auto-WOOT! functionality is
-	 * enabled.
-	 */
-	this.autowootEnabled = true;
-	/**
-	 * Whether or not to enable the auto-queueing functionality.
-	 */
-	this.autoqueueEnabled = true;
-	
+	API.addEventListener(API.VOTE_UPDATE, voteIntercepted);
 }
 
-Core.prototype.IsAutowootEnabled = function() { return this.autowootEnabled; }
-Core.prototype.IsAutoqueueEnabled = function() { return this.autoqueueEnabled; }
-Core.prototype.SetAutowootEnabled = function() { this.autowootEnabled = !this.autowootEnabled; }
-Core.prototype.SetAutoqueueEnabled = function() { this.autoqueueEnabled = !this.autoqueueEnabled; }
-
-/**
- * Bind relevant plug.dj API listeners.
- */
-Core.prototype.BindListeners = function()
+// Display UI
+function displayUI()
 {
-	/*
-	 * Listen for whenever the DJ is changed (the last DJ's song ended)
-	 * so we can cycle.
-	 */
-	API.addEventListener(API.DJ_ADVANCE, NewDjCallback);
+	$('#plugbot-ui').remove();
+	$('#playback').css('z-index', '8'); // hack to make the buttons usable
+	
+	$('#playback').append('<div id="plugbot-ui"></div>');
+		$("#plugbot-ui").animate({"height": "64px"}, {duration: "slow" });
+		$('#plugbot-ui').append(
+			'<img src="' + ROOT_DIR + 'autohwheat_active.png" id="plugbot-btn-woot" alt="auto-hwheat!" />' +
+			'<img src="' + ROOT_DIR + 'autoqueue_active.png" id="plugbot-btn-queue" alt="auto-queue!" />' + 
+			'<img src="' + ROOT_DIR + 'hidevideo.png" id="plugbot-btn-hidevideo" alt="hide the video!" />' +
+			'<img src="' + ROOT_DIR + 'counters_active.png" id="plugbot-btn-counters" alt="woot/meh counters!" />'
+		);
 }
 
-/**
- * Hit the auto-queue and auto-woot buttons upon startup.
- */
-Core.prototype.PushInitButtons = function()
+// Display woot and meh counters
+function displayCounters()
+{
+	$("#plugbot-counters").remove();
+	
+	$('body').append('<div id="plugbot-counters"><div id="woots"><span id="woots-activate">woots »</span><br /></div><div id="mehs"><span id="mehs-activate">mehs »</span><br /></div></div>');
+}
+
+// Some on-click listeners for the UI buttons
+function initUIListeners()
+{
+	$("#plugbot-btn-woot").on("click", function() {
+		autowoot = !autowoot;
+		$(this).attr("src", ROOT_DIR + 'autohwheat' + (autowoot ? '_active' : '') + '.png');
+		if (autowoot)
+			$("#button-vote-positive").click();
+		
+		console.log('Auto-woot is now ' + (autowoot ? 'enabled' : 'disabled'));
+	});
+	
+	$("#plugbot-btn-hidevideo").on("click", function() {
+		hideVideo = !hideVideo;
+		$(this).attr("src", ROOT_DIR + 'hidevideo' + (hideVideo ? '_active' : '') + '.png');
+		if (hideVideo) {
+			$("#yt-frame").animate({"height": "0px"}, {duration: "fast"});
+		} else {
+			$("#yt-frame").animate({"height": "271px"}, {duration: "fast"});
+		}
+	});
+	
+	$("#plugbot-btn-queue").on("click", function() {
+		autoqueue = !autoqueue;
+		$(this).attr("src", ROOT_DIR + 'autoqueue' + (autoqueue ? '_active' : '') + '.png');
+		if (autoqueue)
+			$("#button-dj-waitlist-join").click();
+		else 
+			$("#button-dj-waitlist-leave").click();
+		
+		console.log('Auto-queue is now ' + (autoqueue ? 'enabled' : 'disabled'));
+	});
+	
+	$("#plugbot-btn-counters").on("click", function() {
+		counters = !counters;
+		$(this).attr("src", ROOT_DIR + 'counters' + (counters ? '_active' : '') + '.png');
+		if (counters)
+			$("#plugbot-counters").css("visibility", "visible");
+		else
+			$("#plugbot-counters").css("visibility", "hidden");
+		
+		console.log('Woot/Meh counters are now ' + (counters ? 'enabled' : 'disabled'));
+	});
+
+	$("#woots-activate").on("click", function() {
+		showingWoots = !showingWoots;
+		console.log('Showing woot list? ' + showingWoots);
+		
+		if (showingWoots && woots.length > 0) 
+		{
+			for (var i = 0; i < woots.length; i++) 
+			{
+				$("#woots").append("<p>" + woots[i] + "</p>");
+			}
+		}
+		else 
+		{
+			$("#woots").find("*").not("#woots-activate").remove();
+			$("#woots").append("<br />");
+		}
+	});
+	
+	$("#mehs-activate").on("click", function() {
+		showingMehs = !showingMehs;
+		console.log('Showing meh list? ' + showingMehs);
+		
+		if (showingMehs && mehs.length > 0)
+		{
+			for (var i = 0; i < mehs.length; i++)
+			{ 
+				$("#mehs").append("<p>" + mehs[i] + "</p>");	
+			}
+		}
+		else
+		{
+			$("#mehs").find("*").not("#mehs-activate").remove();
+			$("#mehs").append("<br />");
+		}
+	});
+}
+
+// Call back when there's a new Dj
+function djAdvanced(obj) 
 {
 	$("#button-vote-positive").click();
-	$("#button-dj-waitlist-join").click();
-}
-
-/**
- * Respond to the API's DJ_ADVANCE listener call by 
- * doing anything that should be done whenever there's
- * a new DJ playing.
- */
-function NewDjCallback() 
-{
-	if (c.IsAutowootEnabled()) 
-	{
-		$("#button-vote-positive").click();
-		
-		console.log("NEW DJ CALLBACK: Autowoot -- COMPLETED");
-	}
 	
-	if (c.IsAutoqueueEnabled() && ($("#button-dj-waitlist-join").css("display") === "block")) 
-	{
+	if ($("#button-dj-waitlist-join").css("display") === "block")
 		$("#button-dj-waitlist-join").click();
-		
-		console.log("NEW DJ CALLBACK: Autoqueue -- COMPLETED");
+	
+	$("#yt-frame").css("height", "271px");
+	$("#plugbot-btn-hidevideo").attr("src", ROOT_DIR + 'hidevideo.png');
+	
+	resetCounters();
+}
+
+// Call back when a vote is intercepted
+function voteIntercepted(obj)
+{
+	var vote = obj.vote;
+	switch (vote) 
+	{ 
+		case 1: // Woot
+			if (woots[woots.length - 1] != obj.user.username) 
+			{
+				if ($.inArray(obj.user.username, mehs) != -1) 
+				{
+					mehs = jQuery.grep(mehs, function(value) {
+						return value != obj.user.username;
+					});
+					$("#mehs p").remove(":contains('" + obj.user.username + "')");
+				}
+				woots.push(obj.user.username);
+				$("#woots").append("<p>" + obj.user.username + "</p>");
+				console.log('Woot appended: ' + obj.user.username);
+			}
+			break;
+		default: // Meh	
+			if (mehs[mehs.length - 1] != obj.user.username) 
+			{
+				if ($.inArray(obj.user.username, woots) != -1) 
+				{
+					woots = jQuery.grep(woots, function(value) {
+						return value != obj.user.username;
+					});
+					$("#woots p").remove(":contains('" + obj.user.username + "')");
+				}
+				mehs.push(obj.user.username);
+				$("#mehs").append("<p>" + obj.user.username + "</p>");
+				console.log('Meh appended: ' + obj.user.username);
+			}
+			break;
 	}
 }
 
-
-/**
- * Boris Yeltsin is the famous EDM Basement bot created by
- * UnearthedTRU7H that is provided some extra functionality
- * by Plug.bot.
- */
-function Boris()
+// Reset all woot/meh counters
+function resetCounters() 
 {
-
-	/**
-	 * As Boris welcomes new users, we stash them into an
-	 * array for all users we already know were here before.
-	 * We do this so we can say "Welcome back" versus "Welcome"
-	 * to those users.
-	 */	
-	var knownUsers = new Array();
+	woots.length = 0;
+	$("#woots").find("*").not("#woots-activate").remove();
 	
-	/**
-	 * Various random messages that Boris can send to Sebastian.
-	 */
-	var randomMessages = new Array(
-		"How are you doing today, Sebastian?",
-		"I am good as well.  Logic is sexy."
-	);
-	
+	mehs.length = 0;
+	$("#mehs").find("*").not("#mehs-activate").remove();
 }
 
-Boris.prototype.GetKnownUsers = function() { return this.knownUsers; }
+function isSebastian() { return API.getSelf().username == "Sebastian[BOT]"; }
+function isBoris() { return API.getSelf().username == "BorisYeltsin[BOT]"; }
 
-/**
- * Initialise all of Sebastian's functionality.
- */
-Boris.prototype.Init = function()
-{
-	/*
-	 * Welcome all new users to the room.
-	 */
-	API.addEventListener(API.USER_JOIN, BorisWelcomeCallback);
-	
-	/*
-	 * Start the random message timer.  Since Boris is the one
-	 * that initiates all the conversations between himself and
-	 * Sebastian, he has to start it.
-	 */
-	window.setInterval(function() {
-		API.sendChat("@Sebastian " + (this.randomMessages[Math.floor(Math.random() * randomMessages.length)]));
-	}, (1000 * 60 * 60) * (Math.floor(Math.random() * 24)));
-}
 
-/**
- * We'll call this method whenever a user joins, so Boris
- * can welcome them!
- * 
- * @param user
- * 				The user that just joined.
- */
-function BorisWelcomeCallback(user)
-{
-	console.log('Boris should welcome ' + user.username);
-	
-	API.sendChat("Welcome " + ($.inArray(user, b.GetKnownUsers()) ? "back" : "") + 
-		" to " + $("#current-room-value").text() + ", " + user.username + "!");
-}
+// On init
 
-///////////////////////////////////////////////////////////////////////////////
+alert("PLUG.BOT HAS UPDATED!  Please visit https://github.com/ConnerGDavis/Plugbot to change your bookmark!  Last change, I promise!!");
 
-/*
- * Let's add the CSS stylesheet so that's over with.
- */
-var css = document.createElement("link");
-	css.setAttribute('rel', 'stylesheet');
-	css.setAttribute('type', 'text/css');
-	css.setAttribute('id', 'plugbot-css');
-	css.setAttribute('href', (API.getSelf().username == "[VIP][PLUG.BOT] Łŏģıč®") ? 'http://localhost/plugbot/plugbot.css' : 'null');
-document.body.appendChild(css);
+$('head').prepend('<link href="' + ROOT_DIR + 'plugbot.css" rel="stylesheet" type="text/css" />');
 
-/*
- * Init the core.
- */
-var c = new Core;
-	c.BindListeners();
-	c.PushInitButtons();
-	
-	
-/*
- * Init Boris's functionality if we're Boris.
- */
-if (API.getSelf().username == "BorisYeltsin[BOT]")
-{
-	var b = new Boris;
-		b.Init();
-	
-	console.log('Boris Yeltsin bot functionality initialised.');
-}
+$("#button-vote-positive").click();
+$("#button-dj-waitlist-join").click();
+
+displayUI();
+displayCounters();
+initUIListeners();
+initAPIListeners();
