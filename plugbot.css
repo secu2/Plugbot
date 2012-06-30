@@ -1,0 +1,47 @@
+#plugbot-ui 
+{
+	left: 3%;
+	position: absolute;
+	top: 281px;
+	height: 0;
+}
+
+#plugbot-ui img
+{
+	display: inline;
+	cursor: pointer;
+	margin-left: -2px;
+}
+
+#plugbot-counters
+{
+	float: right;
+	width: 11%;
+	height: 768px;
+	position: relative;
+	top: 8px;
+}
+
+#mehs
+{
+	margin-top: 32px;
+	color: #ED1C24;
+}
+
+#woots
+{
+	color: #7FFF00;
+}
+
+#woots p, #mehs p
+{
+	font-size: 11px;
+	margin: 0;
+}
+
+#woots-activate, #mehs-activate
+{
+	font-variant: small-caps;
+	font-size: 14px !important;
+	cursor: pointer;
+}
