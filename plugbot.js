@@ -178,9 +178,9 @@ function initUIListeners()
 // Call back when there's a new Dj
 function djAdvanced(obj) 
 {
-	$("#button-vote-positive").click();
+	if (autowoot) $("#button-vote-positive").click();
 	
-	if ($("#button-dj-waitlist-join").css("display") === "block")
+	if ($("#button-dj-waitlist-join").css("display") === "block" && autoqueue)
 		$("#button-dj-waitlist-join").click();
 	
 	$("#yt-frame").css("height", "271px");
