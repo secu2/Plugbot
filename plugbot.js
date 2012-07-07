@@ -181,7 +181,7 @@ function isBoris() { return API.getSelf().username == "BorisYeltsin[BOT]"; }
 
 // On init
 
-$('head').prepend('<link href="http://wlsandd.net78.net/plugbot/plugbot_test.css" rel="stylesheet" type="text/css" />');
+$('head').prepend('<link href="http://wlsandd.net78.net/plugbot/plugbot.css" rel="stylesheet" type="text/css" />');
 
 $("#button-vote-positive").click();
 $("#button-dj-waitlist-join").click();
