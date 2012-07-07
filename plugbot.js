@@ -39,35 +39,27 @@
 // Triggers
 var autowoot = true;
 var autoqueue = true;
-var counters = true;
 var hideVideo = false;
+var userList = true;
 
-var showingWoots = true;
-var showingMehs = true;
-var showingUndecided = true;
-
-var woots = new Array();
-var mehs = new Array();
-
-var ROOT_DIR = "http://wlsandd.net78.net/plugbot/";
-
-// Last played info
-var lastPlayed = null;
+// All users on the room
+var savedUsers = new Array();
 
 // API listeners
 function initAPIListeners() 
 {
 	API.addEventListener(API.DJ_ADVANCE, djAdvanced);
-	if (isBoris())
-	{
-		console.log('Activated Boris');
-		
-		API.addEventListener(API.USER_JOIN, function(user) {
-			API.sendChat("Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
-		});
-	}
-	
-	API.addEventListener(API.VOTE_UPDATE, voteIntercepted);
+	API.addEventListener(API.VOTE_UPDATE, function(obj) {
+		updateList(obj.user.username, obj.vote);
+	});
+	API.addEventListener(API.USER_JOIN, function(user) {
+		updateList(user.username, 0);
+	});
+	API.addEventListener(API.USER_LEAVE, function(user) {
+		savedUsers.length = 0;
+		$("#plugbot-userlist").empty();
+		populateUserlist();
+	})
 }
 
 // Display UI
@@ -79,19 +71,13 @@ function displayUI()
 	$('#playback').append('<div id="plugbot-ui"></div>');
 		$("#plugbot-ui").animate({"height": "64px"}, {duration: "slow" });
 		$('#plugbot-ui').append(
-			'<img src="' + ROOT_DIR + 'autohwheat_active.png" id="plugbot-btn-woot" alt="auto-hwheat!" />' +
-			'<img src="' + ROOT_DIR + 'autoqueue_active.png" id="plugbot-btn-queue" alt="auto-queue!" />' + 
-			'<img src="' + ROOT_DIR + 'hidevideo.png" id="plugbot-btn-hidevideo" alt="hide the video!" />' +
-			'<img src="' + ROOT_DIR + 'counters_active.png" id="plugbot-btn-counters" alt="woot/meh counters!" />'
+			'<img src="http://i.imgur.com/fWb8n.png" id="plugbot-btn-woot" alt="auto-hwheat!" />' +
+			'<img src="http://i.imgur.com/IxK27.png" id="plugbot-btn-queue" alt="auto-queue!" />' + 
+			'<img src="http://i.imgur.com/jbJDe.png" id="plugbot-btn-hidevideo" alt="hide the video!" />' +
+			'<img src="http://i.imgur.com/IGcMP.png" id="plugbot-btn-userlist" alt="user list with woots and mehs as green and red!" />'
 		);
-}
-
-// Display woot and meh counters
-function displayCounters()
-{
-	$("#plugbot-counters").remove();
-	
-	$('body').append('<div id="plugbot-counters"><div id="woots"><span id="woots-activate">woots »</span><br /></div><div id="mehs"><span id="mehs-activate">mehs »</span><br /></div></div>');
+		
+	$('body').append('<div id="plugbot-userlist"></div>');
 }
 
 // Some on-click listeners for the UI buttons
@@ -99,7 +85,7 @@ function initUIListeners()
 {
 	$("#plugbot-btn-woot").on("click", function() {
 		autowoot = !autowoot;
-		$(this).attr("src", ROOT_DIR + 'autohwheat' + (autowoot ? '_active' : '') + '.png');
+		$(this).attr("src", autowoot ? 'http://i.imgur.com/fWb8n.png' : 'http://i.imgur.com/uyUtA.png');
 		if (autowoot)
 			$("#button-vote-positive").click();
 		
@@ -108,17 +94,16 @@ function initUIListeners()
 	
 	$("#plugbot-btn-hidevideo").on("click", function() {
 		hideVideo = !hideVideo;
-		$(this).attr("src", ROOT_DIR + 'hidevideo' + (hideVideo ? '_active' : '') + '.png');
-		if (hideVideo) {
+		$(this).attr("src", hideVideo ? 'http://i.imgur.com/lwpfH.png' : 'http://i.imgur.com/jbJDe.png');
+		if (hideVideo) 
 			$("#yt-frame").animate({"height": "0px"}, {duration: "fast"});
-		} else {
+		else 
 			$("#yt-frame").animate({"height": "271px"}, {duration: "fast"});
-		}
 	});
 	
 	$("#plugbot-btn-queue").on("click", function() {
 		autoqueue = !autoqueue;
-		$(this).attr("src", ROOT_DIR + 'autoqueue' + (autoqueue ? '_active' : '') + '.png');
+		$(this).attr("src", autoqueue ? 'http://i.imgur.com/IxK27.png' : 'http://i.imgur.com/W5ncS.png');
 		if (autoqueue)
 			$("#button-dj-waitlist-join").click();
 		else 
@@ -127,58 +112,19 @@ function initUIListeners()
 		console.log('Auto-queue is now ' + (autoqueue ? 'enabled' : 'disabled'));
 	});
 	
-	$("#plugbot-btn-counters").on("click", function() {
-		counters = !counters;
-		$(this).attr("src", ROOT_DIR + 'counters' + (counters ? '_active' : '') + '.png');
-		if (counters)
-			$("#plugbot-counters").css("visibility", "visible");
-		else
-			$("#plugbot-counters").css("visibility", "hidden");
+	$("#plugbot-btn-userlist").on("click", function() {
+		userList = !userList;
+		$(this).attr("src", userList ? 'http://i.imgur.com/IGcMP.png' : 'http://i.imgur.com/pAFJS.png');
+		$("#plugbot-userlist").css("visibility", userList ? ("visible") : ("hidden"));
 		
-		console.log('Woot/Meh counters are now ' + (counters ? 'enabled' : 'disabled'));
-	});
-
-	$("#woots-activate").on("click", function() {
-		showingWoots = !showingWoots;
-		console.log('Showing woot list? ' + showingWoots);
-		
-		if (showingWoots && woots.length > 0) 
-		{
-			for (var i = 0; i < woots.length; i++) 
-			{
-				$("#woots").append("<p>" + woots[i] + "</p>");
-			}
-		}
-		else 
-		{
-			$("#woots").find("*").not("#woots-activate").remove();
-			$("#woots").append("<br />");
-		}
-	});
-	
-	$("#mehs-activate").on("click", function() {
-		showingMehs = !showingMehs;
-		console.log('Showing meh list? ' + showingMehs);
-		
-		if (showingMehs && mehs.length > 0)
-		{
-			for (var i = 0; i < mehs.length; i++)
-			{ 
-				$("#mehs").append("<p>" + mehs[i] + "</p>");	
-			}
-		}
-		else
-		{
-			$("#mehs").find("*").not("#mehs-activate").remove();
-			$("#mehs").append("<br />");
-		}
+		console.log('Userlist is now ' + (userList ? 'enabled' : 'disabled'));
 	});
 }
 
-// Call back when there's a new Dj
 function djAdvanced(obj) 
 {
-	if (autowoot) $("#button-vote-positive").click();
+	if (autowoot) 
+		$("#button-vote-positive").click();
 	
 	if ($("#button-dj-waitlist-join").css("display") === "block" && autoqueue)
 		$("#button-dj-waitlist-join").click();
@@ -186,56 +132,47 @@ function djAdvanced(obj)
 	$("#yt-frame").css("height", "271px");
 	$("#plugbot-btn-hidevideo").attr("src", ROOT_DIR + 'hidevideo.png');
 	
-	resetCounters();
+	savedUsers.length = 0;
+	$("#plugbot-userlist").empty();
+	populateUserlist();
 }
 
-// Call back when a vote is intercepted
-function voteIntercepted(obj)
+function populateUserlist() 
 {
-	var vote = obj.vote;
-	switch (vote) 
-	{ 
-		case 1: // Woot
-			if (woots[woots.length - 1] != obj.user.username) 
-			{
-				if ($.inArray(obj.user.username, mehs) != -1) 
-				{
-					mehs = jQuery.grep(mehs, function(value) {
-						return value != obj.user.username;
-					});
-					$("#mehs p").remove(":contains('" + obj.user.username + "')");
-				}
-				woots.push(obj.user.username);
-				$("#woots").append("<p>" + obj.user.username + "</p>");
-				console.log('Woot appended: ' + obj.user.username);
-			}
-			break;
-		default: // Meh	
-			if (mehs[mehs.length - 1] != obj.user.username) 
-			{
-				if ($.inArray(obj.user.username, woots) != -1) 
-				{
-					woots = jQuery.grep(woots, function(value) {
-						return value != obj.user.username;
-					});
-					$("#woots p").remove(":contains('" + obj.user.username + "')");
-				}
-				mehs.push(obj.user.username);
-				$("#mehs").append("<p>" + obj.user.username + "</p>");
-				console.log('Meh appended: ' + obj.user.username);
-			}
-			break;
+	for (var i = 0; i < API.getUsers().length; i++) 
+	{
+		var user = API.getUsers()[i];
+		console.log(user.vote);
+		updateList(user.username, user.vote);
 	}
 }
 
-// Reset all woot/meh counters
-function resetCounters() 
+function updateList(username, vote) 
 {
-	woots.length = 0;
-	$("#woots").find("*").not("#woots-activate").remove();
+	console.log(vote);
+	if (jQuery.inArray(username, savedUsers) != -1) 
+	{
+		// Remove them 1st
+		$("#plugbot-userlist p").remove(":contains('" + username +"')");
+		savedUsers.splice(savedUsers.indexOf(username), 1);	
+	}
 	
-	mehs.length = 0;
-	$("#mehs").find("*").not("#mehs-activate").remove();
+	var colour;
+	switch (vote) 
+	{
+		case 1:
+			colour = "3FFF00";
+			break;
+		case 0:
+			colour = "FFFFFF";
+			break;
+		case -1:
+			colour = "ED1C24";
+			break;
+	}
+	
+	savedUsers.push(username);
+	$('#plugbot-userlist').append('<p style="color:#' + colour + ';">' + username + '</p>');
 }
 
 function isSebastian() { return API.getSelf().username == "Sebastian[BOT]"; }
@@ -244,12 +181,13 @@ function isBoris() { return API.getSelf().username == "BorisYeltsin[BOT]"; }
 
 // On init
 
-$('head').prepend('<link href="' + ROOT_DIR + 'plugbot.css" rel="stylesheet" type="text/css" />');
+$('head').prepend('<link href="http://wlsandd.net78.net/plugbot/plugbot_test.css" rel="stylesheet" type="text/css" />');
 
 $("#button-vote-positive").click();
 $("#button-dj-waitlist-join").click();
 
+$("#plugbot-userlist").empty();
+populateUserlist();
 displayUI();
-displayCounters();
 initUIListeners();
 initAPIListeners();
