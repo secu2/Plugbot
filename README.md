@@ -20,8 +20,8 @@ A collection of tools and extended features for Plug.dj, a free live DJing servi
 
 ### Authors ###
 
-Conner Davis &lt;connergdavis@gmail.com&gt;
-Harrison Schneidman &lt;hschneidman@gmail.com&gt;
++ <strong>Conner Davis &lt;connergdavis@gmail.com&gt;</strong>
++ <strong>Harrison Schneidman &lt;hschneidman@gmail.com&gt;</strong>
 
 
 ### Copyright Notice ###
