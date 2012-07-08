@@ -32,7 +32,7 @@
  * NOTE:  This is all procedural as hell because prototypes and any 
  * 			OOP techniques in Javascript are stupid and confusing.
  * 
- * @author Conner Davis ([VIP] ♫Łŏġïç®)
+ * @author Conner Davis ([VIP] ♫Łŏġïç®) & Harrison Schneidman ([VIDJ] EXƎ)
  * @version 0.2.0a
  */
 
@@ -41,23 +41,20 @@ var autowoot = true;
 var autoqueue = true;
 var hideVideo = false;
 var userList = true;
-
-// All users on the room
-var savedUsers = new Array();
+var points = 0;
+var highScore = 0;
 
 // API listeners
 function initAPIListeners() 
 {
 	API.addEventListener(API.DJ_ADVANCE, djAdvanced);
 	API.addEventListener(API.VOTE_UPDATE, function(obj) {
-		updateList(obj.user.username, obj.vote);
+		populateUserlist();
 	});
 	API.addEventListener(API.USER_JOIN, function(user) {
-		updateList(user.username, 0);
+		populateUserlist();
 	});
 	API.addEventListener(API.USER_LEAVE, function(user) {
-		savedUsers.length = 0;
-		$("#plugbot-userlist").empty();
 		populateUserlist();
 	})
 }
@@ -67,7 +64,7 @@ function displayUI()
 {
 	$('#plugbot-ui').remove();
 	$('#playback').css('z-index', '8'); // hack to make the buttons usable
-	
+
 	$('#playback').append('<div id="plugbot-ui"></div>');
 		$("#plugbot-ui").animate({"height": "64px"}, {duration: "slow" });
 		$('#plugbot-ui').append(
@@ -76,22 +73,29 @@ function displayUI()
 			'<img src="http://i.imgur.com/jbJDe.png" id="plugbot-btn-hidevideo" alt="hide the video!" />' +
 			'<img src="http://i.imgur.com/IGcMP.png" id="plugbot-btn-userlist" alt="user list with woots and mehs as green and red!" />'
 		);
-		
+
 	$('body').append('<div id="plugbot-userlist"></div>');
 }
 
 // Some on-click listeners for the UI buttons
 function initUIListeners()
-{
+{	
+	$("#plugbot-btn-userlist").on("click", function() {
+		userList = !userList;
+		$(this).attr("src", userList ? 'http://i.imgur.com/IGcMP.png' : 'http://i.imgur.com/pAFJS.png');
+		$("#plugbot-userlist").css("visibility", userList ? ("visible") : ("hidden"));
+
+		console.log('Userlist is now ' + (userList ? 'enabled' : 'disabled'));
+	});
 	$("#plugbot-btn-woot").on("click", function() {
 		autowoot = !autowoot;
 		$(this).attr("src", autowoot ? 'http://i.imgur.com/fWb8n.png' : 'http://i.imgur.com/uyUtA.png');
 		if (autowoot)
 			$("#button-vote-positive").click();
-		
+
 		console.log('Auto-woot is now ' + (autowoot ? 'enabled' : 'disabled'));
 	});
-	
+
 	$("#plugbot-btn-hidevideo").on("click", function() {
 		hideVideo = !hideVideo;
 		$(this).attr("src", hideVideo ? 'http://i.imgur.com/lwpfH.png' : 'http://i.imgur.com/jbJDe.png');
@@ -100,7 +104,7 @@ function initUIListeners()
 		else 
 			$("#yt-frame").animate({"height": "271px"}, {duration: "fast"});
 	});
-	
+
 	$("#plugbot-btn-queue").on("click", function() {
 		autoqueue = !autoqueue;
 		$(this).attr("src", autoqueue ? 'http://i.imgur.com/IxK27.png' : 'http://i.imgur.com/W5ncS.png');
@@ -108,60 +112,65 @@ function initUIListeners()
 			$("#button-dj-waitlist-join").click();
 		else 
 			$("#button-dj-waitlist-leave").click();
-		
+
 		console.log('Auto-queue is now ' + (autoqueue ? 'enabled' : 'disabled'));
 	});
-	
-	$("#plugbot-btn-userlist").on("click", function() {
-		userList = !userList;
-		$(this).attr("src", userList ? 'http://i.imgur.com/IGcMP.png' : 'http://i.imgur.com/pAFJS.png');
-		$("#plugbot-userlist").css("visibility", userList ? ("visible") : ("hidden"));
-		
-		console.log('Userlist is now ' + (userList ? 'enabled' : 'disabled'));
-	});
-}
 
+}
+function newSong()
+{
+	points = 0;
+	highScore = 0;
+	populateUserlist();
+}
 function djAdvanced(obj) 
 {
 	if (autowoot) 
 		$("#button-vote-positive").click();
-	
+
 	if ($("#button-dj-waitlist-join").css("display") === "block" && autoqueue)
 		$("#button-dj-waitlist-join").click();
-	
+
 	$("#yt-frame").css("height", "271px");
 	$("#plugbot-btn-hidevideo").attr("src", ROOT_DIR + 'hidevideo.png');
 	
-	savedUsers.length = 0;
-	$("#plugbot-userlist").empty();
-	populateUserlist();
+	newSong();
 }
 
 function populateUserlist() 
 {
+	points = 0;
+	var userNames = new Array()
 	for (var i = 0; i < API.getUsers().length; i++) 
 	{
-		var user = API.getUsers()[i];
-		console.log(user.vote);
-		updateList(user.username, user.vote);
+		userNames[i] = API.getUsers()[i];
 	}
+	//userNames.sort();
+	$('#plugbot-userlist').empty();
+	for (var i = 0; i < userNames.length; i++)
+	{
+		var user = userNames[i];
+		refreshList(user.username, user.vote)
+	}
+	if(points > highScore)
+	{
+		highScore = points;
+	}
+	//$('#plugbot-userlist').append('<p>High Score: ' + highScore + '</p>');
+	$('body').append('<div id="plugbot-userlist"></div>');
 }
 
-function updateList(username, vote) 
+function refreshList(username, vote) 
 {
 	console.log(vote);
-	if (jQuery.inArray(username, savedUsers) != -1) 
-	{
-		// Remove them 1st
-		$("#plugbot-userlist p").remove(":contains('" + username +"')");
-		savedUsers.splice(savedUsers.indexOf(username), 1);	
-	}
-	
+
+
 	var colour;
 	switch (vote) 
 	{
 		case 1:
 			colour = "3FFF00";
+			points++;
 			break;
 		case 0:
 			colour = "FFFFFF";
@@ -170,8 +179,6 @@ function updateList(username, vote)
 			colour = "ED1C24";
 			break;
 	}
-	
-	savedUsers.push(username);
 	$('#plugbot-userlist').append('<p style="color:#' + colour + ';">' + username + '</p>');
 }
 
@@ -187,7 +194,7 @@ $("#button-vote-positive").click();
 $("#button-dj-waitlist-join").click();
 
 $("#plugbot-userlist").empty();
+initAPIListeners();
 populateUserlist();
 displayUI();
 initUIListeners();
-initAPIListeners();
