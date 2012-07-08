@@ -18,6 +18,12 @@ A collection of tools and extended features for Plug.dj, a free live DJing servi
 <a href="http://pastebin.com/x8Xak4zU">Go to this site and copy the code you see into a new bookmark.  Just Copy and Paste the code into the URL/Location of your bookmark.</a>
 
 
+### Authors ###
+
+Conner Davis &lt;connergdavis@gmail.com&gt;
+Harrison Schneidman &lt;hschneidman@gmail.com&gt;
+
+
 ### Copyright Notice ###
 
 Plug.bot is licensed under the GNU General Public License, or GPL.  Essentially, all I require of you if you want to redistribute Plug.bot's source code, is that you retain the three first comments in the files composing Plug.bot:  firstly, the GNU GPL statement.  Secondly, the statement I make myself about usage.  And thirdly, the author and purposes comment that show who originally made the content -- me.  So long as you abide by that rule and provide a link back to this repository, you are free to redistribute it as you want!  Thanks for playing fair ^.^
