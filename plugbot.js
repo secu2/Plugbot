@@ -133,13 +133,11 @@ function djAdvanced(obj)
 
 	$("#yt-frame").css("height", "271px");
 	$("#plugbot-btn-hidevideo").attr("src", ROOT_DIR + 'hidevideo.png');
-	hideVideo = !hideVideo;
-	$("#plugbot-btn-queue").attr("src", hideVideo ? 'http://i.imgur.com/lwpfH.png' : 'http://i.imgur.com/jbJDe.png');
 	if (hideVideo) 
-		$("#yt-frame").animate({"height": "0px"}, {duration: "fast"});
-	else 
-		$("#yt-frame").animate({"height": "271px"}, {duration: "fast"});
-	
+		{
+		hideVideo = !hideVideo;
+		$("#plugbot-btn-queue").attr("src", hideVideo ? 'http://i.imgur.com/lwpfH.png' : 'http://i.imgur.com/jbJDe.png');
+	}
 	newSong();
 }
 
