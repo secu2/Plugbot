@@ -41,6 +41,8 @@ var autowoot = true;
 var autoqueue = true;
 var hideVideo = false;
 var userList = true;
+
+// DJ Battles
 var points = 0;
 var highScore = 0;
 
@@ -53,6 +55,8 @@ function initAPIListeners()
 	});
 	API.addEventListener(API.USER_JOIN, function(user) {
 		populateUserlist();
+		if (isBoris())
+			API.sendChat("Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
 	});
 	API.addEventListener(API.USER_LEAVE, function(user) {
 		populateUserlist();
@@ -84,7 +88,6 @@ function initUIListeners()
 		userList = !userList;
 		$(this).attr("src", userList ? 'http://i.imgur.com/IGcMP.png' : 'http://i.imgur.com/pAFJS.png');
 		$("#plugbot-userlist").css("visibility", userList ? ("visible") : ("hidden"));
-
 		console.log('Userlist is now ' + (userList ? 'enabled' : 'disabled'));
 	});
 	$("#plugbot-btn-woot").on("click", function() {
@@ -92,37 +95,25 @@ function initUIListeners()
 		$(this).attr("src", autowoot ? 'http://i.imgur.com/fWb8n.png' : 'http://i.imgur.com/uyUtA.png');
 		if (autowoot)
 			$("#button-vote-positive").click();
-
 		console.log('Auto-woot is now ' + (autowoot ? 'enabled' : 'disabled'));
 	});
 
 	$("#plugbot-btn-hidevideo").on("click", function() {
 		hideVideo = !hideVideo;
 		$(this).attr("src", hideVideo ? 'http://i.imgur.com/lwpfH.png' : 'http://i.imgur.com/jbJDe.png');
-		if (hideVideo) 
-			$("#yt-frame").animate({"height": "0px"}, {duration: "fast"});
-		else 
-			$("#yt-frame").animate({"height": "271px"}, {duration: "fast"});
+		$("#yt-frame").animate({"height": (hideVideo ? "0px" : "271px")}, {duration: "fast"});
 	});
 
 	$("#plugbot-btn-queue").on("click", function() {
 		autoqueue = !autoqueue;
 		$(this).attr("src", autoqueue ? 'http://i.imgur.com/IxK27.png' : 'http://i.imgur.com/W5ncS.png');
-		if (autoqueue)
-			$("#button-dj-waitlist-join").click();
-		else 
-			$("#button-dj-waitlist-leave").click();
-
+		$("#button-dj-waitlist-" (autoqueue ? "join" : "leave")).click();
 		console.log('Auto-queue is now ' + (autoqueue ? 'enabled' : 'disabled'));
 	});
 
 }
-function newSong()
-{
-	points = 0;
-	highScore = 0;
-	populateUserlist();
-}
+
+
 function djAdvanced(obj) 
 {
 	if (autowoot) 
@@ -132,13 +123,12 @@ function djAdvanced(obj)
 		$("#button-dj-waitlist-join").click();
 
 	$("#yt-frame").css("height", "271px");
-	$("#plugbot-btn-hidevideo").attr("src", ROOT_DIR + 'hidevideo.png');
-	if (hideVideo) 
-		{
-		hideVideo = !hideVideo;
-		$("#plugbot-btn-queue").attr("src", hideVideo ? 'http://i.imgur.com/lwpfH.png' : 'http://i.imgur.com/jbJDe.png');
-	}
-	newSong();
+	$('#plugbot-btn-hidevideo').attr('src', 'http://i.imgur.com/jbJDe.png');
+	hideVideo = false;
+	
+	points = 0;
+	highScore = 0;
+	populateUserlist();
 }
 
 function populateUserlist() 
@@ -166,9 +156,6 @@ function populateUserlist()
 
 function refreshList(username, vote) 
 {
-	console.log(vote);
-
-
 	var colour;
 	switch (vote) 
 	{
@@ -202,3 +189,10 @@ initAPIListeners();
 populateUserlist();
 displayUI();
 initUIListeners();
+
+if (isBoris())
+{
+	window.setInterval(function() {
+		API.sendChat("Please remember to view our rules at http://tinyurl.com/892sf9j");
+	}, (1000 * 60 * 30));
+}
