@@ -193,6 +193,6 @@ initUIListeners();
 if (isBoris())
 {
 	window.setInterval(function() {
-		API.sendChat("Please remember to view our rules at http://tinyurl.com/892sf9j");
+		API.sendChat("Please remember to view our rules at http://goo.gl/YoFDH");
 	}, (1000 * 60 * 30));
 }
