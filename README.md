@@ -43,13 +43,24 @@ Try to keep the subject relevant, or else I won't see it and think it's related 
 
 ### Version History ###
 
-0.1a:
-	1. Not organised at all.  It functioned, but made no sense.  Concluded on 24-6-2012
+<strong>0.1a (Released 6/6/2012)</strong>:
+<ol>
+<li>Autowoot introduced</li>
+<li>Basic HTML UI</li>
+<li>Auto-queue WIP</li>
+</ol>
 
-0.2.0a (RELEASED 24-6-2012):
-	1. This is going to, hopefully, introduce similar functionality while providing structural strides.  Will be as OO as possible.
-	
-0.3.0a (RELEASED 6-7-2012):
-	1. Added userlist
-	2. Revamped UI
-	3. 
+
+<strong>0.2a (Released 29/6/2012)</strong>:
+<ol>
+<li>Sebastian welcomes users as they join the room</li>
+<li>Introduced Woot/Meh Ratios List</li>
+</ol>
+
+
+<strong>0.3a (Released 6/7/2012)</strong>:
+<ol>
+<li>Woot/Meh Ratios nerfed, replaced with Userlist that properly updates and doesn't have ANY problems</li>
+<li>Clean UI with pictures instead of HTML text</li>
+<li>Boris replaces Sebastian for welcome messages</li>
+</ol>
