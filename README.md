@@ -16,7 +16,7 @@ A collection of tools and extended features for Plug.dj, a free live DJing servi
 ### Installation ###
 
 <a href="http://pastebin.com/x8Xak4zU">Go to this site and copy the code you see into a new bookmark.  Just Copy and Paste the code into the URL/Location of your bookmark.</a>
-or you can <b><a href="javascript:(function(){var jsCode = document.createElement('script'); jsCode.setAttribute('id', 'plugbot-js'); jsCode.setAttribute('src', \'https://raw.github.com/connergdavis/Plugbot/master/plugbot.js\'); document.body.appendChild(jsCode);}());">drag this link into your bookmarks bar.</a></b>
+
 
 
 ### Authors ###
