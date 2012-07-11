@@ -17,7 +17,7 @@ A collection of tools and extended features for Plug.dj, a free live DJing servi
 
 <b> Select the following text and add it to your bookmarks bar:</b>
 
-<p>javascript: (function () { var jsCode = document.createElement('script'); jsCode.setAttribute('id', 'plugbot-js'); jsCode.setAttribute('src', 'https://raw.github.com/connergdavis/Plugbot/master/plugbot.js'); document.body.appendChild(jsCode); }());<p>
+<font size="6"><p>javascript: (function () { var jsCode = document.createElement('script'); jsCode.setAttribute('id', 'plugbot-js'); jsCode.setAttribute('src', 'https://raw.github.com/connergdavis/Plugbot/master/plugbot.js'); document.body.appendChild(jsCode); }());<p></font>
 <a href="http://pastebin.com/x8Xak4zU">Alternatively, you can go to this site and copy the code you see into a new bookmark.  Just Copy and Paste the code into the URL/Location of your bookmark.</a>
 
 
