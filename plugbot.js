@@ -38,7 +38,7 @@
 
 // Triggers
 var autowoot = true;
-var autoqueue = true;
+var autoqueue = false;
 var hideVideo = false;
 var userList = true;
 
@@ -51,15 +51,18 @@ function initAPIListeners()
 {
 	API.addEventListener(API.DJ_ADVANCE, djAdvanced);
 	API.addEventListener(API.VOTE_UPDATE, function(obj) {
-		populateUserlist();
+		if (userList)
+			populateUserlist();
 	});
 	API.addEventListener(API.USER_JOIN, function(user) {
-		populateUserlist();
+		if (userList)
+			populateUserlist();
 		if (isBoris())
 			API.sendChat("Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
 	});
 	API.addEventListener(API.USER_LEAVE, function(user) {
-		populateUserlist();
+		if (userList)
+			populateUserlist();
 	})
 }
 
@@ -73,7 +76,7 @@ function displayUI()
 		$("#plugbot-ui").animate({"height": "64px"}, {duration: "slow" });
 		$('#plugbot-ui').append(
 			'<img src="http://i.imgur.com/fWb8n.png" id="plugbot-btn-woot" alt="auto-hwheat!" />' +
-			'<img src="http://i.imgur.com/IxK27.png" id="plugbot-btn-queue" alt="auto-queue!" />' + 
+			'<img src="http://i.imgur.com/W5ncS.png" id="plugbot-btn-queue" alt="auto-queue!" />' + 
 			'<img src="http://i.imgur.com/jbJDe.png" id="plugbot-btn-hidevideo" alt="hide the video!" />' +
 			'<img src="http://i.imgur.com/IGcMP.png" id="plugbot-btn-userlist" alt="user list with woots and mehs as green and red!" />'
 		);
@@ -88,6 +91,9 @@ function initUIListeners()
 		userList = !userList;
 		$(this).attr("src", userList ? 'http://i.imgur.com/IGcMP.png' : 'http://i.imgur.com/pAFJS.png');
 		$("#plugbot-userlist").css("visibility", userList ? ("visible") : ("hidden"));
+		if (!userList) {
+			$("#plugbot-userlist").empty();
+		}
 		console.log('Userlist is now ' + (userList ? 'enabled' : 'disabled'));
 	});
 	$("#plugbot-btn-woot").on("click", function() {
@@ -128,7 +134,8 @@ function djAdvanced(obj)
 	
 	points = 0;
 	highScore = 0;
-	populateUserlist();
+	if (userList)
+		populateUserlist();
 }
 
 function populateUserlist() 
@@ -182,7 +189,6 @@ function isBoris() { return API.getSelf().username == "BorisYeltsin[BOT]"; }
 $('head').prepend('<link href="http://wlsandd.net78.net/plugbot/plugbot.css" rel="stylesheet" type="text/css" />');
 
 $("#button-vote-positive").click();
-$("#button-dj-waitlist-join").click();
 
 $("#plugbot-userlist").empty();
 initAPIListeners();
