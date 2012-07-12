@@ -113,10 +113,9 @@ function initUIListeners()
 	$("#plugbot-btn-queue").on("click", function() {
 		autoqueue = !autoqueue;
 		$(this).attr("src", autoqueue ? 'http://i.imgur.com/IxK27.png' : 'http://i.imgur.com/W5ncS.png');
-		$("#button-dj-waitlist-" (autoqueue ? "join" : "leave")).click();
+		$("#button-dj-waitlist-" + (autoqueue ? "join" : "leave")).click();
 		console.log('Auto-queue is now ' + (autoqueue ? 'enabled' : 'disabled'));
 	});
-
 }
 
 
