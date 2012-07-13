@@ -133,6 +133,7 @@ function djAdvanced(obj)
 	
 	points = 0;
 	highScore = 0;
+	
 	if (userList)
 		populateUserlist();
 }
@@ -140,22 +141,24 @@ function djAdvanced(obj)
 function populateUserlist() 
 {
 	points = 0;
-	var userNames = new Array()
+	var userNames = new Array();
+	
 	for (var i = 0; i < API.getUsers().length; i++) 
 	{
 		userNames[i] = API.getUsers()[i];
 	}
-	//userNames.sort();
+	
 	$('#plugbot-userlist').empty();
+	
 	for (var i = 0; i < userNames.length; i++)
 	{
 		var user = userNames[i];
 		refreshList(user.username, user.vote)
 	}
-	if(points > highScore)
-	{
+	
+	if (points > highScore)
 		highScore = points;
-	}
+	
 	//$('#plugbot-userlist').append('<p>High Score: ' + highScore + '</p>');
 	$('body').append('<div id="plugbot-userlist"></div>');
 }
@@ -163,20 +166,50 @@ function populateUserlist()
 function refreshList(username, vote) 
 {
 	var colour;
+	var currentDj = false;
+	var moderator = false;
+	var img;
+	
+	for (var i = 0; i < API.getModerators().length; i++) {
+		if (API.getModerators()[i].username == username) {
+			moderator = true;
+		}
+	}
+	
 	switch (vote) 
 	{
 		case 1:
 			colour = "3FFF00";
 			points++;
+			if (moderator)
+				img = "http://i.imgur.com/T5G4f.png";
 			break;
 		case 0:
 			colour = "FFFFFF";
+			if (moderator)
+				img = "http://i.imgur.com/sRsU0.png";
 			break;
 		case -1:
 			colour = "ED1C24";
+			if (moderator)
+				img = "http://i.imgur.com/JPA1Q.png";
 			break;
 	}
-	$('#plugbot-userlist').append('<p style="color:#' + colour + ';">' + username + '</p>');
+	
+	
+	
+	if (API.getDJs()[0].username == username) {
+		currentDj = true;
+		colour = "42A5DC";
+	}
+		
+	$('#plugbot-userlist').append(
+		(moderator ? '<img src="' + img + '" align="left" style="margin-left:4px" alt="Moderator" />' : '') 
+		+ '<p style="' + (moderator ? 'text-indent:4px !important;font-weight:bold;' : '') 
+		+ 'color:#' + colour + ';' + (currentDj ? 'font-weight:bold;font-size:18px' : '') + '"' 
+		+ (currentDj ? ('title="' + username + ' is the current DJ!"') : '') + '>' 
+		+ username + '</p>'
+	);
 }
 
 function isSebastian() { return API.getSelf().username == "Sebastian[BOT]"; }
