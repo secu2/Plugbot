@@ -196,11 +196,11 @@ function refreshList(username, vote)
 			break;
 	}
 	
-	
-	
 	if (API.getDJs()[0].username == username) {
 		currentDj = true;
 		colour = "42A5DC";
+		if (moderator)
+			img = "http://i.imgur.com/CsK3d.png";
 	}
 		
 	$('#plugbot-userlist').append(

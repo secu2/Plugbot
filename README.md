@@ -64,3 +64,11 @@ Try to keep the subject relevant, or else I won't see it and think it's related 
 <li>Clean UI with pictures instead of HTML text</li>
 <li>Boris replaces Sebastian for welcome messages</li>
 </ol>
+
+
+<strong>0.33a (Released 12/7/2012)</strong>:
+<ol>
+<li>Userlist now recognises moderators and changes some styles for them.  First off, they are enbolden.  They also have the star next to their name, coloured to their vote.</li>
+<li>Patched a problem with moderators being the current DJ and the star being white.</li>
+<li>Patched the userlist still populating even when disabled.  Thanks for the heads-up.</li>
+</ol>
