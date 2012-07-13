@@ -186,7 +186,7 @@ function refreshList(username, vote)
 			break;
 		case 0:
 			colour = "FFFFFF";
-			if (moderator)
+			if (moderator) 
 				img = "http://i.imgur.com/sRsU0.png";
 			break;
 		case -1:
@@ -202,6 +202,9 @@ function refreshList(username, vote)
 		if (moderator)
 			img = "http://i.imgur.com/CsK3d.png";
 	}
+	
+	if (img == undefined && moderator)
+		img = "http://i.imgur.com/sRsU0.png";
 		
 	$('#plugbot-userlist').append(
 		(moderator ? '<img src="' + img + '" align="left" style="margin-left:4px" alt="Moderator" />' : '') 
