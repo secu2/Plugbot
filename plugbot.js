@@ -42,6 +42,9 @@ var autoqueue = false;
 var hideVideo = false;
 var userList = true;
 
+// Testing shit
+var stream = false;
+
 // DJ Battles
 var points = 0;
 var highScore = 0;
@@ -136,6 +139,9 @@ function djAdvanced(obj)
 	
 	if (userList)
 		populateUserlist();
+		
+	if (stream)
+		$("#yt-frame").remove();
 }
 
 function populateUserlist() 
@@ -209,7 +215,7 @@ function refreshList(username, vote)
 	$('#plugbot-userlist').append(
 		(moderator ? '<img src="' + img + '" align="left" style="margin-left:4px" alt="Moderator" />' : '') 
 		+ '<p style="' + (moderator ? 'text-indent:4px !important;font-weight:bold;' : '') 
-		+ 'color:#' + colour + ';' + (currentDj ? 'font-weight:bold;font-size:18px' : '') + '"' 
+		+ 'color:#' + colour + ';' + (currentDj ? 'font-weight:bold;font-size:15px' : '') + '"' 
 		+ (currentDj ? ('title="' + username + ' is the current DJ!"') : '') + '>' 
 		+ username + '</p>'
 	);
@@ -237,3 +243,23 @@ if (isBoris())
 		API.sendChat("Please remember to view our rules at http://goo.gl/YoFDH");
 	}, (1000 * 60 * 30));
 }
+
+// TESTING ONLY 
+API.addEventListener(API.CHAT, function(data) {
+	if (data.message == "/stream") {
+		stream = !stream;
+		
+		if (stream) {
+			$("#yt-frame").remove();
+			$("#scplayer").remove();
+			
+			
+			console.log('Stream enabled');
+		} else {
+			$("#stream-frame").empty();
+			$("#button-refresh").click();
+			
+			console.log('Stream disabled');
+		}
+	}
+});
