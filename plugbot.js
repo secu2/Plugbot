@@ -240,7 +240,7 @@ initUIListeners();
 if (isBoris())
 {
 	window.setInterval(function() {
-		API.sendChat("Please remember to view our rules at http://goo.gl/YoFDH");
+		API.sendChat("Please remember to view our rules at http://goo.gl/cM7j0");
 	}, (1000 * 60 * 30));
 }
 
