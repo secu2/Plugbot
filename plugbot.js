@@ -31,7 +31,6 @@
  * 			OOP techniques in Javascript are stupid and confusing.
  * 
  * @author Conner Davis ([VIP] ♫Łŏġïç®) & Harrison Schneidman ([VIDJ] EXƎ)
- * @version 0.2.0a
  */
 
 // Triggers
