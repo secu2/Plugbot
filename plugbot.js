@@ -24,8 +24,6 @@
  *
  * 2. Retain these three comments:  the GNU GPL license statement, this comment,
  * 		and that below it, that details the author and purpose.
- *
- * Thanks for playing fair!  You'll fare better than WOLVES, that's for sure.
  */
  
 /**
