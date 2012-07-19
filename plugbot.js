@@ -30,7 +30,8 @@
  * NOTE:  This is all procedural as hell because prototypes and any 
  * 			OOP techniques in Javascript are stupid and confusing.
  * 
- * @author Conner Davis ([VIP] ♫Łŏġïç®) & Harrison Schneidman ([VIDJ] EXƎ)
+ * @author 	Conner Davis ([VIP] ♫Łŏġïç®) 
+ * 			Harrison Schneidman ([VIDJ] EXƎ)
  */
 
 // Triggers
@@ -38,9 +39,6 @@ var autowoot = true;
 var autoqueue = false;
 var hideVideo = false;
 var userList = true;
-
-// Testing shit
-var stream = false;
 
 // DJ Battles
 var points = 0;
@@ -58,7 +56,7 @@ function initAPIListeners()
 		if (userList)
 			populateUserlist();
 		if (isBoris())
-			API.sendChat("Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
+			API.sendChat("\/me Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
 	});
 	API.addEventListener(API.USER_LEAVE, function(user) {
 		if (userList)
@@ -80,8 +78,6 @@ function displayUI()
 			'<img src="http://i.imgur.com/jbJDe.png" id="plugbot-btn-hidevideo" alt="hide the video!" />' +
 			'<img src="http://i.imgur.com/IGcMP.png" id="plugbot-btn-userlist" alt="user list with woots and mehs as green and red!" />'
 		);
-
-	$('body').append('<div id="plugbot-userlist"></div>');
 }
 
 // Some on-click listeners for the UI buttons
@@ -143,6 +139,16 @@ function djAdvanced(obj)
 
 function populateUserlist() 
 {
+	$("#plugbot-userlist").remove();
+	$('body').append('<div id="plugbot-userlist"></div>');
+	$('#plugbot-userlist');
+
+	if ($('#button-dj-waitlist-leave').css('display') === 'block' && ($.inArray(API.getDJs(), API.getSelf()) == -1)) {
+		var spot = $('#button-dj-waitlist-view').attr('title').split('(')[1];
+			spot = spot.substring(0, spot.indexOf(')'));
+		$('#plugbot-userlist').append('<h1 id="plugbot-queuespot"><span style="font-variant:small-caps">Waitlist:</span> ' + spot + '</h3><br />');
+	}
+	
 	points = 0;
 	var userNames = new Array();
 	
@@ -150,8 +156,6 @@ function populateUserlist()
 	{
 		userNames[i] = API.getUsers()[i];
 	}
-	
-	$('#plugbot-userlist').empty();
 	
 	for (var i = 0; i < userNames.length; i++)
 	{
@@ -163,7 +167,6 @@ function populateUserlist()
 		highScore = points;
 	
 	//$('#plugbot-userlist').append('<p>High Score: ' + highScore + '</p>');
-	$('body').append('<div id="plugbot-userlist"></div>');
 }
 
 function refreshList(username, vote) 
@@ -210,7 +213,7 @@ function refreshList(username, vote)
 		img = "http://i.imgur.com/sRsU0.png";
 		
 	$('#plugbot-userlist').append(
-		(moderator ? '<img src="' + img + '" align="left" style="margin-left:4px" alt="Moderator" />' : '') 
+		(moderator ? '<img src="' + img + '" align="left" alt="Moderator" />' : '') 
 		+ '<p style="' + (moderator ? 'text-indent:4px !important;font-weight:bold;' : '') 
 		+ 'color:#' + colour + ';' + (currentDj ? 'font-weight:bold;font-size:15px' : '') + '"' 
 		+ (currentDj ? ('title="' + username + ' is the current DJ!"') : '') + '>' 
@@ -224,11 +227,15 @@ function isBoris() { return API.getSelf().username == "BorisYeltsin[BOT]"; }
 
 // On init
 
-$('head').prepend('<link href="http://wlsandd.net78.net/plugbot/plugbot.css" rel="stylesheet" type="text/css" />');
+$('#plugbot-css').remove();
+$('#plugbot-js').remove();
+
+$('head').prepend(
+	'<link href="http://' + (API.getSelf().username == '[VIP] ♫Łŏġïç®' ? 'localhost' : 'http://wlsandd.net78.net') + '/plugbot/plugbot.css" rel="stylesheet" type="text/css" id="plugbot-css" />'
+);
 
 $("#button-vote-positive").click();
 
-$("#plugbot-userlist").empty();
 initAPIListeners();
 populateUserlist();
 displayUI();
@@ -237,26 +244,6 @@ initUIListeners();
 if (isBoris())
 {
 	window.setInterval(function() {
-		API.sendChat("Please remember to view our rules at http://goo.gl/cM7j0");
-	}, (1000 * 60 * 30));
+		API.sendChat("\/me Please remember to view our rules at http://goo.gl/cM7j0");
+	}, (1000 * 60 * 60));
 }
-
-// TESTING ONLY 
-API.addEventListener(API.CHAT, function(data) {
-	if (data.message == "/stream") {
-		stream = !stream;
-		
-		if (stream) {
-			$("#yt-frame").remove();
-			$("#scplayer").remove();
-			
-			
-			console.log('Stream enabled');
-		} else {
-			$("#stream-frame").empty();
-			$("#button-refresh").click();
-			
-			console.log('Stream disabled');
-		}
-	}
-});
