@@ -213,8 +213,8 @@ function refreshList(username, vote)
 		img = "http://i.imgur.com/sRsU0.png";
 		
 	$('#plugbot-userlist').append(
-		(moderator ? '<img src="' + img + '" align="left" alt="Moderator" />' : '') 
-		+ '<p style="' + (moderator ? 'text-indent:4px !important;font-weight:bold;' : '') 
+		(moderator ? '<img src="' + img + '" align="left" style="margin-left:6px;" alt="Moderator" />' : '') 
+		+ '<p style="' + (moderator ? 'text-indent:6px !important;font-weight:bold;' : '') 
 		+ 'color:#' + colour + ';' + (currentDj ? 'font-weight:bold;font-size:15px' : '') + '"' 
 		+ (currentDj ? ('title="' + username + ' is the current DJ!"') : '') + '>' 
 		+ username + '</p>'
@@ -233,8 +233,8 @@ $('#plugbot-js').remove();
 $('body').prepend('<style type="text/css" id="plugbot-css">' 
 	+ '#plugbot-ui { position: absolute; top: 276px; left: 2.5%; }'
 	+ '#plugbot-ui img { display: inline; cursor: pointer; margin-left: -2px; }'
-    + '#plugbot-userlist { border: 4px solid #0A0A0A; background-color: #000000; padding: 8px 0px 20px 20px; margin-left: 16px; width: 12.5%; }'
-    + '#plugbot-userlist p { margin: 0; padding-top: 2px; text-indent: 18px; }'
+    + '#plugbot-userlist { border: 6px solid rgba(10, 10, 10, 0.8); border-left: 0 !important; background-color: #000000; padding: 8px 0px 20px 0px; width: 12.5%; }'
+    + '#plugbot-userlist p { margin: 0; padding-top: 2px; text-indent: 24px; }'
     + '#plugbot-userlist p:first-child { padding-top: 0px !important; }'
     + '#plugbot-queuespot { color: #42A5DC; }');
 
