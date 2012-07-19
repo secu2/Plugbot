@@ -230,9 +230,13 @@ function isBoris() { return API.getSelf().username == "BorisYeltsin[BOT]"; }
 $('#plugbot-css').remove();
 $('#plugbot-js').remove();
 
-$('head').prepend(
-	'<link href="http://' + (API.getSelf().username == '[VIP] ♫Łŏġïç®' ? 'localhost' : 'http://wlsandd.net78.net') + '/plugbot/plugbot.css" rel="stylesheet" type="text/css" id="plugbot-css" />'
-);
+$('body').prepend('<style type="text/css" id="plugbot-css">' 
+	+ '#plugbot-ui { position: absolute; top: 276px; left: 2.5%; }'
+	+ '#plugbot-ui img { display: inline; cursor: pointer; margin-left: -2px; }'
+    + '#plugbot-userlist { border: 4px solid #0A0A0A; background-color: #000000; padding: 8px 0px 20px 20px; margin-left: 16px; width: 12.5%; }'
+    + '#plugbot-userlist p { margin: 0; padding-top: 2px; text-indent: 18px; }'
+    + '#plugbot-userlist p:first-child { padding-top: 0px !important; }'
+    + '#plugbot-queuespot { color: #42A5DC; }');
 
 $("#button-vote-positive").click();
 
