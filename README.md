@@ -72,3 +72,12 @@ Try to keep the subject relevant, or else I won't see it and think it's related 
 <li>Patched a problem with moderators being the current DJ and the star being white.</li>
 <li>Patched the userlist still populating even when disabled.  Thanks for the heads-up.</li>
 </ol>
+
+
+<strong>0.4a (Released 19/7/2012)</strong>:
+<ol>
+<li>Userlist has been re-styled!  It now looks much sleeker</li>
+<li>Above the userlist is your current spot in the DJ waitlist, if you are in it.  This should make it easier to check instead of having to click the button and look for yourself</li>
+<li>Removed external CSS dependency, fixes a lot of consistency problems</li>
+<li>Boris now welcomes users while using the /me command to make it more obvious.</li>
+</ol>
