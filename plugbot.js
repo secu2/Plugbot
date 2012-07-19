@@ -236,7 +236,7 @@ $('body').prepend('<style type="text/css" id="plugbot-css">'
     + '#plugbot-userlist { border: 6px solid rgba(10, 10, 10, 0.8); border-left: 0 !important; background-color: #000000; padding: 8px 0px 20px 0px; width: 12.5%; }'
     + '#plugbot-userlist p { margin: 0; padding-top: 2px; text-indent: 24px; }'
     + '#plugbot-userlist p:first-child { padding-top: 0px !important; }'
-    + '#plugbot-queuespot { color: #42A5DC; text-align: center; }');
+    + '#plugbot-queuespot { color: #42A5DC; text-align: left; font-size: 1.5em; margin-left: 8px }');
 
 $("#button-vote-positive").click();
 
