@@ -34,42 +34,88 @@
  * 			Harrison Schneidman ([VIDJ] EXƎ)
  */
 
-// Triggers
+/**
+ * Whether the user has currently enabled auto-woot. 
+ */
 var autowoot = true;
+/**
+ * Whether the user has currently enabled auto-queueing. 
+ */
 var autoqueue = false;
+/**
+ * Whether or not the user has enabled hiding this video. 
+ */
 var hideVideo = false;
+/**
+ * Whether or not the user has enabled the userlist. 
+ */
 var userList = true;
 
-// DJ Battles
+// TODO:  DJ battle-related.
 var points = 0;
 var highScore = 0;
 
-// API listeners
+/**
+ * Initialise all of the Plug.dj API listeners which we use
+ * to asynchronously intercept specific events and the data
+ * attached with them. 
+ */
 function initAPIListeners() 
 {
+	/**
+	 * This listens in for whenever a new DJ starts playing. 
+	 */
 	API.addEventListener(API.DJ_ADVANCE, djAdvanced);
+	
+	/**
+	 * This listens for whenever a user in the room either WOOT!s
+	 * or Mehs the current song. 
+	 */
 	API.addEventListener(API.VOTE_UPDATE, function(obj) {
 		if (userList)
 			populateUserlist();
 	});
+	
+	/**
+	 * Whenever a user joins, this listener is called. 
+	 */
 	API.addEventListener(API.USER_JOIN, function(user) {
 		if (userList)
 			populateUserlist();
 		if (isBoris())
 			API.sendChat("\/me Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
 	});
+	
+	/**
+	 * Called upon a user exiting the room. 
+	 */
 	API.addEventListener(API.USER_LEAVE, function(user) {
 		if (userList)
 			populateUserlist();
 	})
 }
 
-// Display UI
+/**
+ * Renders all of the Plug.bot "UI" that is visible beneath the video
+ * player. 
+ */
 function displayUI()
 {
+	/*
+	 * Be sure to remove any old instance of the UI, in case the user
+	 * reloads the script without refreshing the page (updating.)
+	 */
 	$('#plugbot-ui').remove();
-	$('#playback').css('z-index', '8'); // hack to make the buttons usable
+	
+	/*
+	 * This is a necessary hack (of sorts) that allows the UI to actually
+	 * be visible and interactive.
+	 */
+	$('#playback').css('z-index', '8'); 
 
+	/*
+	 * Generate the HTML code for the UI.
+	 */
 	$('#playback').append('<div id="plugbot-ui"></div>');
 		$("#plugbot-ui").animate({"height": "64px"}, {duration: "slow" });
 		$('#plugbot-ui').append(
@@ -80,7 +126,12 @@ function displayUI()
 		);
 }
 
-// Some on-click listeners for the UI buttons
+/**
+ * For every button on the Plug.bot UI, we have listeners backing them
+ * that are built to intercept the user's clicking each button.  Based 
+ * on the button that they clicked, we can execute some logic that will
+ * in some way affect their experience. 
+ */
 function initUIListeners()
 {	
 	$("#plugbot-btn-userlist").on("click", function() {
@@ -92,6 +143,7 @@ function initUIListeners()
 		}
 		console.log('Userlist is now ' + (userList ? 'enabled' : 'disabled'));
 	});
+	
 	$("#plugbot-btn-woot").on("click", function() {
 		autowoot = !autowoot;
 		$(this).attr("src", autowoot ? 'http://i.imgur.com/fWb8n.png' : 'http://i.imgur.com/uyUtA.png');
@@ -114,94 +166,165 @@ function initUIListeners()
 	});
 }
 
-
+/**
+ * Called whenever a new DJ begins playing in the room.
+ *  
+ * @param {Object} obj
+ * 				This contains the user (current DJ)'s data.
+ */
 function djAdvanced(obj) 
 {
+	/*
+	 * If auto-woot is enabled, WOOT! the song.
+	 */
 	if (autowoot) 
 		$("#button-vote-positive").click();
 
+	/*
+	 * If auto-queueing has been enabled, and they have just recently
+	 * left the waitlist, join them back.
+	 */
 	if ($("#button-dj-waitlist-join").css("display") === "block" && autoqueue)
 		$("#button-dj-waitlist-join").click();
 
+	/*
+	 * Reset all hide video-related matters.
+	 */
 	$("#yt-frame").css("height", "271px");
 	$('#plugbot-btn-hidevideo').attr('src', 'http://i.imgur.com/jbJDe.png');
 	hideVideo = false;
 	
+	// TODO: DJ battle-related
 	points = 0;
 	highScore = 0;
 	
+	/*
+	 * If the userlist is enabled, re-populate it.
+	 */
 	if (userList)
 		populateUserlist();
-		
-	if (stream)
-		$("#yt-frame").remove();
 }
 
+/**
+ * Generates every user in the room and their current vote as 
+ * colour-coded text.  Also, moderators get the star next to
+ * their name. 
+ */
 function populateUserlist() 
 {
+	/*
+	 * Destroy the old userlist DIV and replace it with a fresh
+	 * empty one to work with.
+	 */
 	$("#plugbot-userlist").remove();
 	$('body').append('<div id="plugbot-userlist"></div>');
-	$('#plugbot-userlist');
 
+	/*
+	 * If the user is in the waitlist, show them their current spot.
+	 */
 	if ($('#button-dj-waitlist-leave').css('display') === 'block' && ($.inArray(API.getDJs(), API.getSelf()) == -1)) {
 		var spot = $('#button-dj-waitlist-view').attr('title').split('(')[1];
 			spot = spot.substring(0, spot.indexOf(')'));
 		$('#plugbot-userlist').append('<h1 id="plugbot-queuespot"><span style="font-variant:small-caps">Waitlist:</span> ' + spot + '</h3><br />');
 	}
 	
+	// TODO:  DJ battle-related
 	points = 0;
-	var userNames = new Array();
 	
-	for (var i = 0; i < API.getUsers().length; i++) 
+	/*
+	 * An array of all of the room's users.
+	 */
+	var users = new Array();
+	
+	/*
+	 * Populate the users array with the next user
+	 * in the room (this is stored alphabetically.)
+	 */
+	for (user in API.getUsers())
 	{
-		userNames[i] = API.getUsers()[i];
+		users.push(API.getUsers()[user]);
 	}
 	
-	for (var i = 0; i < userNames.length; i++)
+	/*
+	 * For every user, call the #appendUser(username, vote) method
+	 * which will display their username with any colour coding that
+	 * they match.
+	 */
+	for (user in users) 
 	{
-		var user = userNames[i];
-		refreshList(user.username, user.vote)
+		var user = users[user];
+		appendUser(user.username, user.vote)
 	}
 	
+	// TODO: DJ battle-related
 	if (points > highScore)
 		highScore = points;
-	
-	//$('#plugbot-userlist').append('<p>High Score: ' + highScore + '</p>');
 }
 
-function refreshList(username, vote) 
+
+/**
+ * Appends another user's username to the userlist.
+ *  
+ * @param {Object} username
+ * 				The username of this user.
+ * @param {Object} vote
+ * 				Their current 'vote', which may be:
+ * 					-1 	: Meh
+ *					0	: 'undecided' (hasn't voted yet)
+ * 					1	: WOOT!
+ */
+function appendUser(username, vote) 
 {
+	/*
+	 * Some variables that we'll either be setting as true/false
+	 * (some conditionals that do major changes to their look in the userlist)
+	 * or setting a value to.
+	 */
 	var colour;
 	var currentDj = false;
 	var moderator = false;
 	var img;
 	
-	for (var i = 0; i < API.getModerators().length; i++) {
-		if (API.getModerators()[i].username == username) {
+	/*
+	 * Loop through the room's moderators to detect a match
+	 * for this user, in which case we'll prepend the mod
+	 * star to their name.
+	 */
+	for (var i = 0; i < API.getModerators().length; i++) 
+	{
+		if (API.getModerators()[i].username == username) 
+		{
 			moderator = true;
 		}
 	}
 	
+	/*
+	 * Based on their vote, apply the colour coding.
+	 */
 	switch (vote) 
 	{
-		case 1:
+		case 1:		// WOOT!
 			colour = "3FFF00";
 			points++;
 			if (moderator)
 				img = "http://i.imgur.com/T5G4f.png";
 			break;
-		case 0:
+		case 0:		// Undecided
 			colour = "FFFFFF";
 			if (moderator) 
 				img = "http://i.imgur.com/sRsU0.png";
 			break;
-		case -1:
+		case -1:	// Meh
 			colour = "ED1C24";
 			if (moderator)
 				img = "http://i.imgur.com/JPA1Q.png";
 			break;
 	}
 	
+	/*
+	 * If they're the current DJ, apply some more special
+	 * changes.
+	 */
 	if (API.getDJs()[0].username == username) {
 		currentDj = true;
 		colour = "42A5DC";
@@ -209,9 +332,16 @@ function refreshList(username, vote)
 			img = "http://i.imgur.com/CsK3d.png";
 	}
 	
+	/*
+	 * Sometimes undecided mod star breaks.  This fixes that.
+	 */
 	if (img == undefined && moderator)
 		img = "http://i.imgur.com/sRsU0.png";
 		
+	/*
+	 * Apply the HTML code to the page that actually displays them
+	 * inside the userlist.
+	 */
 	$('#plugbot-userlist').append(
 		(moderator ? '<img src="' + img + '" align="left" style="margin-left:6px;" alt="Moderator" />' : '') 
 		+ '<p style="' + (moderator ? 'text-indent:6px !important;font-weight:bold;' : '') 
@@ -221,30 +351,56 @@ function refreshList(username, vote)
 	);
 }
 
-function isSebastian() { return API.getSelf().username == "Sebastian[BOT]"; }
-function isBoris() { return API.getSelf().username == "BorisYeltsin[BOT]"; }
+
+/**
+ * If you are Boris, you are awesome.
+ * 
+ * (The greeting bot) 
+ */
+function isBoris() 
+{ 
+	return API.getSelf().username == "BorisYeltsin[BOT]"; 
+}
 
 
-// On init
+///////////////////////////////////////////////////////////
+////////// EVERYTHING FROM HERE ON OUT IS INIT ////////////
+///////////////////////////////////////////////////////////
 
+/*
+ * Clear the old code so we can properly update everything.
+ */
 $('#plugbot-css').remove();
 $('#plugbot-js').remove();
 
+/*
+ * Write the CSS rules that are used for components of the 
+ * Plug.bot UI.
+ */
 $('body').prepend('<style type="text/css" id="plugbot-css">' 
 	+ '#plugbot-ui { position: absolute; top: 276px; left: 2.5%; }'
 	+ '#plugbot-ui img { display: inline; cursor: pointer; margin-left: -2px; }'
-    + '#plugbot-userlist { border: 6px solid rgba(10, 10, 10, 0.8); border-left: 0 !important; background-color: #000000; padding: 8px 0px 20px 0px; width: 12.5%; }'
+    + '#plugbot-userlist { border: 6px solid rgba(10, 10, 10, 0.8); border-left: 0 !important; background-color: #000000; padding: 8px 0px 20px 0px; width: 12%; }'
     + '#plugbot-userlist p { margin: 0; padding-top: 2px; text-indent: 24px; }'
     + '#plugbot-userlist p:first-child { padding-top: 0px !important; }'
     + '#plugbot-queuespot { color: #42A5DC; text-align: left; font-size: 1.5em; margin-left: 8px }');
 
+/*
+ * Hit the woot button, since auto-woot is enabled by default.
+ */
 $("#button-vote-positive").click();
 
+/*
+ * Call all init-related functions to start the software up.
+ */
 initAPIListeners();
 populateUserlist();
 displayUI();
 initUIListeners();
 
+/*
+ * If this is Boris bot, then start the timed rules notice.
+ */
 if (isBoris())
 {
 	window.setInterval(function() {
