@@ -140,6 +140,8 @@ function initUIListeners()
 		$("#plugbot-userlist").css("visibility", userList ? ("visible") : ("hidden"));
 		if (!userList) {
 			$("#plugbot-userlist").empty();
+		} else {
+			populateUserlist();
 		}
 		console.log('Userlist is now ' + (userList ? 'enabled' : 'disabled'));
 	});
@@ -403,7 +405,23 @@ initUIListeners();
  */
 if (isBoris())
 {
+	var messages = new Array(
+		"Hey, I just came here... and this is crazy. But this place is awsome, so join us maybe? http://www.facebook.com/groups/311826685551703/",
+		"If you enjoy EDM, and enjoy this room, please join us on facebook. http://www.facebook.com/groups/311826685551703/",
+		"If you like our community, Join us! We have a steam group and a facebook! (*cough* and we also have a teamspeak server *cough*) http://www.facebook.com/groups/311826685551703/",
+		"Follow us on Twitter! https://twitter.com/TheEDMBasement  @TheEDMBasement",
+		"Join our TeamSpeak 3 server some time!  dfw01.mainvoice.net:7110"
+	);
+	var lastMessage = "";
+	
 	window.setInterval(function() {
-		API.sendChat("\/me Please remember to view our rules at http://goo.gl/cM7j0");
-	}, (1000 * 60 * 60));
+		var nextMessage = messages[Math.floor(Math.random() * messages.length)];
+		
+		if (nextMessage == lastMessage) {
+			while ((nextMessage = messages[Math.floor(Math.random() * messages.length)]) == lastMessage) ;
+		}
+		
+		lastMessage = nextMessage;
+		API.sendChat("\/me " + lastMessage);
+	}, (1000 * 60 * 20));
 }
