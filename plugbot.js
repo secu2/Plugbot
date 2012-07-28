@@ -51,12 +51,6 @@ var hideVideo = false;
  */
 var userList = true;
 
-/**
- * Whether or not the user is allowed to auto-woot.  May be configured
- * by room admin. 
- */
-var autowootAllowed = true;
-
 // TODO:  DJ battle-related.
 var points = 0;
 var highScore = 0;
@@ -72,7 +66,7 @@ function initAPIListeners()
 	 * This listens in for whenever a new DJ starts playing. 
 	 */
 	API.addEventListener(API.DJ_ADVANCE, djAdvanced);
-	
+
 	/**
 	 * This listens for whenever a user in the room either WOOT!s
 	 * or Mehs the current song. 
@@ -81,7 +75,7 @@ function initAPIListeners()
 		if (userList)
 			populateUserlist();
 	});
-	
+
 	/**
 	 * Whenever a user joins, this listener is called. 
 	 */
@@ -91,7 +85,7 @@ function initAPIListeners()
 		if (isBoris())
 			API.sendChat("\/me Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
 	});
-	
+
 	/**
 	 * Called upon a user exiting the room. 
 	 */
@@ -99,43 +93,6 @@ function initAPIListeners()
 		if (userList)
 			populateUserlist();
 	})
-	
-	/**
-	 * In case an admin (host of the room / Logic) types a message, /disableautowoot, 
-	 * we can prevent everyone in the room from auto-wooting. 
-	 */
-	API.addEventListener(API.CHAT, function(data) {
-		if (data.from == ".ŃōıɀɛƦɇƀȇʟ`" || data.from == "[VIP] ♫Łŏġïç®") 
-		{
-			if (data.message == "/disableautowoot") 
-			{
-				autowootAllowed = false;
-				if (autowoot) {
-					$("#plugbot-btn-woot").attr("src", "http://i.imgur.com/uyUtA.png");
-					autowoot = false;
-				}
-			
-				if (API.getSelf().username == API.getHost().username) {
-					API.sendChat("\/me Please be aware that auto-woot has now been disabled for all Plug.bot users.  This is likely due to a special event which requires that you aren't AFK.");
-				}
-			} 
-			else if (data.message == "/enableautowoot")
-			{
-				autowootAllowed = true;
-				if (!autowoot) {
-					$("#plugbot-btn-woot").attr("src", "http://i.imgur.com/fWb8n.png");
-					autowoot = true;
-					$("#button-vote-positive").click();
-				}
-				
-				if (API.getSelf.username == API.getHost().username) {
-					API.sendChat("\/me Auto-woot is now allowed.  Thanks for being patient.");
-				}
-			}
-		}
-		
-		
-	});
 }
 
 /**
@@ -149,7 +106,7 @@ function displayUI()
 	 * reloads the script without refreshing the page (updating.)
 	 */
 	$('#plugbot-ui').remove();
-	
+
 	/*
 	 * This is a necessary hack (of sorts) that allows the UI to actually
 	 * be visible and interactive.
@@ -188,19 +145,14 @@ function initUIListeners()
 		}
 		console.log('Userlist is now ' + (userList ? 'enabled' : 'disabled'));
 	});
-	
+
 	$("#plugbot-btn-woot").on("click", function() {
-		if (autowootAllowed) 
-		{
-			autowoot = !autowoot;
-			$(this).attr("src", autowoot ? 'http://i.imgur.com/fWb8n.png' : 'http://i.imgur.com/uyUtA.png');
-			if (autowoot)
-				$("#button-vote-positive").click();
-			console.log('Auto-woot is now ' + (autowoot ? 'enabled' : 'disabled'));
-		} else {
-			alert('Sorry, but auto-woot is currently disabled by the room host.');
-		}
-	});	
+		autowoot = !autowoot;
+		$(this).attr("src", autowoot ? 'http://i.imgur.com/fWb8n.png' : 'http://i.imgur.com/uyUtA.png');
+		if (autowoot)
+			$("#button-vote-positive").click();
+		console.log('Auto-woot is now ' + (autowoot ? 'enabled' : 'disabled'));
+	});
 
 	$("#plugbot-btn-hidevideo").on("click", function() {
 		hideVideo = !hideVideo;
@@ -243,11 +195,11 @@ function djAdvanced(obj)
 	$("#yt-frame").css("height", "271px");
 	$('#plugbot-btn-hidevideo').attr('src', 'http://i.imgur.com/jbJDe.png');
 	hideVideo = false;
-	
+
 	// TODO: DJ battle-related
 	points = 0;
 	highScore = 0;
-	
+
 	/*
 	 * If the userlist is enabled, re-populate it.
 	 */
@@ -277,15 +229,15 @@ function populateUserlist()
 			spot = spot.substring(0, spot.indexOf(')'));
 		$('#plugbot-userlist').append('<h1 id="plugbot-queuespot"><span style="font-variant:small-caps">Waitlist:</span> ' + spot + '</h3><br />');
 	}
-	
+
 	// TODO:  DJ battle-related
 	points = 0;
-	
+
 	/*
 	 * An array of all of the room's users.
 	 */
 	var users = new Array();
-	
+
 	/*
 	 * Populate the users array with the next user
 	 * in the room (this is stored alphabetically.)
@@ -294,7 +246,7 @@ function populateUserlist()
 	{
 		users.push(API.getUsers()[user]);
 	}
-	
+
 	/*
 	 * For every user, call the #appendUser(username, vote) method
 	 * which will display their username with any colour coding that
@@ -305,7 +257,7 @@ function populateUserlist()
 		var user = users[user];
 		appendUser(user.username, user.vote)
 	}
-	
+
 	// TODO: DJ battle-related
 	if (points > highScore)
 		highScore = points;
@@ -334,7 +286,7 @@ function appendUser(username, vote)
 	var currentDj = false;
 	var moderator = false;
 	var img;
-	
+
 	/*
 	 * Loop through the room's moderators to detect a match
 	 * for this user, in which case we'll prepend the mod
@@ -347,7 +299,7 @@ function appendUser(username, vote)
 			moderator = true;
 		}
 	}
-	
+
 	/*
 	 * Based on their vote, apply the colour coding.
 	 */
@@ -370,7 +322,7 @@ function appendUser(username, vote)
 				img = "http://i.imgur.com/JPA1Q.png";
 			break;
 	}
-	
+
 	/*
 	 * If they're the current DJ, apply some more special
 	 * changes.
@@ -381,13 +333,13 @@ function appendUser(username, vote)
 		if (moderator)
 			img = "http://i.imgur.com/CsK3d.png";
 	}
-	
+
 	/*
 	 * Sometimes undecided mod star breaks.  This fixes that.
 	 */
 	if (img == undefined && moderator)
 		img = "http://i.imgur.com/sRsU0.png";
-		
+
 	/*
 	 * Apply the HTML code to the page that actually displays them
 	 * inside the userlist.
@@ -461,14 +413,14 @@ if (isBoris())
 		"Join our TeamSpeak 3 server some time!  dfw01.mainvoice.net:7110"
 	);
 	var lastMessage = "";
-	
+
 	window.setInterval(function() {
 		var nextMessage = messages[Math.floor(Math.random() * messages.length)];
-		
+
 		if (nextMessage == lastMessage) {
 			while ((nextMessage = messages[Math.floor(Math.random() * messages.length)]) == lastMessage) ;
 		}
-		
+
 		lastMessage = nextMessage;
 		API.sendChat("\/me " + lastMessage);
 	}, (1000 * 60 * 20));
