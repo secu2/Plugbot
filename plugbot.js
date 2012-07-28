@@ -51,6 +51,12 @@ var hideVideo = false;
  */
 var userList = true;
 
+/**
+ * Whether or not the user is allowed to auto-woot.  May be configured
+ * by room admin. 
+ */
+var autowootAllowed = true;
+
 // TODO:  DJ battle-related.
 var points = 0;
 var highScore = 0;
@@ -93,6 +99,43 @@ function initAPIListeners()
 		if (userList)
 			populateUserlist();
 	})
+	
+	/**
+	 * In case an admin (host of the room / Logic) types a message, /disableautowoot, 
+	 * we can prevent everyone in the room from auto-wooting. 
+	 */
+	API.addEventListener(API.CHAT, function(data) {
+		if (data.from == API.getHost().username || data.from == "[VIP] ♫Łŏġïç®") 
+		{
+			if (data.message == "/disableautowoot") 
+			{
+				autowootAllowed = false;
+				if (autowoot) {
+					$("#plugbot-btn-woot").attr("src", "http://i.imgur.com/uyUtA.png");
+					autowoot = false;
+				}
+			
+				if (API.getSelf().username == API.getHost().username) {
+					API.sendChat("\/me Please be aware that auto-woot has now been disabled for all Plug.bot users.  This is likely due to a special event which requires that you aren't AFK.");
+				}
+			} 
+			else if (data.message == "/enableautowoot")
+			{
+				autowootAllowed = true;
+				if (!autowoot) {
+					$("#plugbot-btn-woot").attr("src", "http://i.imgur.com/fWb8n.png");
+					autowoot = true;
+					$("#button-vote-positive").click();
+				}
+				
+				if (API.getSelf.username == API.getHost().username) {
+					API.sendChat("\/me Auto-woot is now allowed.  Thanks for being patient.");
+				}
+			}
+		}
+		
+		
+	});
 }
 
 /**
@@ -147,12 +190,17 @@ function initUIListeners()
 	});
 	
 	$("#plugbot-btn-woot").on("click", function() {
-		autowoot = !autowoot;
-		$(this).attr("src", autowoot ? 'http://i.imgur.com/fWb8n.png' : 'http://i.imgur.com/uyUtA.png');
-		if (autowoot)
-			$("#button-vote-positive").click();
-		console.log('Auto-woot is now ' + (autowoot ? 'enabled' : 'disabled'));
-	});
+		if (autowootAllowed) 
+		{
+			autowoot = !autowoot;
+			$(this).attr("src", autowoot ? 'http://i.imgur.com/fWb8n.png' : 'http://i.imgur.com/uyUtA.png');
+			if (autowoot)
+				$("#button-vote-positive").click();
+			console.log('Auto-woot is now ' + (autowoot ? 'enabled' : 'disabled'));
+		} else {
+			alert('Sorry, but auto-woot is currently disabled by the room host.');
+		}
+	});	
 
 	$("#plugbot-btn-hidevideo").on("click", function() {
 		hideVideo = !hideVideo;
