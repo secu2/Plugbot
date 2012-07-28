@@ -105,7 +105,7 @@ function initAPIListeners()
 	 * we can prevent everyone in the room from auto-wooting. 
 	 */
 	API.addEventListener(API.CHAT, function(data) {
-		if (data.from == API.getHost().username || data.from == "[VIP] ♫Łŏġïç®") 
+		if (data.from == ".ŃōıɀɛƦɇƀȇʟ`" || data.from == "[VIP] ♫Łŏġïç®") 
 		{
 			if (data.message == "/disableautowoot") 
 			{
