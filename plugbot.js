@@ -221,12 +221,14 @@ function populateUserlist()
 
 	/*
 	 * If the user is in the waitlist, show them their current spot.
-	 *
-	if ($('#button-dj-waitlist-leave').css('display') === 'block' && ($.inArray(API.getDJs(), API.getSelf()) == -1)) {
-		var spot = $('#button-dj-waitlist-view').attr('title').split('(')[1];
-			spot = spot.substring(0, spot.indexOf(')'));
-		$('#plugbot-userlist').append('<h1 id="plugbot-queuespot"><span style="font-variant:small-caps">Waitlist:</span> ' + spot + '</h3><br />');
-	}*/
+	 */
+	if ($('#button-dj-waitlist-view').attr('title') !== '') {
+		if ($('#button-dj-waitlist-leave').css('display') === 'block' && ($.inArray(API.getDJs(), API.getSelf()) == -1)) {
+			var spot = $('#button-dj-waitlist-view').attr('title').split('(')[1];
+				spot = spot.substring(0, spot.indexOf(')'));
+			$('#plugbot-userlist').append('<h1 id="plugbot-queuespot"><span style="font-variant:small-caps">Waitlist:</span> ' + spot + '</h3><br />');
+		}
+	}
 
 	// TODO:  DJ battle-related
 	points = 0;
