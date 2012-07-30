@@ -82,8 +82,6 @@ function initAPIListeners()
 	API.addEventListener(API.USER_JOIN, function(user) {
 		if (userList)
 			populateUserlist();
-		if (isBoris())
-			API.sendChat("\/me Welcome to " + $("#current-room-value").text() + ", " + user.username + "!");
 	});
 
 	/**
@@ -327,7 +325,7 @@ function appendUser(username, vote)
 	 * If they're the current DJ, apply some more special
 	 * changes.
 	 */
-	if (API.getDJs()[0].username == username) {
+	if (API.getDJs().length > 0 && API.getDJs()[0].username == username) {
 		currentDj = true;
 		colour = "42A5DC";
 		if (moderator)
@@ -354,17 +352,6 @@ function appendUser(username, vote)
 }
 
 
-/**
- * If you are Boris, you are awesome.
- * 
- * (The greeting bot) 
- */
-function isBoris() 
-{ 
-	return API.getSelf().username == "BorisYeltsin[BOT]"; 
-}
-
-
 ///////////////////////////////////////////////////////////
 ////////// EVERYTHING FROM HERE ON OUT IS INIT ////////////
 ///////////////////////////////////////////////////////////
@@ -373,7 +360,6 @@ function isBoris()
  * Clear the old code so we can properly update everything.
  */
 $('#plugbot-css').remove();
-$('#plugbot-js').remove();
 
 /*
  * Write the CSS rules that are used for components of the 
@@ -399,29 +385,3 @@ initAPIListeners();
 populateUserlist();
 displayUI();
 initUIListeners();
-
-/*
- * If this is Boris bot, then start the timed rules notice.
- */
-if (isBoris())
-{
-	var messages = new Array(
-		"Hey, I just came here... and this is crazy. But this place is awsome, so join us maybe? http://www.facebook.com/groups/311826685551703/",
-		"If you enjoy EDM, and enjoy this room, please join us on facebook. http://www.facebook.com/groups/311826685551703/",
-		"If you like our community, Join us! We have a steam group and a facebook! (*cough* and we also have a teamspeak server *cough*) http://www.facebook.com/groups/311826685551703/",
-		"Follow us on Twitter! https://twitter.com/TheEDMBasement  @TheEDMBasement",
-		"Join our TeamSpeak 3 server some time!  dfw01.mainvoice.net:7110"
-	);
-	var lastMessage = "";
-
-	window.setInterval(function() {
-		var nextMessage = messages[Math.floor(Math.random() * messages.length)];
-
-		if (nextMessage == lastMessage) {
-			while ((nextMessage = messages[Math.floor(Math.random() * messages.length)]) == lastMessage) ;
-		}
-
-		lastMessage = nextMessage;
-		API.sendChat("\/me " + lastMessage);
-	}, (1000 * 60 * 20));
-}
