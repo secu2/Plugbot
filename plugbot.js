@@ -295,14 +295,11 @@ function appendUser(username, vote)
 	 */
 	for (var i = 0; i < API.getModerators().length; i++) 
 	{
-		if (API.getModerators()[i].username == username) 
+		if (API.getModerators()[i].username == username && !host) 
 		{
 			moderator = true;
 		}
 	}
-	
-	if (host) 
-		moderator = false;
 
 	/*
 	 * Based on their vote, apply the colour coding.
@@ -347,15 +344,18 @@ function appendUser(username, vote)
 	/*
 	 * Sometimes undecided mod star breaks.  This fixes that.
 	 */
-	if (img == undefined && moderator)
-		img = "http://i.imgur.com/sRsU0.png";
+	if (img == undefined && (moderator || host)) 
+	{
+		colour = "FFFFFF";
+		img = moderator ? "http://i.imgur.com/sRsU0.png" : "http://i.imgur.com/6Bq5W.png";
+	}
 
 	/*
 	 * Apply the HTML code to the page that actually displays them
 	 * inside the userlist.
 	 */
 	$('#plugbot-userlist').append(
-		((moderator || host) ? '<img src="' + img + '" align="left" style="margin-left:6px;" alt="Moderator" />' : '') 
+		((moderator || host) ? '<img src="' + img + '" align="left" style="margin-left:6px;margin-top:3px" alt="Moderator" />' : '') 
 		+ '<p style="' + ((moderator || host) ? 'text-indent:6px !important;font-weight:bold;' : '') 
 		+ 'color:#' + colour + ';' + (currentDj ? 'font-weight:bold;font-size:15px' : '') + '"' 
 		+ (currentDj ? ('title="' + username + ' is the current DJ!"') : '') + '>' 
