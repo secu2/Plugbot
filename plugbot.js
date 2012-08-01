@@ -114,14 +114,13 @@ function displayUI()
 	/*
 	 * Generate the HTML code for the UI.
 	 */
-	$('#playback').append('<div id="plugbot-ui"></div>');
-		$("#plugbot-ui").animate({"height": "64px"}, {duration: "slow" });
-		$('#plugbot-ui').append(
-			'<img src="http://i.imgur.com/fWb8n.png" id="plugbot-btn-woot" alt="auto-hwheat!" />' +
-			'<img src="http://i.imgur.com/W5ncS.png" id="plugbot-btn-queue" alt="auto-queue!" />' + 
-			'<img src="http://i.imgur.com/jbJDe.png" id="plugbot-btn-hidevideo" alt="hide the video!" />' +
-			'<img src="http://i.imgur.com/IGcMP.png" id="plugbot-btn-userlist" alt="user list with woots and mehs as green and red!" />'
-		);
+	$('#chat').prepend('<div id="plugbot-ui"></div>');
+	$('#plugbot-ui').append(
+			'<p id="plugbot-btn-woot" style="color:#3FFF00">auto-woot</p>'
+		+ 	'<p id="plugbot-btn-queue" style="color:#ED1C24">auto-queue</p>'
+		+ 	'<p id="plugbot-btn-hidevideo" style="color:#ED1C24">hide video</p>'
+		+ 	'<p id="plugbot-btn-userlist" style="color:#3FFF00">userlist</p>'
+	);
 }
 
 /**
@@ -134,35 +133,32 @@ function initUIListeners()
 {	
 	$("#plugbot-btn-userlist").on("click", function() {
 		userList = !userList;
-		$(this).attr("src", userList ? 'http://i.imgur.com/IGcMP.png' : 'http://i.imgur.com/pAFJS.png');
+		$(this).css("color", userList ? "#3FFF00" : "#ED1C24");
 		$("#plugbot-userlist").css("visibility", userList ? ("visible") : ("hidden"));
 		if (!userList) {
 			$("#plugbot-userlist").empty();
 		} else {
 			populateUserlist();
 		}
-		console.log('Userlist is now ' + (userList ? 'enabled' : 'disabled'));
 	});
 
 	$("#plugbot-btn-woot").on("click", function() {
 		autowoot = !autowoot;
-		$(this).attr("src", autowoot ? 'http://i.imgur.com/fWb8n.png' : 'http://i.imgur.com/uyUtA.png');
+		$(this).css("color", autowoot ? "#3FFF00" : "#ED1C24");
 		if (autowoot)
 			$("#button-vote-positive").click();
-		console.log('Auto-woot is now ' + (autowoot ? 'enabled' : 'disabled'));
 	});
 
 	$("#plugbot-btn-hidevideo").on("click", function() {
 		hideVideo = !hideVideo;
-		$(this).attr("src", hideVideo ? 'http://i.imgur.com/lwpfH.png' : 'http://i.imgur.com/jbJDe.png');
+		$(this).css("color", hideVideo ? "#3FFF00" : "#ED1C24");
 		$("#yt-frame").animate({"height": (hideVideo ? "0px" : "271px")}, {duration: "fast"});
 	});
 
 	$("#plugbot-btn-queue").on("click", function() {
 		autoqueue = !autoqueue;
-		$(this).attr("src", autoqueue ? 'http://i.imgur.com/IxK27.png' : 'http://i.imgur.com/W5ncS.png');
+		$(this).css("color", autoqueue ? "#3FFF00" : "#ED1C24");
 		$("#button-dj-waitlist-" + (autoqueue ? "join" : "leave")).click();
-		console.log('Auto-queue is now ' + (autoqueue ? 'enabled' : 'disabled'));
 	});
 }
 
@@ -191,7 +187,6 @@ function djAdvanced(obj)
 	 * Reset all hide video-related matters.
 	 */
 	$("#yt-frame").css("height", "271px");
-	$('#plugbot-btn-hidevideo').attr('src', 'http://i.imgur.com/jbJDe.png');
 	hideVideo = false;
 
 	// TODO: DJ battle-related
@@ -355,7 +350,7 @@ function appendUser(username, vote)
 	 * inside the userlist.
 	 */
 	$('#plugbot-userlist').append(
-		((moderator || host) ? '<img src="' + img + '" align="left" style="margin-left:6px;margin-top:3px" alt="Moderator" />' : '') 
+		((moderator || host) ? '<img src="' + img + '" align="left" style="margin-left:6px" alt="Moderator" />' : '') 
 		+ '<p style="' + ((moderator || host) ? 'text-indent:6px !important;font-weight:bold;' : '') 
 		+ 'color:#' + colour + ';' + (currentDj ? 'font-weight:bold;font-size:15px' : '') + '"' 
 		+ (currentDj ? ('title="' + username + ' is the current DJ!"') : '') + '>' 
@@ -378,9 +373,9 @@ $('#plugbot-css').remove();
  * Plug.bot UI.
  */
 $('body').prepend('<style type="text/css" id="plugbot-css">' 
-	+ '#plugbot-ui { position: absolute; top: 276px; left: 2.5%; }'
-	+ '#plugbot-ui img { display: inline; cursor: pointer; margin-left: -2px; }'
-    + '#plugbot-userlist { border: 6px solid rgba(10, 10, 10, 0.8); border-left: 0 !important; background-color: #000000; padding: 8px 0px 20px 0px; width: 12%; }'
+ 	+ '#plugbot-ui { position: absolute; margin-left: 349px; }'
+	+ '#plugbot-ui p { background-color: #0b0b0b; height: 32px; padding-top: 8px; padding-left: 12px; cursor: pointer; font-variant: small-caps; width: 84px; font-size: 15px; margin: 0; }'
+    + '#plugbot-userlist { border: 6px solid rgba(10, 10, 10, 0.8); border-left: 0 !important; background-color: #000000; padding: 8px 0px 20px 0px; width: 12%; margin-top: -14px; }'
     + '#plugbot-userlist p { margin: 0; padding-top: 2px; text-indent: 24px; }'
     + '#plugbot-userlist p:first-child { padding-top: 0px !important; }'
     + '#plugbot-queuespot { color: #42A5DC; text-align: left; font-size: 1.5em; margin-left: 8px }');
