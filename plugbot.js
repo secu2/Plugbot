@@ -285,6 +285,7 @@ function appendUser(username, vote)
 	var colour;
 	var currentDj = false;
 	var moderator = false;
+	var host = username == API.getHost().username;
 	var img;
 
 	/*
@@ -299,6 +300,9 @@ function appendUser(username, vote)
 			moderator = true;
 		}
 	}
+	
+	if (host) 
+		moderator = false;
 
 	/*
 	 * Based on their vote, apply the colour coding.
@@ -310,16 +314,22 @@ function appendUser(username, vote)
 			points++;
 			if (moderator)
 				img = "http://i.imgur.com/T5G4f.png";
+			if (host)
+				img = "http://i.imgur.com/Lu1qo.png";
 			break;
 		case 0:		// Undecided
 			colour = "FFFFFF";
 			if (moderator) 
 				img = "http://i.imgur.com/sRsU0.png";
+			if (host)
+				img = "http://i.imgur.com/6Bq5W.png";
 			break;
 		case -1:	// Meh
 			colour = "ED1C24";
 			if (moderator)
 				img = "http://i.imgur.com/JPA1Q.png";
+			if (host)
+				img = "http://i.imgur.com/wVLR3.png";
 			break;
 	}
 
@@ -345,8 +355,8 @@ function appendUser(username, vote)
 	 * inside the userlist.
 	 */
 	$('#plugbot-userlist').append(
-		(moderator ? '<img src="' + img + '" align="left" style="margin-left:6px;" alt="Moderator" />' : '') 
-		+ '<p style="' + (moderator ? 'text-indent:6px !important;font-weight:bold;' : '') 
+		((moderator || host) ? '<img src="' + img + '" align="left" style="margin-left:6px;" alt="Moderator" />' : '') 
+		+ '<p style="' + ((moderator || host) ? 'text-indent:6px !important;font-weight:bold;' : '') 
 		+ 'color:#' + colour + ';' + (currentDj ? 'font-weight:bold;font-size:15px' : '') + '"' 
 		+ (currentDj ? ('title="' + username + ' is the current DJ!"') : '') + '>' 
 		+ username + '</p>'
