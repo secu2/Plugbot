@@ -124,17 +124,16 @@ function checkCustomUsernames()
  */
 function displayUI()
 {
+	$("#plugbot-warning").remove();
+	$('#playback').append('<div id="plugbot-warning" style="background-color:#0a0a0a;opacity:0.91;width:100%;padding:12px 0 12px 0;color:#fff;text-align:center;opacity:0;font-variant:small-caps;font-size:15px">'
+		+ 'it is recommended that you extend the chatbox while using plug.bot <br />so you have as much storage for ' 
+		+ 'custom usernames as possible.  <br />however, it is not necessary.</div>');
+	
 	/*
 	 * Be sure to remove any old instance of the UI, in case the user
 	 * reloads the script without refreshing the page (updating.)
 	 */
 	$('#plugbot-ui').remove();
-
-	/*
-	 * This is a necessary hack (of sorts) that allows the UI to actually
-	 * be visible and interactive.
-	 */
-	$('#playback').css('z-index', '8'); 
 
 	/*
 	 * Generate the HTML code for the UI.
@@ -444,3 +443,12 @@ initUIListeners();
  * FX.
  */
 window.setInterval(checkCustomUsernames(), 1000);
+
+/*
+ * Display a warning telling users that it's preferable to extend
+ * the chatbox while using Plug.bot for the most space for custom
+ * usernames.
+ */
+$(function() {
+	$("#plugbot-warning").animate({"opacity": "0.91"}, {duration: "medium"}).delay(8000).animate({"opacity": "0"}, {duration: "slow"});
+});
