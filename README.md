@@ -81,3 +81,13 @@ Try to keep the subject relevant, or else I won't see it and think it's related 
 <li>Removed external CSS dependency, fixes a lot of consistency problems</li>
 <li>Boris now welcomes users while using the /me command to make it more obvious.</li>
 </ol>
+
+
+<strong>0.5a (Released 01/8/2012)</strong>:
+<ol>
+<li>Userlist font is smaller due to more users being in rooms.</li>
+<li>Hide video now lasts until you disable it, rather than resetting each time a new song comes around</li>
+<li>Moved the UI to be beside the chat for more space for buttons</li>
+<li>Buttons are now HTML-generated instead of pictures</li>
+<li>Custom username FX now allows you to highlight specific people with custom colours</li>
+</ol>
