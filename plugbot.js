@@ -235,6 +235,15 @@ function djAdvanced(obj)
 	// TODO: DJ battle-related
 	points = 0;
 	highScore = 0;
+	
+	/*
+	 * If they want the video to be hidden, be sure to re-hide it.
+	 */
+	if (hideVideo)
+	{
+		$("#yt-frame").animate({"height": "0px"}, {duration: "fast"});
+		$("#playback .frame-background").animate({"opacity": "0"}, {duration: "medium"});
+	}
 
 	/*
 	 * If the userlist is enabled, re-populate it.
