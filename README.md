@@ -10,6 +10,7 @@ A collection of tools and extended features for Plug.dj, a free live DJing servi
 + User list  :  Lists all of the users currently in the room, and highlights them white if they're undecided, green if they're wooting, and red if they're mehing
 + Button UI  :  Allows you to easily configure your Plug.bot experience;  enable or disable each of its features at the click of a button! 
 + Hide video  :  Lets you cover up the video player in case what's playing is NSFW or for any other reason you choose to hide it.
++ Custom username FX *NEW  :  Now allows you to change some user's names in the chatbox to a different colour!
 + Open-source code  :  All code of plugbot.js and plugbot.css are available in this repo, no cost, no secrecy
 
 
