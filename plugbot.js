@@ -157,8 +157,9 @@ function promptCustomUsername() {
 	var check = prompt("Format:  username:color\n(For color codes, Google 'Hexadecimal color chart')");
 	customUsernames.push(check);
 	alert(check.split(":")[0] + " will now be specially coloured with #" + check.split(":")[1] + ".");
-	$('#space').after('<span onclick="$(this).remove();removeCustomUsername(\'' + check + '\')" style="cursor:pointer;color:#' + check.split(":")[1] + '">- ' + check.split(":")[0] 
-		+ '</span><br id="linebr-' + check.split(":")[0] + '" />');
+	check.replace(/\s+/g, '-');
+	$('#space').after('<span id="' + check + '" onclick="removeCustomUsername(\'' + check + '\');$(this).next().remove();$(this).remove();" style="cursor:pointer;color:#' + check.split(":")[1] + '">- ' + check.split(":")[0] 
+		+ '</span><br />');
 	checkCustomUsernames();
 }
 
@@ -168,7 +169,6 @@ function promptCustomUsername() {
  */
 function removeCustomUsername(data) {
 	delete customUsernames[data];
-	$("#linebr-" + data.split(":")[0]).remove();
 }
 
 
