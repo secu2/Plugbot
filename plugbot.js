@@ -51,6 +51,8 @@ var hideVideo = false;
  */
 var userList = true;
 
+var customUsernames = new Array();
+
 // TODO:  DJ battle-related.
 var points = 0;
 var highScore = 0;
@@ -90,8 +92,22 @@ function initAPIListeners()
 	API.addEventListener(API.USER_LEAVE, function(user) {
 		if (userList)
 			populateUserlist();
-	})
+	});
 }
+
+
+function checkCustomUsernames() 
+{
+	$(".chat-from").each(function() {
+		for (var custom in customUsernames) {
+			console.log(customUsernames[custom].split(":")[0] + ", " + $(this).text());
+			if (customUsernames[custom].split(":")[0] == $(this).text()) {
+				$(this).css({ color: "#" + customUsernames[custom].split(":")[1] });
+			}
+		}1
+	});
+}
+
 
 /**
  * Renders all of the Plug.bot "UI" that is visible beneath the video
@@ -120,8 +136,26 @@ function displayUI()
 		+ 	'<p id="plugbot-btn-queue" style="color:#ED1C24">auto-queue</p>'
 		+ 	'<p id="plugbot-btn-hidevideo" style="color:#ED1C24">hide video</p>'
 		+ 	'<p id="plugbot-btn-userlist" style="color:#3FFF00">userlist</p>'
+		+ 	'<h2>Custom Username FX: <br /><br id="space" /><span onclick="promptCustomUsername()" style="cursor:pointer">+ add new</span></h2>'
 	);
 }
+
+
+function promptCustomUsername() {
+	var check = prompt("Format:  username:color\n(For color codes, Google 'Hexadecimal color chart')");
+	customUsernames.push(check);
+	alert(check.split(":")[0] + " will now be specially coloured with #" + check.split(":")[1] + ".");
+	$('#space').after('<span onclick="$(this).remove();removeCustomUsername(\'' + check + '\')" style="cursor:pointer;color:#' + check.split(":")[1] + '">- ' + check.split(":")[0] 
+		+ '</span><br id="linebr-' + check.split(":")[0] + '" />');
+	checkCustomUsernames();
+}
+
+
+function removeCustomUsername(data) {
+	delete customUsernames[data];
+	$("#linebr-" + data.split(":")[0]).remove();
+}
+
 
 /**
  * For every button on the Plug.bot UI, we have listeners backing them
@@ -131,6 +165,10 @@ function displayUI()
  */
 function initUIListeners()
 {	
+	$(".plugbot-custom-username").on("click", function() {
+		console.log('hi');
+	});
+	
 	$("#plugbot-btn-userlist").on("click", function() {
 		userList = !userList;
 		$(this).css("color", userList ? "#3FFF00" : "#ED1C24");
@@ -367,6 +405,7 @@ function appendUser(username, vote)
  * Clear the old code so we can properly update everything.
  */
 $('#plugbot-css').remove();
+$('#plugbot-js').remove();
 
 /*
  * Write the CSS rules that are used for components of the 
@@ -375,7 +414,8 @@ $('#plugbot-css').remove();
 $('body').prepend('<style type="text/css" id="plugbot-css">' 
  	+ '#plugbot-ui { position: absolute; margin-left: 349px; }'
 	+ '#plugbot-ui p { background-color: #0b0b0b; height: 32px; padding-top: 8px; padding-left: 12px; cursor: pointer; font-variant: small-caps; width: 84px; font-size: 15px; margin: 0; }'
-    + '#plugbot-userlist { border: 6px solid rgba(10, 10, 10, 0.8); border-left: 0 !important; background-color: #000000; padding: 8px 0px 20px 0px; width: 12%; margin-top: -14px; }'
+	+ '#plugbot-ui h2 { background-color: #0b0b0b; height: 112px; width: 156px; margin: 0; color: #fff; font-size: 13px; font-variant: small-caps; padding: 8px 0 0 12px; border-top: 1px dotted #292929; }'
+    + '#plugbot-userlist { border: 6px solid rgba(10, 10, 10, 0.8); border-left: 0 !important; background-color: #000000; padding: 8px 0px 20px 0px; width: 12%; }'
     + '#plugbot-userlist p { margin: 0; padding-top: 2px; text-indent: 24px; }'
     + '#plugbot-userlist p:first-child { padding-top: 0px !important; }'
     + '#plugbot-queuespot { color: #42A5DC; text-align: left; font-size: 1.5em; margin-left: 8px }');
@@ -392,3 +432,5 @@ initAPIListeners();
 populateUserlist();
 displayUI();
 initUIListeners();
+
+window.setInterval(checkCustomUsernames(), 1000);
