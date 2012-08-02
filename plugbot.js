@@ -97,6 +97,8 @@ function initAPIListeners()
 		if (userList)
 			populateUserlist();
 	});
+	
+	API.addEventListener(API.CHAT, checkCustomUsernames);
 }
 
 
@@ -107,11 +109,14 @@ function initAPIListeners()
  */
 function checkCustomUsernames() 
 {
-	$(".chat-from, .chat-from-moderator, .chat-from-host").each(function() {
-		for (var custom in customUsernames) {
-			console.log(customUsernames[custom].split(":")[0] + ", " + $(this).text());
-			if (customUsernames[custom].split(":")[0] == $(this).text()) {
-				$(this).css({ color: "#" + customUsernames[custom].split(":")[1] });
+	$('span[class*="chat-from"]').each(function() {
+		for (var custom in customUsernames) 
+		{
+			var check = customUsernames[custom].split(":");
+			if (check[0] == $(this).text()) 
+			{
+				$(this).css({ color: "#" + check[1]});
+				break;
 			}
 		}
 	});
@@ -154,11 +159,12 @@ function displayUI()
  */
 function promptCustomUsername() {
 	var check = prompt("Format:  username:color\n(For color codes, Google 'Hexadecimal color chart')");
+	
 	customUsernames.push(check);
-	alert(check.split(":")[0] + " will now be specially coloured with #" + check.split(":")[1] + ".");
-	check.replace(/\s+/g, '-');
+	
 	$('#space').after('<span id="' + check + '" onclick="removeCustomUsername(\'' + check + '\');$(this).next().remove();$(this).remove();" style="cursor:pointer;color:#' + check.split(":")[1] + '">- ' + check.split(":")[0] 
 		+ '</span><br />');
+		
 	checkCustomUsernames();
 }
 
@@ -446,12 +452,6 @@ initAPIListeners();
 populateUserlist();
 displayUI();
 initUIListeners();
-
-/*
- * Periodically check for users covered by the custom username
- * FX.
- */
-window.setInterval(checkCustomUsernames(), 1000);
 
 /*
  * Display a warning telling users that it's preferable to extend
