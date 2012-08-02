@@ -51,6 +51,10 @@ var hideVideo = false;
  */
 var userList = true;
 
+/**
+ * Whenever a user chooses to apply custom username FX to a
+ * user, their username and chosen colour and saved here. 
+ */
 var customUsernames = new Array();
 
 // TODO:  DJ battle-related.
@@ -96,15 +100,20 @@ function initAPIListeners()
 }
 
 
+/**
+ * Periodically check the chat history to see if any of the messages
+ * match that of the user's chosen custom username FX.  If so, then we
+ * need to stylise every instance of those. 
+ */
 function checkCustomUsernames() 
 {
-	$(".chat-from").each(function() {
+	$(".chat-from, .chat-from-moderator, .chat-from-host").each(function() {
 		for (var custom in customUsernames) {
 			console.log(customUsernames[custom].split(":")[0] + ", " + $(this).text());
 			if (customUsernames[custom].split(":")[0] == $(this).text()) {
 				$(this).css({ color: "#" + customUsernames[custom].split(":")[1] });
 			}
-		}1
+		}
 	});
 }
 
@@ -136,11 +145,14 @@ function displayUI()
 		+ 	'<p id="plugbot-btn-queue" style="color:#ED1C24">auto-queue</p>'
 		+ 	'<p id="plugbot-btn-hidevideo" style="color:#ED1C24">hide video</p>'
 		+ 	'<p id="plugbot-btn-userlist" style="color:#3FFF00">userlist</p>'
-		+ 	'<h2>Custom Username FX: <br /><br id="space" /><span onclick="promptCustomUsername()" style="cursor:pointer">+ add new</span></h2>'
+		+ 	'<h2 title="This makes it so you can give a user in the room a special colour when they chat!">Custom Username FX: <br /><br id="space" /><span onclick="promptCustomUsername()" style="cursor:pointer">+ add new</span></h2>'
 	);
 }
 
 
+/**
+ * Prompt the user to provide a new custom username FX. 
+ */
 function promptCustomUsername() {
 	var check = prompt("Format:  username:color\n(For color codes, Google 'Hexadecimal color chart')");
 	customUsernames.push(check);
@@ -151,6 +163,9 @@ function promptCustomUsername() {
 }
 
 
+/**
+ * Remove an existing entry in the custom username FX. 
+ */
 function removeCustomUsername(data) {
 	delete customUsernames[data];
 	$("#linebr-" + data.split(":")[0]).remove();
@@ -165,10 +180,6 @@ function removeCustomUsername(data) {
  */
 function initUIListeners()
 {	
-	$(".plugbot-custom-username").on("click", function() {
-		console.log('hi');
-	});
-	
 	$("#plugbot-btn-userlist").on("click", function() {
 		userList = !userList;
 		$(this).css("color", userList ? "#3FFF00" : "#ED1C24");
@@ -191,6 +202,7 @@ function initUIListeners()
 		hideVideo = !hideVideo;
 		$(this).css("color", hideVideo ? "#3FFF00" : "#ED1C24");
 		$("#yt-frame").animate({"height": (hideVideo ? "0px" : "271px")}, {duration: "fast"});
+		$("#playback .frame-background").animate({"opacity": (hideVideo ? "0" : "0.91")}, {duration: "medium"});
 	});
 
 	$("#plugbot-btn-queue").on("click", function() {
@@ -220,12 +232,6 @@ function djAdvanced(obj)
 	 */
 	if ($("#button-dj-waitlist-join").css("display") === "block" && autoqueue)
 		$("#button-dj-waitlist-join").click();
-
-	/*
-	 * Reset all hide video-related matters.
-	 */
-	$("#yt-frame").css("height", "271px");
-	hideVideo = false;
 
 	// TODO: DJ battle-related
 	points = 0;
@@ -389,7 +395,7 @@ function appendUser(username, vote)
 	 */
 	$('#plugbot-userlist').append(
 		((moderator || host) ? '<img src="' + img + '" align="left" style="margin-left:6px" alt="Moderator" />' : '') 
-		+ '<p style="' + ((moderator || host) ? 'text-indent:6px !important;font-weight:bold;' : '') 
+		+ '<p style="' + ((moderator || host) ? 'text-indent:6px !important;' : '') 
 		+ 'color:#' + colour + ';' + (currentDj ? 'font-weight:bold;font-size:15px' : '') + '"' 
 		+ (currentDj ? ('title="' + username + ' is the current DJ!"') : '') + '>' 
 		+ username + '</p>'
@@ -416,7 +422,7 @@ $('body').prepend('<style type="text/css" id="plugbot-css">'
 	+ '#plugbot-ui p { background-color: #0b0b0b; height: 32px; padding-top: 8px; padding-left: 12px; cursor: pointer; font-variant: small-caps; width: 84px; font-size: 15px; margin: 0; }'
 	+ '#plugbot-ui h2 { background-color: #0b0b0b; height: 112px; width: 156px; margin: 0; color: #fff; font-size: 13px; font-variant: small-caps; padding: 8px 0 0 12px; border-top: 1px dotted #292929; }'
     + '#plugbot-userlist { border: 6px solid rgba(10, 10, 10, 0.8); border-left: 0 !important; background-color: #000000; padding: 8px 0px 20px 0px; width: 12%; }'
-    + '#plugbot-userlist p { margin: 0; padding-top: 2px; text-indent: 24px; }'
+    + '#plugbot-userlist p { margin: 0; padding-top: 2px; text-indent: 24px; font-size: 10px; }'
     + '#plugbot-userlist p:first-child { padding-top: 0px !important; }'
     + '#plugbot-queuespot { color: #42A5DC; text-align: left; font-size: 1.5em; margin-left: 8px }');
 
@@ -433,4 +439,8 @@ populateUserlist();
 displayUI();
 initUIListeners();
 
+/*
+ * Periodically check for users covered by the custom username
+ * FX.
+ */
 window.setInterval(checkCustomUsernames(), 1000);
