@@ -7,9 +7,9 @@ A collection of tools and extended features for Plug.dj, a free live DJing servi
 
 + Auto-woot  :  Automatically WOOT! each song as it is played
 + Auto-queueing  :  Automatically re-append yourself to the DJ Waitlist whenever you play a song
-+ User list *NEW!  :  Lists all of the users currently in the room, and highlights them white if they're undecided, green if they're wooting, and red if they're mehing
-+ Button UI  :  Allows you to easily configure your Plug.bot experience;  enable or disable each of its features at the click of a button!
-+ Hide video *NEW!  :  Lets you cover up the video player in case what's playing is NSFW or for any other reason you choose to hide it.  Resets every time a new song is played
++ User list  :  Lists all of the users currently in the room, and highlights them white if they're undecided, green if they're wooting, and red if they're mehing
++ Button UI  :  Allows you to easily configure your Plug.bot experience;  enable or disable each of its features at the click of a button! 
++ Hide video  :  Lets you cover up the video player in case what's playing is NSFW or for any other reason you choose to hide it.
 + Open-source code  :  All code of plugbot.js and plugbot.css are available in this repo, no cost, no secrecy
 
 
