@@ -332,7 +332,7 @@ function appendUser(username, vote)
 	var colour;
 	var currentDj = false;
 	var moderator = false;
-	var host = username == API.getHost().username;
+	if (API.getHost() != null) var host = username == API.getHost().username;
 	var img;
 
 	/*
