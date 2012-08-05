@@ -313,7 +313,7 @@ function populateUserlist()
 	for (user in users) 
 	{
 		var user = users[user];
-		appendUser(user.username, user.vote)
+		appendUser(user)
 	}
 
 	// TODO: DJ battle-related
@@ -333,8 +333,11 @@ function populateUserlist()
  *					0	: 'undecided' (hasn't voted yet)
  * 					1	: WOOT!
  */
-function appendUser(username, vote) 
+function appendUser(user) 
 {
+	var username 	= user.username;
+	var vote 		= user.vote;
+	
 	/*
 	 * Some variables that we'll either be setting as true/false
 	 * (some conditionals that do major changes to their look in the userlist)
@@ -343,6 +346,7 @@ function appendUser(username, vote)
 	var colour;
 	var currentDj = false;
 	var moderator = false;
+	if (API.getSuperUsers() != null) var su = $.inArray(user, API.getSuperUsers()) != -1;
 	if (API.getHost() != null) var host = username == API.getHost().username;
 	var img;
 
@@ -371,6 +375,8 @@ function appendUser(username, vote)
 				img = "http://i.imgur.com/T5G4f.png";
 			if (host)
 				img = "http://i.imgur.com/Lu1qo.png";
+			if (su)
+				img = "http://i.imgur.com/XA1DE.png";
 			break;
 		case 0:		// Undecided
 			colour = "FFFFFF";
@@ -378,6 +384,8 @@ function appendUser(username, vote)
 				img = "http://i.imgur.com/sRsU0.png";
 			if (host)
 				img = "http://i.imgur.com/6Bq5W.png";
+			if (su)
+				img = "http://i.imgur.com/veoVS.png";
 			break;
 		case -1:	// Meh
 			colour = "ED1C24";
@@ -385,6 +393,8 @@ function appendUser(username, vote)
 				img = "http://i.imgur.com/JPA1Q.png";
 			if (host)
 				img = "http://i.imgur.com/wVLR3.png";
+			if (su)
+				img = "http://i.imgur.com/5LcI3.png";
 			break;
 	}
 
@@ -402,7 +412,7 @@ function appendUser(username, vote)
 	/*
 	 * Sometimes undecided mod star breaks.  This fixes that.
 	 */
-	if (img == undefined && (moderator || host)) 
+	if (img == undefined && (moderator || host || su)) 
 	{
 		colour = "FFFFFF";
 		img = moderator ? "http://i.imgur.com/sRsU0.png" : "http://i.imgur.com/6Bq5W.png";
@@ -413,8 +423,8 @@ function appendUser(username, vote)
 	 * inside the userlist.
 	 */
 	$('#plugbot-userlist').append(
-		((moderator || host) ? '<img src="' + img + '" align="left" style="margin-left:6px" alt="Moderator" />' : '') 
-		+ '<p style="' + ((moderator || host) ? 'text-indent:6px !important;' : '') 
+		((moderator || host || su) ? '<img src="' + img + '" align="left" style="margin-left:6px" alt="Moderator" />' : '') 
+		+ '<p style="' + ((moderator || host || su) ? 'text-indent:6px !important;' : '') 
 		+ 'color:#' + colour + ';' + (currentDj ? 'font-weight:bold;font-size:15px' : '') + '"' 
 		+ (currentDj ? ('title="' + username + ' is the current DJ!"') : '') + '>' 
 		+ username + '</p>'
