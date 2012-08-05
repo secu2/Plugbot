@@ -271,6 +271,11 @@ function populateUserlist()
 	 */
 	$("#plugbot-userlist").remove();
 	$('body').append('<div id="plugbot-userlist"></div>');
+	
+	/*
+	 * Update the current # of users in the room.
+	 */
+	$('#plugbot-userlist').append('<h1 style="text-indent:12px;color:#42A5DC;font-size:14px;font-variant:small-caps;">Users: ' + API.getUsers().length + '</h1>');
 
 	/*
 	 * If the user is in the waitlist, show them their current spot.
