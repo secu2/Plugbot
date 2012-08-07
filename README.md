@@ -18,9 +18,9 @@ A collection of extensions to the growing online DJing website, <a href="plug.dj
 
 ### Installation ###
 
-If you get stuck or just can't be bothered to use your brain (I know that feel), you can watch my badly prepared YouTube tutorial video.  I'm going to shoot this again eventually so the quality's better.  For now, you'll survive:  <a href="http://www.youtube.com/watch?v=1sNwoA1ZCTE">http://www.youtube.com/watch?v=1sNwoA1ZCTE</a>
+If you get stuck or just can't be bothered to use your brain (I know that feel), do yourself a favour and watch <a href="http://youtu.be/Xr93msMOQ-E">EXƎ's awesome sauce video</a>.
 
-<b>Create a new bookmark in your favourite browser and copy/paste this to the 'URL/Location' of the bookmark:</b>
+<b>Create a new bookmark in your favourite browser and copy/paste this to the 'URL/Location' of the bookmark (<i>or even better just select all the text and drag it there</i>)</b>
 
 	javascript: (function () { var jsCode = document.createElement('script'); jsCode.setAttribute('id', 'plugbot-js'); jsCode.setAttribute('src', 'https://raw.github.com/connergdavis/Plugbot/master/plugbot.js'); document.body.appendChild(jsCode); }());
 
