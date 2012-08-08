@@ -345,9 +345,9 @@ function appendUser(user)
 	 */
 	var colour;
 	var currentDj = false;
-	var moderator = API.getSelf().moderator;
-	if (API.getSuperUsers() != null) 	var su = API.getSelf().superuser;
-	if (API.getHost() != null) 			var host = username == API.getHost().username;
+	var moderator = user.moderator;
+	if (API.getSuperUsers() != null) 	var su = user.superuser;
+	if (API.getHost() != null) 			var host = user.owner;
 	var img;
 
 	/*
