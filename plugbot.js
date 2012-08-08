@@ -226,6 +226,15 @@ function initUIListeners()
 function djAdvanced(obj) 
 {
 	/*
+	 * If they want the video to be hidden, be sure to re-hide it.
+	 */
+	if (hideVideo)
+	{
+		$("#yt-frame").css("height", "0px");
+		$("#playback .frame-background").css("opacity", "0.0");
+	}
+	
+	/*
 	 * If auto-woot is enabled, WOOT! the song.
 	 */
 	if (autowoot) 
@@ -242,15 +251,6 @@ function djAdvanced(obj)
 	points = 0;
 	highScore = 0;
 	
-	/*
-	 * If they want the video to be hidden, be sure to re-hide it.
-	 */
-	if (hideVideo)
-	{
-		$("#yt-frame").animate({"height": "0px"}, {duration: "fast"});
-		$("#playback .frame-background").animate({"opacity": "0"}, {duration: "medium"});
-	}
-
 	/*
 	 * If the userlist is enabled, re-populate it.
 	 */
@@ -345,23 +345,10 @@ function appendUser(user)
 	 */
 	var colour;
 	var currentDj = false;
-	var moderator = false;
-	if (API.getSuperUsers() != null) var su = $.inArray(user, API.getSuperUsers()) != -1;
-	if (API.getHost() != null) var host = username == API.getHost().username;
+	var moderator = API.getSelf().moderator;
+	if (API.getSuperUsers() != null) 	var su = API.getSelf().superuser;
+	if (API.getHost() != null) 			var host = username == API.getHost().username;
 	var img;
-
-	/*
-	 * Loop through the room's moderators to detect a match
-	 * for this user, in which case we'll prepend the mod
-	 * star to their name.
-	 */
-	for (var i = 0; i < API.getModerators().length; i++) 
-	{
-		if (API.getModerators()[i].username == username && !host) 
-		{
-			moderator = true;
-		}
-	}
 
 	/*
 	 * Based on their vote, apply the colour coding.
