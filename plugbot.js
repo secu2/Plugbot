@@ -173,7 +173,7 @@ function promptCustomUsername() {
  * Remove an existing entry in the custom username FX. 
  */
 function removeCustomUsername(data) {
-	delete customUsernames[data];
+	customUsernames.splice(data, 1);
 }
 
 
