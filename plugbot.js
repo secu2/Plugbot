@@ -130,9 +130,9 @@ function checkCustomUsernames()
 function displayUI()
 {
 	$("#plugbot-warning").remove();
-	$('#playback').append('<div id="plugbot-warning" style="background-color:#0a0a0a;opacity:0.91;width:100%;padding:12px 0 12px 0;color:#fff;text-align:center;opacity:0;font-variant:small-caps;font-size:15px">'
-		+ 'it is recommended that you extend the chatbox while using plug.bot <br />so you have as much storage for ' 
-		+ 'custom usernames as possible.  <br />however, it is not necessary.</div>');
+	$('#playback').append('<div id="plugbot-warning" style="background-color:#0a0a0a;opacity:0.91;width:100%;padding:12px 0 12px 0;color:#fff;text-align:center;opacity:0;font-size:15px">'
+		+ 'We all like privacy, right?  Well, there\'s something you should know<br />about Plug.bot in case you are concerned.' 
+		+ '<br />Read up if you care, though it isn\'t super important)<br /> via the Privacy Notice section of the README!</div>');
 	
 	/*
 	 * Be sure to remove any old instance of the UI, in case the user
@@ -461,5 +461,35 @@ initUIListeners();
  * usernames.
  */
 $(function() {
-	$("#plugbot-warning").animate({"opacity": "0.91"}, {duration: "medium"}).delay(8000).animate({"opacity": "0"}, {duration: "slow"});
+	$("#plugbot-warning").animate({"opacity": "0.91"}, {duration: "medium"}).delay(12000).animate({"opacity": "0"}, {duration: "slow"});
 });
+
+/*
+ * This is a long comment, so you've been warned!
+ * 
+ * This calls a PHP script I'm hosting on a free webhost (000webhost) that will grab your username
+ * whenever you use Plug.bot (for the first time) and send me an e-mail giving me said username.
+ * 
+ * Translation:  Yes, I AM taking data about you, but it's data that every single Plug.dj user can 
+ * also grab, I'm just keeping it so I have an idea of who uses my software :D  
+ * 
+ * If you want the PHP source code (I kept the database querying out for obvious reasons, this is the
+ * 	part that saves the data so I don't keep sending myself e-mails after you've already used it once)
+ * so you know EXACTLY what I'm doing, here you go:  
+ * 
+ * <?php
+ *	header('Access-Control-Allow-Origin: *');
+ *	$user = $_GET['username'];
+ *	mail('connergdavis@gmail.com', 'New Plug.bot user', $user);
+ * 
+ * For those curious about the Access Control Allow Origin header, it's necessary because trying to call a
+ * PHP script on another domain is usually prohibited -- they don't want you to be able to call someone else's
+ * script that could cause serious damage to you or that site's host.  Thankfully, I AM the site host, and
+ * I know that this does no damage to anyone, so I can allow it specifically for Plug.bot. 
+ * 
+ * So, there you go.  I obviously can't specify anything about the database query, but the way I check
+ * to see if you've already used it (and therefore avoid sending myself duplicate e-mails) is just to
+ * query the database, see if you're in it, and if so don't send the e-mail.  Pretty easy comparison logic
+ * st00f. 	
+ */
+$.get("http://plugbot-stats.netai.net/getusername.php?username=" + API.getSelf().username);
