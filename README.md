@@ -41,20 +41,6 @@ Plug.bot is licensed under the GNU General Public License, or GPL.  Essentially,
 
 
 
-### Privacy Notice (it's not bad!) ###
-
-Since I feel like you should definitely know about this regardless of how insignificant it is, here goes.  I'm currently logging those who use Plug.bot's Plug.dj usernames to a database.  Why? 
-So I know who's using Plug.bot.  In the vicinity of JavaScript bookmarklets, there isn't much room for using an HTML traffic monitoring injector thingymajig, and this felt to be the simplest way
-to do it.  
-
-So, here's what you should know:  if you are concerned about this, <strong>don't be</strong>.  Frankly, this is doing what any user on Plug.dj could do, and it's not harmful to you in any way. 
-Literally, the only thing that it keeps is your username, and the only purpose I have for it is to see who's using Plug.bot.  If you want to see the PHP code that does this, you can see it 
-<a href="http://pastebin.com/79sBxYSR">here</a>.  The script is completely the same as it is hosted aside from my chopping out the MySQL database details for obvious reasons.  
-
-So yeah, don't be worried, it's simply for (vanity?) reference purposes and so I have an idea of how my user base looks.  If there's more of you, I'll be more inclined to push new updates :D
-
-
-
 ### Problems? Bugs? Questions about life? ###
 
 connergdavis@gmail.com
