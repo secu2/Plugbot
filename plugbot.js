@@ -299,10 +299,6 @@ function populateUserlist()
 		var user = users[user];
 		appendUser(user)
 	}
-
-	// TODO: DJ battle-related
-	if (points > highScore)
-		highScore = points;
 }
 
 
@@ -341,7 +337,6 @@ function appendUser(user)
 	{
 		case 1:		// WOOT!
 			colour = "3FFF00";
-			points++;
 			if (moderator)
 				img = "http://i.imgur.com/T5G4f.png";
 			if (host)
