@@ -57,10 +57,6 @@ var userList = true;
  */
 var customUsernames = new Array();
 
-// TODO:  DJ battle-related.
-var points = 0;
-var highScore = 0;
-
 /**
  * Initialise all of the Plug.dj API listeners which we use
  * to asynchronously intercept specific events and the data
@@ -129,11 +125,6 @@ function checkCustomUsernames()
  */
 function displayUI()
 {
-	$("#plugbot-warning").remove();
-	$('#playback').append('<div id="plugbot-warning" style="background-color:#0a0a0a;opacity:0.91;width:100%;padding:12px 0 12px 0;color:#fff;text-align:center;opacity:0;font-size:15px">'
-		+ 'We all like privacy, right?  Well, there\'s something you should know<br />about Plug.bot in case you are concerned.' 
-		+ '<br />Read up if you care, though it isn\'t super important)<br /> via the Privacy Notice section of the README!</div>');
-	
 	/*
 	 * Be sure to remove any old instance of the UI, in case the user
 	 * reloads the script without refreshing the page (updating.)
@@ -246,10 +237,6 @@ function djAdvanced(obj)
 	 */
 	if ($("#button-dj-waitlist-join").css("display") === "block" && autoqueue)
 		$("#button-dj-waitlist-join").click();
-
-	// TODO: DJ battle-related
-	points = 0;
-	highScore = 0;
 	
 	/*
 	 * If the userlist is enabled, re-populate it.
@@ -287,9 +274,6 @@ function populateUserlist()
 			$('#plugbot-userlist').append('<h1 id="plugbot-queuespot"><span style="font-variant:small-caps">Waitlist:</span> ' + spot + '</h3><br />');
 		}
 	}
-
-	// TODO:  DJ battle-related
-	points = 0;
 
 	/*
 	 * An array of all of the room's users.
@@ -454,12 +438,3 @@ initAPIListeners();
 populateUserlist();
 displayUI();
 initUIListeners();
-
-/*
- * Display a warning telling users that it's preferable to extend
- * the chatbox while using Plug.bot for the most space for custom
- * usernames.
- */
-$(function() {
-	$("#plugbot-warning").animate({"opacity": "0.91"}, {duration: "medium"}).delay(12000).animate({"opacity": "0"}, {duration: "slow"});
-});
