@@ -30,7 +30,7 @@ Alternatively, you can go<a href="http://pastebin.com/x8Xak4zU"> to this site </
 
 ### Authors ###
 
-+ <strong>Conner Davis &lt;connergdavis@gmail.com&gt;</strong> <em>a.k.a. [VIP] Logic</em>
++ <strong>Conner Davis &lt;connergdavis@gmail.com&gt;</strong> <em>a.k.a. Logic</em>
 + <strong>Harrison Schneidman &lt;hschneidman@gmail.com&gt;</strong> <em>a.k.a. EXƎ</em>
 
 
