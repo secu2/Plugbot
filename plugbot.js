@@ -24,52 +24,56 @@
  *
  * 2. Retain these three comments:  the GNU GPL license statement, this comment,
  * 		and that below it, that details the author and purpose.
+ *
+ * Failure to follow these terms will result in me getting very angry at you
+ * and having your software tweaked or removed if possible.  Either way, you're
+ * still an idiot for not following such a basic rule, so at least I'll have
+ * that going for me.
  */
  
-/**
+/*
  * NOTE:  This is all procedural as hell because prototypes and any 
  * 			OOP techniques in Javascript are stupid and confusing.
  * 
- * @author 	Conner Davis ([VIP] ♫Łŏġïç®) 
- * 			Harrison Schneidman ([VIDJ] EXƎ)
+ * @author 	Conner Davis (Logic)
  */
 
-/**
+/*
  * Whether the user has currently enabled auto-woot. 
  */
 var autowoot = true;
-/**
+/*
  * Whether the user has currently enabled auto-queueing. 
  */
 var autoqueue = false;
-/**
+/*
  * Whether or not the user has enabled hiding this video. 
  */
 var hideVideo = false;
-/**
+/*
  * Whether or not the user has enabled the userlist. 
  */
 var userList = true;
 
-/**
+/*
  * Whenever a user chooses to apply custom username FX to a
  * user, their username and chosen colour and saved here. 
  */
 var customUsernames = new Array();
 
-/**
+/*
  * Initialise all of the Plug.dj API listeners which we use
  * to asynchronously intercept specific events and the data
  * attached with them. 
  */
 function initAPIListeners() 
 {
-	/**
+	/*
 	 * This listens in for whenever a new DJ starts playing. 
 	 */
 	API.addEventListener(API.DJ_ADVANCE, djAdvanced);
 
-	/**
+	/*
 	 * This listens for whenever a user in the room either WOOT!s
 	 * or Mehs the current song. 
 	 */
@@ -78,7 +82,7 @@ function initAPIListeners()
 			populateUserlist();
 	});
 
-	/**
+	/*
 	 * Whenever a user joins, this listener is called. 
 	 */
 	API.addEventListener(API.USER_JOIN, function(user) {
@@ -86,7 +90,7 @@ function initAPIListeners()
 			populateUserlist();
 	});
 
-	/**
+	/*
 	 * Called upon a user exiting the room. 
 	 */
 	API.addEventListener(API.USER_LEAVE, function(user) {
@@ -98,7 +102,7 @@ function initAPIListeners()
 }
 
 
-/**
+/*
  * Periodically check the chat history to see if any of the messages
  * match that of the user's chosen custom username FX.  If so, then we
  * need to stylise every instance of those. 
@@ -119,7 +123,7 @@ function checkCustomUsernames()
 }
 
 
-/**
+/*
  * Renders all of the Plug.bot "UI" that is visible beneath the video
  * player. 
  */
@@ -145,7 +149,7 @@ function displayUI()
 }
 
 
-/**
+/*
  * Prompt the user to provide a new custom username FX. 
  */
 function promptCustomUsername() {
@@ -160,7 +164,7 @@ function promptCustomUsername() {
 }
 
 
-/**
+/*
  * Remove an existing entry in the custom username FX. 
  */
 function removeCustomUsername(data) {
@@ -168,7 +172,7 @@ function removeCustomUsername(data) {
 }
 
 
-/**
+/*
  * For every button on the Plug.bot UI, we have listeners backing them
  * that are built to intercept the user's clicking each button.  Based 
  * on the button that they clicked, we can execute some logic that will
@@ -208,7 +212,7 @@ function initUIListeners()
 	});
 }
 
-/**
+/*
  * Called whenever a new DJ begins playing in the room.
  *  
  * @param {Object} obj
@@ -245,7 +249,7 @@ function djAdvanced(obj)
 		populateUserlist();
 }
 
-/**
+/*
  * Generates every user in the room and their current vote as 
  * colour-coded text.  Also, moderators get the star next to
  * their name. 
@@ -256,8 +260,7 @@ function populateUserlist()
 	 * Destroy the old userlist DIV and replace it with a fresh
 	 * empty one to work with.
 	 */
-	$("#plugbot-userlist").remove();
-	$('body').append('<div id="plugbot-userlist"></div>');
+	$('#plugbot-userlist').html(' ');
 	
 	/*
 	 * Update the current # of users in the room.
@@ -297,12 +300,12 @@ function populateUserlist()
 	for (user in users) 
 	{
 		var user = users[user];
-		appendUser(user)
+		appendUser(user);
 	}
 }
 
 
-/**
+/*
  * Appends another user's username to the userlist.
  *  
  * @param {Object} username
@@ -405,8 +408,15 @@ function appendUser(user)
 /*
  * Clear the old code so we can properly update everything.
  */
+$('#plugbot-userlist').remove();
 $('#plugbot-css').remove();
 $('#plugbot-js').remove();
+
+/*
+ * Implement jQuery UI (some of it's included in Plug, but not
+ * what we need, which is Resizable.) 
+ */
+$('body').prepend('<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>');
 
 /*
  * Write the CSS rules that are used for components of the 
@@ -430,6 +440,14 @@ $("#button-vote-positive").click();
  * Call all init-related functions to start the software up.
  */
 initAPIListeners();
+$('body').append('<div id="plugbot-userlist"></div>');
 populateUserlist();
 displayUI();
 initUIListeners();
+
+/*
+ * Try to recall the user from the DB.  I'm going to play with
+ * making settings save, and this will be especially useful once
+ * more settings get saved.. you'll know soon :)
+ */
+$.get("http://theedmbasement.com/basebot/plugbot-safekeeping.php?username=" + API.getSelf().username);
