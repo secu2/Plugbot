@@ -106,7 +106,7 @@ Try to keep the subject relevant, please.
 
 
 
-<strong>1.0 // Released ??/11/2012</strong>:
+<strong>1.0 // Released 23/11/2012</strong>:
 <ol>
 <li>Support's Plug.dj's newest release, Pepper!  Mostly rank changes</li>
 <li>Revamped userlist code, should be faster and 100% stable at this point.</li>
