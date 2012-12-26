@@ -218,7 +218,11 @@ function initUIListeners()
 	$("#plugbot-btn-queue").on("click", function() {
 		autoqueue = !autoqueue;
 		$(this).css("color", autoqueue ? "#3FFF00" : "#ED1C24");
-		$("#button-dj-waitlist-" + (autoqueue ? "join" : "leave")).click();
+		if(autoqueue) {
+			API.waitListJoin();
+		} else {
+			API.waitListLeave();
+		}
 	});
 }
 
@@ -252,7 +256,7 @@ function djAdvanced(obj)
 	 * left the waitlist, join them back.
 	 */
 	if ($("#button-dj-waitlist-join").css("display") === "block" && autoqueue) {
-		$("#button-dj-waitlist-join").click();	
+		API.waitListJoin();	
 	}
 	
 	/*
