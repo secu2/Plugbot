@@ -527,9 +527,11 @@ $('body').prepend('<style type="text/css" id="plugbot-css">'
     + '#plugbot-queuespot { color: #42A5DC; text-align: left; font-size: 15px; margin-left: 8px }');
 
 /*
- * Hit the woot button, since auto-woot is enabled by default.
+ * Hit the woot button, if autowoot is enabled by default.
  */
-$("#button-vote-positive").click();
+if(autowoot){
+	$("#button-vote-positive").click();
+}
 
 /*
  * Call all init-related functions to start the software up.
