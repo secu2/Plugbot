@@ -73,6 +73,12 @@ function initAPIListeners()
 	 * This listens in for whenever a new DJ starts playing. 
 	 */
 	API.addEventListener(API.DJ_ADVANCE, djAdvanced);
+	
+	
+	/*
+	* This listens for changes in the waiting list
+	*/
+	API.addEventListener(API.WAIT_LIST_UPDATE, wlUpdate);
 
 	/*
 	 * This listens for whenever a user in the room either WOOT!s
@@ -250,20 +256,22 @@ function djAdvanced(obj)
 	if (autowoot) {
 		$("#button-vote-positive").click();
 	}
-
-	/*
-	 * If auto-queueing has been enabled, and they have just recently
-	 * left the waitlist, join them back.
-	 */
-	if ($("#button-dj-waitlist-join").css("display") === "block" && autoqueue) {
-		API.waitListJoin();	
-	}
 	
 	/*
 	 * If the userlist is enabled, re-populate it.
 	 */
 	if (userList) {
 		populateUserlist();
+	}
+}
+
+function wlUpdate(users) {
+	/*
+	 * If auto-queueing has been enabled, and we are currently
+	 * not in the waitlist, then try to join the list.
+	 */
+	if (autoqueue && users.length < 50 && users.indexOf(API.getSelf()) === -1) {
+		API.waitListJoin();	
 	}
 }
 
@@ -528,7 +536,9 @@ $("#button-vote-positive").click();
  */
 initAPIListeners();
 $('body').append('<div id="plugbot-userlist"></div>');
-populateUserlist();
+if (userList) {
+	populateUserlist();
+}
 displayUI();
 initUIListeners();
 
