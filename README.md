@@ -22,7 +22,7 @@ A collection of extensions to the growing online DJing website, <a href="plug.dj
   <tbody>
     <tr style="border:none;">
       <td style="vertical-align: middle; padding-top: 10px; border: none;">
-        <a href="javascript:%20(function%20()%20{%20var%20jsCode%20=%20document.createElement(%27script%27);%20jsCode.setAttribute(%27id%27,%20%27plugbot-js%27);%20jsCode.setAttribute(%27src%27,%20%27https://raw.github.com/TheHolyWaffle/Plugbot/master/plugbot.js%27);%20document.body.appendChild(jsCode);%20}());" title="Drag and drop this in your bookmark bar.">
+        <a href="javascript: (function () { var jsCode = document.createElement('script'); jsCode.setAttribute('id', 'plugbot-js'); jsCode.setAttribute('src', 'https://raw.github.com/connergdavis/Plugbot/master/plugbot.js'); document.body.appendChild(jsCode); }());" title="Drag and drop into a running Eclipse Indigo workspace to install Eclipse 4 Chrome Theme">
           <img src="http://i.imgur.com/vCSDi.png">
         </a>
       </td>
