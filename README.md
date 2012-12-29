@@ -19,18 +19,31 @@ A collection of extensions to the growing online DJing website, <a href="plug.dj
 ### Installation ###
 
 <table style="border: none;">
+
   <tbody>
+  
     <tr style="border:none;">
+	
       <td style="vertical-align: middle; padding-top: 10px; border: none;">
+	  
         <a href="http://www.google.com" title="Drag and drop this in your bookmark bar.">
+		
           <img src="http://i.imgur.com/vCSDi.png">
+		  
         </a>
+		
       </td>
+	  
       <td style="vertical-align: middle; text-align: left; border: none;">
+	  
         ← Drag this to your bookmark bar.
+		
       </td>
+	  
     </tr>
+	
   </tbody>
+  
 </table>
 
 
