@@ -26,7 +26,7 @@ A collection of extensions to the growing online DJing website, <a href="plug.dj
 	
       <td style="vertical-align: middle; padding-top: 10px; border: none;">
 	  
-        <a href="http://www.google.com" title="Drag and drop this in your bookmark bar.">
+        <a href="javascript:(function(){ window.open(‘http://www.cnn.com/’); })();">
 		
           <img src="http://i.imgur.com/vCSDi.png">
 		  
