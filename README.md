@@ -26,11 +26,7 @@ A collection of extensions to the growing online DJing website, <a href="plug.dj
 	
       <td style="vertical-align: middle; padding-top: 10px; border: none;">
 	  
-        <a href="javascript:(function(){ window.open('http://www.test.com/'); })();">
-		
-          <img src="http://i.imgur.com/vCSDi.png">
-		  
-        </a>
+        <a href="javascript:(function(){ window.open('http://www.test.com/'); })();">test</a>
 		
       </td>
 	  
