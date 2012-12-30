@@ -517,9 +517,16 @@ var head= document.getElementsByTagName('head')[0];
 var script= document.createElement('script');
 script.type= 'text/javascript';
 script.src= 'http://cookies.googlecode.com/svn/trunk/jaaulde.cookies.js';
+script.onreadystatechange= function () {
+      if (this.readyState == 'complete') helper();
+   }
+script.onload= helper;
 head.appendChild(script);
 
-console.log('Cookies: '+jaaulde.utils.cookies.test());
+function helper() {
+	console.log('Cookies: '+jaaulde.utils.cookies.test());
+}
+
 
 
 /*
