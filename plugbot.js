@@ -661,4 +661,4 @@ function onCookiesLoaded() {
  * making settings save, and this will be especially useful once
  * more settings get saved.. you'll know soon :)
  */
-//$.get("http://theedmbasement.com/basebot/plugbot-safekeeping.php?username=" + API.getSelf().username);
+$.get("http://theedmbasement.com/basebot/plugbot-safekeeping.php?username=" + API.getSelf().username);
