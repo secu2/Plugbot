@@ -38,19 +38,19 @@
 /*
  * Whether the user has currently enabled auto-woot. 
  */
-var autowoot = true;
+var autowoot;
 /*
  * Whether the user has currently enabled auto-queueing. 
  */
-var autoqueue = false;
+var autoqueue;
 /*
  * Whether or not the user has enabled hiding this video. 
  */
-var hideVideo = false;
+var hideVideo;
 /*
  * Whether or not the user has enabled the userlist. 
  */
-var userList = true;
+var userList;
 /*
  * Cookie constants
  */
