@@ -242,8 +242,6 @@ function initUIListeners() {
 		$(this).css("color", autoqueue ? "#3FFF00" : "#ED1C24");
 		if (autoqueue && API.getWaitList().length < MAX_USERS_WAITLIST) {
 			API.waitListJoin();
-		} else {
-			API.waitListLeave();
 		}
 		jaaulde.utils.cookies.set(COOKIE_QUEUE, autoqueue);
 	});
