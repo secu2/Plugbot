@@ -190,6 +190,7 @@ function initUIListeners() {
 		} else {
 			populateUserlist();
 		}
+		jaaulde.utils.cookies.set(COOKIE_USERLIST , userList);
 	});
 
 	/*
@@ -198,7 +199,8 @@ function initUIListeners() {
 	$("#plugbot-btn-woot").on("click", function () {
 		autowoot = !autowoot;
 		$(this).css("color", autowoot ? "#3FFF00" : "#ED1C24");
-		if (autowoot) $("#button-vote-positive").click();
+		if (autowoot){ $("#button-vote-positive").click();}
+		jaaulde.utils.cookies.set(COOKIE_WOOT , autowoot);
 	});
 
 	/*
@@ -217,6 +219,7 @@ function initUIListeners() {
 		}, {
 			duration: "medium"
 		});
+		jaaulde.utils.cookies.set(COOKIE_HIDE_VIDEO  , hideVideo);
 	});
 
 	/*
@@ -230,6 +233,7 @@ function initUIListeners() {
 		} else {
 			API.waitListLeave();
 		}
+		jaaulde.utils.cookies.set(COOKIE_QUEUE  , autoqueue);
 	});
 }
 
@@ -541,6 +545,7 @@ function readCookies() {
 	if (value != null) {
 		autowoot = value;
 	} else {
+		console.log('Cookie '+COOKIE_WOOT+' missing...');
 		autowoot = true;
 	}
 
@@ -551,6 +556,7 @@ function readCookies() {
 	if (value != null) {
 		autoqueue = value;
 	} else {
+		console.log('Cookie '+COOKIE_QUEUE+' missing...');
 		autoqueue = false;
 	}
 
@@ -561,6 +567,7 @@ function readCookies() {
 	if (value != null) {
 		hideVideo = value;
 	} else {
+		console.log('Cookie '+COOKIE_HIDE_VIDEO+' missing...');
 		hideVideo = false;
 	}
 
@@ -571,6 +578,7 @@ function readCookies() {
 	if (value != null) {
 		userList = value;
 	} else {
+		console.log('Cookie '+COOKIE_USERLIST+' missing...');
 		userList = true;
 	}
 
