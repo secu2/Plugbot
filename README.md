@@ -1,6 +1,6 @@
 ## Plug.bot
 
-A collection of extensions to the growing online DJing website, <a href="plug.dj">plug.dj</a>.  The source code is written in JavaScript utilising the Plug.dj API anywhere possible.  Easily embeddable as a bookmark in your favourite browser.  Initially inspired by TechGuard's AutoWoot script from back in April '12.  
+A collection of extensions to the growing online DJing website, <a href="http://plug.dj">plug.dj</a>.  The source code is written in JavaScript utilising the Plug.dj API anywhere possible.  Easily embeddable as a bookmark in your favourite browser.  Initially inspired by TechGuard's AutoWoot script from back in April '12.  
 
 
 
