@@ -61,6 +61,11 @@ var COOKIE_HIDE_VIDEO = 'hidevideo';
 var COOKIE_USERLIST = 'userlist';
 
 /*
+ * Maximum amount of people that can be in the waitlist.
+ */
+var MAX_USERS_WAITLIST = 50;
+
+/*
  * Whenever a user chooses to apply custom username FX to a
  * user, their username and chosen colour and saved here. 
  */
@@ -156,7 +161,7 @@ function displayUI() {
 	var cHideVideo = hideVideo ? "#3FFF00" : "#ED1C24";
 	var cUserList = userList ? "#3FFF00" : "#ED1C24";
 	$('#plugbot-ui').append(
-		'<p id="plugbot-btn-woot" style="color:'+cWoot+'">auto-woot</p><p id="plugbot-btn-queue" style="color:'+cQueue+'">auto-queue</p><p id="plugbot-btn-hidevideo" style="color:'+cHideVideo+'">hide video</p><p id="plugbot-btn-userlist" style="color:'+cUserList+'">userlist</p><h2 title="This makes it so you can give a user in the room a special colour when they chat!">Custom Username FX: <br /><br id="space" /><span onclick="promptCustomUsername()" style="cursor:pointer">+ add new</span></h2>');
+		'<p id="plugbot-btn-woot" style="color:' + cWoot + '">auto-woot</p><p id="plugbot-btn-queue" style="color:' + cQueue + '">auto-queue</p><p id="plugbot-btn-hidevideo" style="color:' + cHideVideo + '">hide video</p><p id="plugbot-btn-userlist" style="color:' + cUserList + '">userlist</p><h2 title="This makes it so you can give a user in the room a special colour when they chat!">Custom Username FX: <br /><br id="space" /><span onclick="promptCustomUsername()" style="cursor:pointer">+ add new</span></h2>');
 }
 
 
@@ -235,7 +240,7 @@ function initUIListeners() {
 	$("#plugbot-btn-queue").on("click", function () {
 		autoqueue = !autoqueue;
 		$(this).css("color", autoqueue ? "#3FFF00" : "#ED1C24");
-		if (autoqueue) {
+		if (autoqueue && API.getWaitList().length < MAX_USERS_WAITLIST) {
 			API.waitListJoin();
 		} else {
 			API.waitListLeave();
@@ -280,7 +285,7 @@ function wlUpdate(users) {
 	 * If auto-queueing has been enabled, and we are currently
 	 * not in the waitlist, then try to join the list.
 	 */
-	if (autoqueue && users.length < 50 && users.indexOf(API.getSelf()) === -1) {
+	if (autoqueue && users.length < MAX_USERS_WAITLIST && users.indexOf(API.getSelf()) === -1) {
 		API.waitListJoin();
 	}
 }
@@ -535,7 +540,9 @@ var script = document.createElement('script');
 script.type = 'text/javascript';
 script.src = 'http://cookies.googlecode.com/svn/trunk/jaaulde.cookies.js';
 script.onreadystatechange = function () {
-	if (this.readyState == 'complete'){ readCookies();}
+	if (this.readyState == 'complete') {
+		readCookies();
+	}
 }
 script.onload = readCookies;
 head.appendChild(script);
@@ -553,49 +560,30 @@ function readCookies() {
 		expiresAt: currentDate
 	}
 	jaaulde.utils.cookies.setOptions(newOptions);
+
 	/*
 	 * Read Auto-Woot cookie (true by default)
 	 */
 	var value = jaaulde.utils.cookies.get(COOKIE_WOOT);
-	if (value != null) {
-		autowoot = value;
-	} else {
-		console.log('Cookie ' + COOKIE_WOOT + ' missing...');
-		autowoot = true;
-	}
+	autowoot = value != null ? value : true;
 
 	/*
 	 * Read Auto-Queue cookie (false by default)
 	 */
 	value = jaaulde.utils.cookies.get(COOKIE_QUEUE);
-	if (value != null) {
-		autoqueue = value;
-	} else {
-		console.log('Cookie ' + COOKIE_QUEUE + ' missing...');
-		autoqueue = false;
-	}
+	autoqueue = value != null ? value : false;
 
 	/*
 	 * Read hidevideo cookie (false by default)
 	 */
 	value = jaaulde.utils.cookies.get(COOKIE_HIDE_VIDEO);
-	if (value != null) {
-		hideVideo = value;
-	} else {
-		console.log('Cookie ' + COOKIE_HIDE_VIDEO + ' missing...');
-		hideVideo = false;
-	}
+	hideVideo = value != null ? value : false;
 
 	/*
 	 * Read userlist cookie (true by default)
 	 */
 	value = jaaulde.utils.cookies.get(COOKIE_USERLIST);
-	if (value != null) {
-		userList = value;
-	} else {
-		console.log('Cookie ' + COOKIE_USERLIST + ' missing...');
-		userList = true;
-	}
+	userList = value != null ? value : true;
 
 	onCookiesLoaded();
 }
@@ -619,9 +607,9 @@ function onCookiesLoaded() {
 	}
 
 	/*
-	 * Auto-queue, if autoqueue is enabled.
+	 * Auto-queue, if autoqueue is enabled and the list is not full yet.
 	 */
-	if (autoqueue) {
+	if (autoqueue && API.getWaitList().length < MAX_USERS_WAITLIST) {
 		API.waitListJoin();
 	}
 
@@ -640,7 +628,7 @@ function onCookiesLoaded() {
 			duration: "medium"
 		});
 	}
-	
+
 	/*
 	 * Generate userlist, if userList is enabled.
 	 */
@@ -651,7 +639,7 @@ function onCookiesLoaded() {
 	/*
 	 * Call all init-related functions to start the software up.
 	 */
-	initAPIListeners();	
+	initAPIListeners();
 	displayUI();
 	initUIListeners();
 }
