@@ -18,29 +18,8 @@ A collection of extensions to the growing online DJing website, <a href="plug.dj
 
 ### Installation ###
 
-<table style="border: none;">
+Install [this bookmarklet](http://theholywaffle.github.com/Plugbot/bookmarklet.html) in order to run Plugbot.
 
-  <tbody>
-  
-    <tr style="border:none;">
-	
-      <td style="vertical-align: middle; padding-top: 10px; border: none;">
-	  
-        <a href="javascript:(function(){ window.open('http://www.test.com/'); })();">test</a>
-		
-      </td>
-	  
-      <td style="vertical-align: middle; text-align: left; border: none;">
-	  
-        ← Drag this to your bookmark bar.
-		
-      </td>
-	  
-    </tr>
-	
-  </tbody>
-  
-</table>
 
 
 ### Author ###
