@@ -150,8 +150,12 @@ function displayUI() {
 	 * Generate the HTML code for the UI.
 	 */
 	$('#chat').prepend('<div id="plugbot-ui"></div>');
+	var cWoot = autowoot ? "#3FFF00" : "#ED1C24";
+	var cQueue = autoqueue ? "#3FFF00" : "#ED1C24";
+	var cHideVideo = hideVideo ? "#3FFF00" : "#ED1C24";
+	var cUserList = userList ? "#3FFF00" : "#ED1C24";
 	$('#plugbot-ui').append(
-		'<p id="plugbot-btn-woot" style="color:#3FFF00">auto-woot</p><p id="plugbot-btn-queue" style="color:#ED1C24">auto-queue</p><p id="plugbot-btn-hidevideo" style="color:#ED1C24">hide video</p><p id="plugbot-btn-userlist" style="color:#3FFF00">userlist</p><h2 title="This makes it so you can give a user in the room a special colour when they chat!">Custom Username FX: <br /><br id="space" /><span onclick="promptCustomUsername()" style="cursor:pointer">+ add new</span></h2>');
+		'<p id="plugbot-btn-woot" style="color:'+cWoot+'">auto-woot</p><p id="plugbot-btn-queue" style="color:'+cQueue+'">auto-queue</p><p id="plugbot-btn-hidevideo" style="color:'+cHideVideo+'">hide video</p><p id="plugbot-btn-userlist" style="color:'+cUserList+'">userlist</p><h2 title="This makes it so you can give a user in the room a special colour when they chat!">Custom Username FX: <br /><br id="space" /><span onclick="promptCustomUsername()" style="cursor:pointer">+ add new</span></h2>');
 }
 
 
@@ -548,7 +552,6 @@ function readCookies() {
 		expiresAt: currentDate
 	}
 	jaaulde.utils.cookies.setOptions(newOptions);
-	console.log('Cookies functionality: ' + jaaulde.utils.cookies.test());
 	/*
 	 * Read Auto-Woot cookie (true by default)
 	 */
