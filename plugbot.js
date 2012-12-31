@@ -190,7 +190,7 @@ function initUIListeners() {
 		} else {
 			populateUserlist();
 		}
-		jaaulde.utils.cookies.set(COOKIE_USERLIST , userList);
+		jaaulde.utils.cookies.set(COOKIE_USERLIST, userList);
 	});
 
 	/*
@@ -199,8 +199,10 @@ function initUIListeners() {
 	$("#plugbot-btn-woot").on("click", function () {
 		autowoot = !autowoot;
 		$(this).css("color", autowoot ? "#3FFF00" : "#ED1C24");
-		if (autowoot){ $("#button-vote-positive").click();}
-		jaaulde.utils.cookies.set(COOKIE_WOOT , autowoot);
+		if (autowoot) {
+			$("#button-vote-positive").click();
+		}
+		jaaulde.utils.cookies.set(COOKIE_WOOT, autowoot);
 	});
 
 	/*
@@ -219,7 +221,7 @@ function initUIListeners() {
 		}, {
 			duration: "medium"
 		});
-		jaaulde.utils.cookies.set(COOKIE_HIDE_VIDEO  , hideVideo);
+		jaaulde.utils.cookies.set(COOKIE_HIDE_VIDEO, hideVideo);
 	});
 
 	/*
@@ -233,7 +235,7 @@ function initUIListeners() {
 		} else {
 			API.waitListLeave();
 		}
-		jaaulde.utils.cookies.set(COOKIE_QUEUE  , autoqueue);
+		jaaulde.utils.cookies.set(COOKIE_QUEUE, autoqueue);
 	});
 }
 
@@ -537,6 +539,15 @@ head.appendChild(script);
  * Read cookies when the library is loaded
  */
 function readCookies() {
+	/*
+	 * Changing default cookie settings
+	 */
+	var currentDate = new Date();
+	currentDate.setFullYear(currentDate.getFullYear() + 1); //Cookies expire after 1 year
+	var newOptions = {
+		expiresAt: currentDate
+	}
+	jaaulde.utils.cookies.setOptions(newOptions);
 	console.log('Cookies functionality: ' + jaaulde.utils.cookies.test());
 	/*
 	 * Read Auto-Woot cookie (true by default)
@@ -545,7 +556,7 @@ function readCookies() {
 	if (value != null) {
 		autowoot = value;
 	} else {
-		console.log('Cookie '+COOKIE_WOOT+' missing...');
+		console.log('Cookie ' + COOKIE_WOOT + ' missing...');
 		autowoot = true;
 	}
 
@@ -556,7 +567,7 @@ function readCookies() {
 	if (value != null) {
 		autoqueue = value;
 	} else {
-		console.log('Cookie '+COOKIE_QUEUE+' missing...');
+		console.log('Cookie ' + COOKIE_QUEUE + ' missing...');
 		autoqueue = false;
 	}
 
@@ -567,7 +578,7 @@ function readCookies() {
 	if (value != null) {
 		hideVideo = value;
 	} else {
-		console.log('Cookie '+COOKIE_HIDE_VIDEO+' missing...');
+		console.log('Cookie ' + COOKIE_HIDE_VIDEO + ' missing...');
 		hideVideo = false;
 	}
 
@@ -578,7 +589,7 @@ function readCookies() {
 	if (value != null) {
 		userList = value;
 	} else {
-		console.log('Cookie '+COOKIE_USERLIST+' missing...');
+		console.log('Cookie ' + COOKIE_USERLIST + ' missing...');
 		userList = true;
 	}
 
@@ -600,14 +611,22 @@ function onCookiesLoaded() {
 	if (autowoot) {
 		$("#button-vote-positive").click();
 	}
-	
-	if(autoqueue){
+
+	if (autoqueue) {
 		API.waitListJoin();
 	}
-	
+
 	if (hideVideo) {
-		$("#yt-frame").css("height", "0px");
-		$("#playback .frame-background").css("opacity", "0.0");
+		$("#yt-frame").animate({
+			"height": (hideVideo ? "0px" : "271px")
+		}, {
+			duration: "fast"
+		});
+		$("#playback .frame-background").animate({
+			"opacity": (hideVideo ? "0" : "0.91")
+		}, {
+			duration: "medium"
+		});
 	}
 
 	/*
