@@ -51,6 +51,7 @@ var hideVideo;
  * Whether or not the user has enabled the userlist. 
  */
 var userList;
+
 /*
  * Cookie constants
  */
@@ -534,7 +535,7 @@ var script = document.createElement('script');
 script.type = 'text/javascript';
 script.src = 'http://cookies.googlecode.com/svn/trunk/jaaulde.cookies.js';
 script.onreadystatechange = function () {
-	if (this.readyState == 'complete') readCookies();
+	if (this.readyState == 'complete'){ readCookies();}
 }
 script.onload = readCookies;
 head.appendChild(script);
@@ -599,29 +600,34 @@ function readCookies() {
 	onCookiesLoaded();
 }
 
-
-
 /*
  * Write the CSS rules that are used for components of the 
  * Plug.bot UI.
  */
 $('body').prepend('<style type="text/css" id="plugbot-css">#plugbot-ui { position: absolute; margin-left: 349px; }#plugbot-ui p { background-color: #0b0b0b; height: 32px; padding-top: 8px; padding-left: 8px; cursor: pointer; font-variant: small-caps; width: 84px; font-size: 15px; margin: 0; }#plugbot-ui h2 { background-color: #0b0b0b; height: 112px; width: 156px; margin: 0; color: #fff; font-size: 13px; font-variant: small-caps; padding: 8px 0 0 12px; border-top: 1px dotted #292929; }#plugbot-userlist { border: 6px solid rgba(10, 10, 10, 0.8); border-left: 0 !important; background-color: #000000; padding: 8px 0px 20px 0px; width: 12%; }#plugbot-userlist p { margin: 0; padding-top: 4px; text-indent: 24px; font-size: 10px; }#plugbot-userlist p:first-child { padding-top: 0px !important; }#plugbot-queuespot { color: #42A5DC; text-align: left; font-size: 15px; margin-left: 8px }');
+$('body').append('<div id="plugbot-userlist"></div>');
 
 /*
  * Continue initialization after user's settings are loaded
  */
 function onCookiesLoaded() {
 	/*
-	 * Hit the woot button, if autowoot is enabled by default.
+	 * Hit the woot button, if autowoot is enabled.
 	 */
 	if (autowoot) {
 		$("#button-vote-positive").click();
 	}
 
+	/*
+	 * Auto-queue, if autoqueue is enabled.
+	 */
 	if (autoqueue) {
 		API.waitListJoin();
 	}
 
+	/*
+	 * Hide video, if hideVideo is enabled.
+	 */
 	if (hideVideo) {
 		$("#yt-frame").animate({
 			"height": (hideVideo ? "0px" : "271px")
@@ -634,15 +640,18 @@ function onCookiesLoaded() {
 			duration: "medium"
 		});
 	}
+	
+	/*
+	 * Generate userlist, if userList is enabled.
+	 */
+	if (userList) {
+		populateUserlist();
+	}
 
 	/*
 	 * Call all init-related functions to start the software up.
 	 */
-	initAPIListeners();
-	$('body').append('<div id="plugbot-userlist"></div>');
-	if (userList) {
-		populateUserlist();
-	}
+	initAPIListeners();	
 	displayUI();
 	initUIListeners();
 }
