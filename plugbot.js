@@ -293,6 +293,7 @@ function queueUpdate() {
 /**
  * Checks whether or not the user is already in queue.
  *
+ * @return True if the user is in queue, else false.
  */
 function isInQueue() {
     var self = API.getSelf();
