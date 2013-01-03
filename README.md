@@ -1,6 +1,6 @@
-# Plug.bot #
+## Plug.bot
 
-A collection of extensions to the growing online DJing website, <a href="plug.dj">plug.dj</a>.  The source code is written in JavaScript utilising the Plug.dj API anywhere possible.  Easily embeddable as a bookmark in your favourite browser.  Initially inspired by TechGuard's AutoWoot script from back in April '12.  
+A collection of extensions to the growing online DJing website, <a href="http://plug.dj">plug.dj</a>.  The source code is written in JavaScript utilising the Plug.dj API anywhere possible.  Easily embeddable as a bookmark in your favourite browser.  Initially inspired by TechGuard's AutoWoot script from back in April '12.  
 
 
 
@@ -18,13 +18,7 @@ A collection of extensions to the growing online DJing website, <a href="plug.dj
 
 ### Installation ###
 
-If you get stuck or just can't be bothered to use your brain (I know that feel), do yourself a favour and watch <a href="http://youtu.be/Xr93msMOQ-E">EXƎ's awesome sauce video</a>.
-
-<b>Create a new bookmark in your favourite browser and copy/paste this to the 'URL/Location' of the bookmark (<i>or even better just select all the text and drag it there</i>)</b>
-
-	javascript: (function () { var jsCode = document.createElement('script'); jsCode.setAttribute('id', 'plugbot-js'); jsCode.setAttribute('src', 'https://raw.github.com/connergdavis/Plugbot/master/plugbot.js'); document.body.appendChild(jsCode); }());
-
-Alternatively, you can go<a href="http://pastebin.com/x8Xak4zU"> to this site </a>and copy the code you see into a new bookmark.  Just Copy and Paste the code into the URL/Location of your bookmark.
+Install [this bookmarklet](http://theholywaffle.github.com/Plugbot/bookmarklet.html) in order to run Plugbot.
 
 
 
