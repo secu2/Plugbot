@@ -18,7 +18,7 @@ A collection of extensions to the growing online DJing website, <a href="http://
 
 ### Installation ###
 
-Install [this bookmarklet](http://pastebin.com/ywuQK2XA) in order to run Plugbot.
+Install [this bookmarklet](http://pastebin.com/raw.php?i=ywuQK2XA) in order to run Plugbot.
 
 
 
