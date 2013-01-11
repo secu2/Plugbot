@@ -18,7 +18,8 @@ A collection of extensions to the growing online DJing website, <a href="http://
 
 ### Installation ###
 
-Install [this bookmarklet](http://pastebin.com/raw.php?i=ywuQK2XA) in order to run Plugbot.
+In order to install, just click the link below then copy the text you see there (javascript: etc.) to your bookmarks bar.  You can add the bookmark manually or just drag the text straight there, it doesn't matter.  Enjoy!
+Install [this bookmarklet](http://pastebin.com/raw.php?i=ywuQK2XA) in order to run Plug.bot.
 
 
 
