@@ -16,7 +16,7 @@
  * TERMS OF REPRODUCTION USE
  *
  * 1. Provide a link back to the original repository (this repository), as
- * 		in, https://github.com/ConnerGDavis/Plugbot, that is well-visible
+ *     	in, https://github.com/ConnerGDavis/Plugbot, that is well-visible
  * 		wherever the source is being reproduced.  For example, should you
  * 		display it on a website, you should provide a link above/below that
  *		which the users use, titled something such as "ORIGINAL AUTHOR".
@@ -410,10 +410,12 @@ function appendUser(user) {
     var imagePrefix;
     switch (permission) {
         case 0:
+            imagePrefix = 'normal';
+            break;
             // Normal user
         case 1:
             // Featured DJ
-            imagePrefix = 'normal';
+            imagePrefix = 'featured';
             break;
         case 2:
             // Bouncer
@@ -526,7 +528,7 @@ function drawUserlistItem(imagePath, color, username) {
      */
     if (imagePath !== 'void') {
         var realPath = 'http://www.theedmbasement.com/basebot/userlist/' + imagePath;
-        $('#plugbot-userlist').append('<img src="' + realPath + '" align="left" style="margin-left:6px" />');
+        $('#plugbot-userlist').append('<img src="' + realPath + '" align="left" style="margin-left:6px;margin-top:2px" />');
     }
 
     /*
