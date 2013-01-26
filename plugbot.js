@@ -67,8 +67,13 @@ var MAX_USERS_WAITLIST = 50;
 
 /*
  * Timeout before wooting (seconds)
+ * timeOutMin = X
+ * timeOutMax = Y
+ * Make de autowoot timeout between X and Y
  */
-var timeout = 10+10*Math.random(); //Random int between 10 and 20
+var timeOutMin = 10;
+var timeOutMax = 20;
+var timeout = timeOutMin+timeOutMax*Math.random(); //Random int between timeOutMin and TimeOutMax
 
 /*
  * Whenever a user chooses to apply custom username FX to a
@@ -214,7 +219,7 @@ function initUIListeners() {
         autowoot = !autowoot;
         $(this).css("color", autowoot ? "#3FFF00" : "#ED1C24");
         if (autowoot) {
-            setTimeout(function(){$("#button-vote-positive").click()},timeout*1000);
+            $("#button-vote-positive").click();
         }
         jaaulde.utils.cookies.set(COOKIE_WOOT, autowoot);
     });
