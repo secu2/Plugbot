@@ -16,7 +16,7 @@
  * TERMS OF REPRODUCTION USE
  *
  * 1. Provide a link back to the original repository (this repository), as
- *     	in, https://github.com/ConnerGDavis/Plugbot, that is well-visible
+ *         in, https://github.com/ConnerGDavis/Plugbot, that is well-visible
  * 		wherever the source is being reproduced.  For example, should you
  * 		display it on a website, you should provide a link above/below that
  *		which the users use, titled something such as "ORIGINAL AUTHOR".
@@ -64,6 +64,11 @@ var COOKIE_USERLIST = 'userlist';
  * Maximum amount of people that can be in the waitlist.
  */
 var MAX_USERS_WAITLIST = 50;
+
+/*
+ * Timeout before wooting (seconds)
+ */
+var timeout = 10+10*Math.random(); //Random int between 10 and 20
 
 /*
  * Whenever a user chooses to apply custom username FX to a
@@ -209,7 +214,7 @@ function initUIListeners() {
         autowoot = !autowoot;
         $(this).css("color", autowoot ? "#3FFF00" : "#ED1C24");
         if (autowoot) {
-            $("#button-vote-positive").click();
+            setTimeout(function(){$("#button-vote-positive").click()},timeout*1000);
         }
         jaaulde.utils.cookies.set(COOKIE_WOOT, autowoot);
     });
@@ -265,7 +270,7 @@ function djAdvanced(obj) {
      * If auto-woot is enabled, WOOT! the song.
      */
     if (autowoot) {
-        $("#button-vote-positive").click();
+        setTimeout(function(){$("#button-vote-positive").click()},timeout*1000);
     }
 
     /*
@@ -620,7 +625,7 @@ function onCookiesLoaded() {
      * Hit the woot button, if autowoot is enabled.
      */
     if (autowoot) {
-        $("#button-vote-positive").click();
+        setTimeout(function(){$("#button-vote-positive").click()},timeout*1000);
     }
 
     /*
