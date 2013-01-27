@@ -172,7 +172,7 @@ function displayUI() {
     var cHideVideo = hideVideo ? "#3FFF00" : "#ED1C24";
     var cUserList = userList ? "#3FFF00" : "#ED1C24";
     $('#plugbot-ui').append(
-        '<p id="plugbot-btn-woot" style="color:' + cWoot + '">auto-woot</p><p id="timeOutInput">TimeoutMin:<input size="2" type="number" name="timeoutMin">TimeOutMax:<input type="number" name="timeoutMin"></p><p id="plugbot-btn-queue" style="color:' + cQueue + '">auto-queue</p><p id="plugbot-btn-hidevideo" style="color:' + cHideVideo + '">hide video</p><p id="plugbot-btn-userlist" style="color:' + cUserList + '">userlist</p><h2 title="This makes it so you can give a user in the room a special colour when they chat!">Custom Username FX: <br /><br id="space" /><span onclick="promptCustomUsername()" style="cursor:pointer">+ add new</span></h2>');
+        '<p id="plugbot-btn-woot" style="color:' + cWoot + '">auto-woot</p><p id="timeOutInput">TimeoutMin:<input size="2" type="number" name="timeoutMin">TimeOutMax:<input size="2" type="number" name="timeoutMin"></p><p id="plugbot-btn-queue" style="color:' + cQueue + '">auto-queue</p><p id="plugbot-btn-hidevideo" style="color:' + cHideVideo + '">hide video</p><p id="plugbot-btn-userlist" style="color:' + cUserList + '">userlist</p><h2 title="This makes it so you can give a user in the room a special colour when they chat!">Custom Username FX: <br /><br id="space" /><span onclick="promptCustomUsername()" style="cursor:pointer">+ add new</span></h2>');
 }
 
 /**
