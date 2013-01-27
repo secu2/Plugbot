@@ -73,7 +73,7 @@ var MAX_USERS_WAITLIST = 50;
  */
 var timeOutMin = 10;
 var timeOutMax = 20;
-var timeout = timeOutMin+timeOutMax*Math.random(); //Random int between timeOutMin and TimeOutMax
+var timeout;
 
 /*
  * Whenever a user chooses to apply custom username FX to a
@@ -275,6 +275,7 @@ function djAdvanced(obj) {
      * If auto-woot is enabled, WOOT! the song.
      */
     if (autowoot) {
+        timeout = timeOutMin+timeOutMax*Math.random(); //Random int between timeOutMin and TimeOutMax
         setTimeout(function(){$("#button-vote-positive").click()},timeout*1000);
     }
 
@@ -630,6 +631,7 @@ function onCookiesLoaded() {
      * Hit the woot button, if autowoot is enabled.
      */
     if (autowoot) {
+        timeout = timeOutMin+timeOutMax*Math.random(); //Random int between timeOutMin and TimeOutMax
         setTimeout(function(){$("#button-vote-positive").click()},timeout*1000);
     }
 
