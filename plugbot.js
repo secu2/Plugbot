@@ -67,12 +67,7 @@ var MAX_USERS_WAITLIST = 50;
 
 /*
  * Timeout before wooting (seconds)
- * timeOutMin = X
- * timeOutMax = Y
- * Make de autowoot timeout between X and Y
  */
-var timeOutMin = 10;
-var timeOutMax = 20;
 var timeout;
 
 /*
@@ -172,7 +167,7 @@ function displayUI() {
     var cHideVideo = hideVideo ? "#3FFF00" : "#ED1C24";
     var cUserList = userList ? "#3FFF00" : "#ED1C24";
     $('#plugbot-ui').append(
-        '<p id="plugbot-btn-woot" style="color:' + cWoot + '">auto-woot</p><p id="timeOutInput">TimeoutMin:<input size="2" type="number" name="timeoutMin">TimeOutMax:<input size="2" type="number" name="timeoutMin"></p><p id="plugbot-btn-queue" style="color:' + cQueue + '">auto-queue</p><p id="plugbot-btn-hidevideo" style="color:' + cHideVideo + '">hide video</p><p id="plugbot-btn-userlist" style="color:' + cUserList + '">userlist</p><h2 title="This makes it so you can give a user in the room a special colour when they chat!">Custom Username FX: <br /><br id="space" /><span onclick="promptCustomUsername()" style="cursor:pointer">+ add new</span></h2>');
+        '<p id="plugbot-btn-woot" style="color:' + cWoot + '">auto-woot</p><p id="timeOutInput">TimeoutMin:<input size="2" value="10" type="number" id="timeoutMin">TimeOutMax:<input size="2" value="20" type="number" id="timeoutMax"></p><p id="plugbot-btn-queue" style="color:' + cQueue + '">auto-queue</p><p id="plugbot-btn-hidevideo" style="color:' + cHideVideo + '">hide video</p><p id="plugbot-btn-userlist" style="color:' + cUserList + '">userlist</p><h2 title="This makes it so you can give a user in the room a special colour when they chat!">Custom Username FX: <br /><br id="space" /><span onclick="promptCustomUsername()" style="cursor:pointer">+ add new</span></h2>');
 }
 
 /**
@@ -275,7 +270,7 @@ function djAdvanced(obj) {
      * If auto-woot is enabled, WOOT! the song.
      */
     if (autowoot) {
-        timeout = timeOutMin+timeOutMax*Math.random(); //Random int between timeOutMin and TimeOutMax
+        timeout = $("#timeoutMin").value+$("#timeoutMax").value*Math.random(); //Random int between timeOutMin and TimeOutMax
         setTimeout(function(){$("#button-vote-positive").click()},timeout*1000);
     }
 
@@ -631,7 +626,7 @@ function onCookiesLoaded() {
      * Hit the woot button, if autowoot is enabled.
      */
     if (autowoot) {
-        timeout = timeOutMin+timeOutMax*Math.random(); //Random int between timeOutMin and TimeOutMax
+        timeout = $("#timeoutMin").value+$("#timeoutMax").value*Math.random(); //Random int between timeOutMin and TimeOutMax
         setTimeout(function(){$("#button-vote-positive").click()},timeout*1000);
     }
 
