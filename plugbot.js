@@ -215,7 +215,7 @@ function initUIListeners()
         timer = !timer;
         $(this).css('color', timer ? '#3FFF00' : '#ED1C24');
         
-        jaaulde.utils.cookies.set(COOKIE_TIMER, autowoot);
+        jaaulde.utils.cookies.set(COOKIE_TIMER, timer);
     });
 
     /*
@@ -666,7 +666,7 @@ function readCookies()
     /*
      * Read Auto-Woot timer cookie (true by default)
      */
-    var value = jaaulde.utils.cookies.get(COOKIE_TIMER);
+    value = jaaulde.utils.cookies.get(COOKIE_TIMER);
     timer = value != null ? value : true;
 
     /*
